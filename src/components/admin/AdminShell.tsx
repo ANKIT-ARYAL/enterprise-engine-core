@@ -62,7 +62,7 @@ export default function AdminShell({ children, initialNav }: { children: React.R
         
         <div className="px-4 py-2 shrink-0">
           <div className="flex gap-2">
-            <button className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-btn-bg text-btn-text rounded-btn text-sm font-medium hover:bg-btn-hover transition-colors shadow-sm">
+            <button className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-btn-bg text-btn-text rounded-btn text-sm font-medium hover:bg-btn-hover hover:text-btn-hover-text transition-colors shadow-sm">
               <Plus size={16} /> Quick Create
             </button>
             <button className="px-3 py-2 border border-[#ececec] rounded-md text-slate-600 hover:bg-slate-50 transition-colors">
@@ -85,7 +85,7 @@ export default function AdminShell({ children, initialNav }: { children: React.R
                     href={link.href} 
                     className={`flex items-center gap-3 px-3 py-2 transition-colors text-[13px] font-medium rounded-btn ${
                       isActive 
-                        ? 'bg-btn-bg text-btn-text shadow-sm hover:bg-btn-hover' 
+                        ? 'bg-btn-bg text-btn-text shadow-sm hover:bg-btn-hover hover:text-btn-hover-text' 
                         : 'text-surface-text/70 hover:bg-card-hover hover:text-surface-text'
                     }`}
                   >
@@ -109,7 +109,7 @@ export default function AdminShell({ children, initialNav }: { children: React.R
                     href={link.href} 
                     className={`flex items-center gap-3 px-3 py-2 transition-colors text-[13px] font-medium rounded-btn ${
                       isActive 
-                        ? 'bg-btn-bg text-btn-text shadow-sm hover:bg-btn-hover' 
+                        ? 'bg-btn-bg text-btn-text shadow-sm hover:bg-btn-hover hover:text-btn-hover-text' 
                         : 'text-surface-text/70 hover:bg-card-hover hover:text-surface-text'
                     }`}
                   >

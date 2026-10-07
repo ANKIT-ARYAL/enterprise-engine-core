@@ -18,7 +18,7 @@ export default function AcademyDashboard() {
         </div>
         
         <div className="flex items-center gap-2">
-          <button className="flex items-center gap-2 px-3 py-1.5 bg-btn-bg text-btn-text text-xs font-medium rounded-btn hover:bg-btn-hover transition-colors shadow-sm">
+          <button className="flex items-center gap-2 px-3 py-1.5 bg-btn-bg text-btn-text text-xs font-medium rounded-btn hover:bg-btn-hover hover:text-btn-hover-text transition-colors shadow-sm">
             <Megaphone size={14} /> New Announcement
           </button>
           <button className="flex items-center gap-2 px-3 py-1.5 bg-card-bg border border-card-border text-surface-text opacity-90 text-xs font-medium rounded-btn hover:bg-card-hover transition-colors shadow-sm">

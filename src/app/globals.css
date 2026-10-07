@@ -11,6 +11,7 @@
   --color-btn-bg: var(--btn-bg);
   --color-btn-hover: var(--btn-hover-bg);
   --color-btn-text: var(--btn-text);
+  --color-btn-hover-text: var(--btn-hover-text);
   
   --radius-global: var(--radius);
   --radius-card: var(--card-radius);

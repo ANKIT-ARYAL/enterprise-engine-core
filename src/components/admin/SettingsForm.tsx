@@ -130,7 +130,7 @@ export default function SettingsForm({ initialSettings }: { initialSettings: any
           <button 
             disabled={isPending}
             type="submit" 
-            className="flex items-center gap-2 px-6 py-2 bg-btn-bg text-btn-text text-sm font-semibold rounded-btn hover:bg-btn-hover transition-all disabled:opacity-70 shadow-lg shadow-black/10"
+            className="flex items-center gap-2 px-6 py-2 bg-btn-bg text-btn-text text-sm font-semibold rounded-btn hover:bg-btn-hover hover:text-btn-hover-text transition-all disabled:opacity-70 shadow-lg shadow-black/10"
           >
             {success ? <CheckCircle2 size={16} /> : <Save size={16} />}
             {isPending ? 'Deploying...' : success ? 'Deployed!' : 'Deploy Tokens'}
@@ -234,6 +234,7 @@ export default function SettingsForm({ initialSettings }: { initialSettings: any
                       { id: 'buttonBgColor', label: 'Default Button Background Color', val: liveTokens.buttonBgColor || '#2563eb' },
                       { id: 'buttonHoverBgColor', label: 'Button Hover Background Color', val: liveTokens.buttonHoverBgColor || '#1d4ed8' },
                       { id: 'buttonTextColor', label: 'Button Text Color', val: liveTokens.buttonTextColor || '#ffffff' },
+                      { id: 'buttonHoverTextColor', label: 'Button Hover Text Color', val: liveTokens.buttonHoverTextColor || '#ffffff' },
                     ].map(color => (
                       <div key={color.id} className="flex items-center justify-between">
                         <label className="text-sm font-medium w-1/2 opacity-90">{color.label}</label>
