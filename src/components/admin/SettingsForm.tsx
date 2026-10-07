@@ -2,7 +2,7 @@
 
 import { useState, useTransition, useMemo, useEffect } from 'react';
 import { updateSystemSettingsAction } from '@/app/actions/admin-mutations';
-import { Palette, Type, Layout, Code, Save, CheckCircle2, Box, MousePointer2, Layers, Download, ChevronDown } from 'lucide-react';
+import { Palette, Type, Layout, Code, Save, CheckCircle2, Box, MousePointer2, Layers, Download, ChevronDown, Menu, Trash2, Plus } from 'lucide-react';
 
 export default function SettingsForm({ initialSettings }: { initialSettings: any }) {
   const [isPending, startTransition] = useTransition();
@@ -76,6 +76,7 @@ export default function SettingsForm({ initialSettings }: { initialSettings: any
     { id: 'geometry', icon: Layout, label: 'Geometry' },
     { id: 'components', icon: Box, label: 'Components' },
     { id: 'depth', icon: MousePointer2, label: 'Depth & Motion' },
+    { id: 'navigation', icon: Menu, label: 'Navigation' },
     { id: 'css', icon: Code, label: 'Raw CSS' },
   ];
 
@@ -277,6 +278,164 @@ export default function SettingsForm({ initialSettings }: { initialSettings: any
                       </div>
                       <input type="checkbox" name="hoverEffects" checked={liveTokens.hoverEffects !== false} onChange={handleLiveChange} className="w-4 h-4 rounded cursor-pointer" />
                     </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'navigation' && (
+              <div className="space-y-6 animate-in fade-in duration-200">
+                <div className="border border-card-border rounded-card overflow-hidden bg-card-bg shadow-sm">
+                  <div className="px-4 py-3 border-b border-card-border bg-black/5 flex items-center gap-2 font-medium text-sm">
+                    <Menu size={16} className="opacity-70" /> SIDEBAR NAVIGATION ENGINE
+                  </div>
+                  <div className="p-4 space-y-6">
+                    
+                    {/* Dashboards Section */}
+                    <div>
+                      <div className="flex justify-between items-center mb-3">
+                        <h3 className="font-bold text-xs uppercase tracking-wider opacity-60">Dashboards</h3>
+                        <button 
+                          type="button" 
+                          onClick={() => {
+                            const currentNav = liveTokens.navigation || { dashboards: [], pages: [] };
+                            setLiveTokens({
+                              ...liveTokens, 
+                              navigation: {
+                                ...currentNav,
+                                dashboards: [...(currentNav.dashboards || []), { label: 'New Link', href: '/admin/new', icon: 'LayoutDashboard' }]
+                              }
+                            });
+                          }}
+                          className="text-[10px] flex items-center gap-1 font-medium bg-black/5 hover:bg-black/10 px-2 py-1 rounded"
+                        >
+                          <Plus size={12} /> Add Link
+                        </button>
+                      </div>
+                      
+                      <div className="space-y-2">
+                        {((liveTokens.navigation?.dashboards) || []).map((link: any, idx: number) => (
+                          <div key={idx} className="flex items-center gap-2">
+                            <input 
+                              type="text" 
+                              value={link.label} 
+                              onChange={(e) => {
+                                const newNav = { ...liveTokens.navigation };
+                                newNav.dashboards[idx].label = e.target.value;
+                                setLiveTokens({ ...liveTokens, navigation: newNav });
+                              }}
+                              className="w-1/3 px-2 py-1.5 text-xs border rounded-lg bg-transparent border-card-border" 
+                              placeholder="Label"
+                            />
+                            <input 
+                              type="text" 
+                              value={link.href} 
+                              onChange={(e) => {
+                                const newNav = { ...liveTokens.navigation };
+                                newNav.dashboards[idx].href = e.target.value;
+                                setLiveTokens({ ...liveTokens, navigation: newNav });
+                              }}
+                              className="w-1/3 px-2 py-1.5 text-xs border rounded-lg bg-transparent border-card-border" 
+                              placeholder="URL path"
+                            />
+                            <input 
+                              type="text" 
+                              value={link.icon} 
+                              onChange={(e) => {
+                                const newNav = { ...liveTokens.navigation };
+                                newNav.dashboards[idx].icon = e.target.value;
+                                setLiveTokens({ ...liveTokens, navigation: newNav });
+                              }}
+                              className="w-1/4 px-2 py-1.5 text-xs border rounded-lg bg-transparent border-card-border" 
+                              placeholder="Icon name"
+                            />
+                            <button 
+                              type="button" 
+                              onClick={() => {
+                                const newNav = { ...liveTokens.navigation };
+                                newNav.dashboards.splice(idx, 1);
+                                setLiveTokens({ ...liveTokens, navigation: newNav });
+                              }}
+                              className="p-1.5 text-rose-500 hover:bg-rose-50 rounded"
+                            >
+                              <Trash2 size={14} />
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Pages Section */}
+                    <div className="pt-4 border-t border-card-border">
+                      <div className="flex justify-between items-center mb-3">
+                        <h3 className="font-bold text-xs uppercase tracking-wider opacity-60">Pages</h3>
+                        <button 
+                          type="button" 
+                          onClick={() => {
+                            const currentNav = liveTokens.navigation || { dashboards: [], pages: [] };
+                            setLiveTokens({
+                              ...liveTokens, 
+                              navigation: {
+                                ...currentNav,
+                                pages: [...(currentNav.pages || []), { label: 'New Page', href: '/admin/new-page', icon: 'FileText' }]
+                              }
+                            });
+                          }}
+                          className="text-[10px] flex items-center gap-1 font-medium bg-black/5 hover:bg-black/10 px-2 py-1 rounded"
+                        >
+                          <Plus size={12} /> Add Link
+                        </button>
+                      </div>
+                      
+                      <div className="space-y-2">
+                        {((liveTokens.navigation?.pages) || []).map((link: any, idx: number) => (
+                          <div key={idx} className="flex items-center gap-2">
+                            <input 
+                              type="text" 
+                              value={link.label} 
+                              onChange={(e) => {
+                                const newNav = { ...liveTokens.navigation };
+                                newNav.pages[idx].label = e.target.value;
+                                setLiveTokens({ ...liveTokens, navigation: newNav });
+                              }}
+                              className="w-1/3 px-2 py-1.5 text-xs border rounded-lg bg-transparent border-card-border" 
+                            />
+                            <input 
+                              type="text" 
+                              value={link.href} 
+                              onChange={(e) => {
+                                const newNav = { ...liveTokens.navigation };
+                                newNav.pages[idx].href = e.target.value;
+                                setLiveTokens({ ...liveTokens, navigation: newNav });
+                              }}
+                              className="w-1/3 px-2 py-1.5 text-xs border rounded-lg bg-transparent border-card-border" 
+                            />
+                            <input 
+                              type="text" 
+                              value={link.icon} 
+                              onChange={(e) => {
+                                const newNav = { ...liveTokens.navigation };
+                                newNav.pages[idx].icon = e.target.value;
+                                setLiveTokens({ ...liveTokens, navigation: newNav });
+                              }}
+                              className="w-1/4 px-2 py-1.5 text-xs border rounded-lg bg-transparent border-card-border" 
+                            />
+                            <button 
+                              type="button" 
+                              onClick={() => {
+                                const newNav = { ...liveTokens.navigation };
+                                newNav.pages.splice(idx, 1);
+                                setLiveTokens({ ...liveTokens, navigation: newNav });
+                              }}
+                              className="p-1.5 text-rose-500 hover:bg-rose-50 rounded"
+                            >
+                              <Trash2 size={14} />
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
                   </div>
                 </div>
               </div>

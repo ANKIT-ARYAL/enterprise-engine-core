@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { usePathname } from 'next/navigation';
+import * as Icons from 'lucide-react';
 import { 
   Menu, X, LayoutDashboard, Settings, Image as ImageIcon, Trash2, Box, 
   Search, Bell, Moon, User, Plus, Mail, CreditCard, 
@@ -9,7 +10,7 @@ import {
   PanelLeftClose, PanelLeftOpen
 } from 'lucide-react';
 
-export default function AdminShell({ children }: { children: React.ReactNode }) {
+export default function AdminShell({ children, initialNav }: { children: React.ReactNode, initialNav?: any }) {
   const pathname = usePathname();
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
@@ -18,25 +19,20 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
     return <>{children}</>;
   }
 
-  const dashboardLinks = [
-    { href: '/admin/default', label: 'Default', icon: LayoutDashboard },
-    { href: '/admin/crm', label: 'CRM', icon: User },
-    { href: '/admin/finance', label: 'Finance', icon: CreditCard },
-    { href: '/admin/analytics', label: 'Analytics', icon: PieChart },
-    { href: '/admin/productivity', label: 'Productivity', icon: Activity },
-    { href: '/admin/e-commerce', label: 'E-commerce', icon: ShoppingCart },
-    { href: '/admin/academy', label: 'Academy', icon: GraduationCap },
-    { href: '/admin/logistics', label: 'Logistics', icon: Truck },
-    { href: '/admin/infrastructure', label: 'Infrastructure', icon: Server },
-    { href: '/admin/media', label: 'File Manager', icon: ImageIcon },
-    { href: '/admin/patient-monitoring', label: 'Patient Monitoring', icon: ActivitySquare },
+  const defaultDashboardLinks = [
+    { href: '/admin/default', label: 'Default', icon: 'LayoutDashboard' },
+    { href: '/admin/crm', label: 'CRM', icon: 'User' },
+    { href: '/admin/finance', label: 'Finance', icon: 'CreditCard' },
+    { href: '/admin/academy', label: 'Academy', icon: 'GraduationCap' },
   ];
 
-  const pageLinks = [
-    { href: '/admin/email', label: 'Email', icon: Mail },
-    { href: '/admin/settings', label: 'System Design', icon: Settings },
-    { href: '/admin/recycle-bin', label: 'Recycle Bin', icon: Trash2 },
+  const defaultPageLinks = [
+    { href: '/admin/email', label: 'Email', icon: 'Mail' },
+    { href: '/admin/settings', label: 'System Design', icon: 'Settings' },
   ];
+
+  const dashboards = initialNav?.dashboards || defaultDashboardLinks;
+  const pages = initialNav?.pages || defaultPageLinks;
 
   return (
     <div className="flex h-screen overflow-hidden bg-surface text-surface-text font-sans">
@@ -80,9 +76,9 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
           <div>
             <div className="px-3 mb-2 text-[11px] font-semibold text-slate-500 tracking-wider">Dashboards</div>
             <div className="space-y-0.5">
-              {dashboardLinks.map((link) => {
-                const isActive = pathname.startsWith(link.href) || (link.href === '/admin/academy' && pathname === '/admin'); // Default route for demo
-                const Icon = link.icon;
+              {dashboards.map((link: any) => {
+                const isActive = pathname.startsWith(link.href) || (link.href === '/admin/academy' && pathname === '/admin');
+                const IconComponent = (Icons as any)[link.icon] || Icons.Circle;
                 return (
                   <a 
                     key={link.href} 
@@ -93,7 +89,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
                         : 'text-slate-600 hover:bg-slate-50'
                     }`}
                   >
-                    <Icon size={16} className={isActive ? 'text-slate-900' : 'text-slate-500'} />
+                    <IconComponent size={16} className={isActive ? 'text-slate-900' : 'text-slate-500'} />
                     {link.label}
                   </a>
                 );
@@ -104,9 +100,9 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
           <div>
             <div className="px-3 mb-2 text-[11px] font-semibold text-slate-500 tracking-wider">Pages</div>
             <div className="space-y-0.5">
-              {pageLinks.map((link) => {
+              {pages.map((link: any) => {
                 const isActive = pathname.startsWith(link.href);
-                const Icon = link.icon;
+                const IconComponent = (Icons as any)[link.icon] || Icons.Circle;
                 return (
                   <a 
                     key={link.href} 
@@ -117,7 +113,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
                         : 'text-slate-600 hover:bg-slate-50'
                     }`}
                   >
-                    <Icon size={16} className={isActive ? 'text-slate-900' : 'text-slate-500'} />
+                    <IconComponent size={16} className={isActive ? 'text-slate-900' : 'text-slate-500'} />
                     {link.label}
                   </a>
                 );
