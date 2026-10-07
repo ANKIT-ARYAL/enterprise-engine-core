@@ -2,7 +2,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { usePathname } from 'next/navigation';
+import { usePathname, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import * as Icons from 'lucide-react';
 import QuickAddPanel from '@/components/admin/QuickAddPanel';
@@ -12,6 +12,68 @@ import {
   PieChart, Activity, ShoppingCart, GraduationCap, Truck, Server, FileText, ActivitySquare,
   PanelLeftClose, PanelLeftOpen
 } from 'lucide-react';
+function NavItem({ link, pathname }: { link: any, pathname: string }) {
+  const searchParams = useSearchParams();
+  const fullPath = searchParams.toString() ? `${pathname}?${searchParams.toString()}` : pathname;
+  
+  const isActive = pathname.startsWith(link.href) || (link.href === '/admin/academy' && pathname === '/admin');
+  const IconComponent = (Icons as any)[link.icon] || Icons.Circle;
+  const hasChildren = link.children && link.children.length > 0;
+  
+  // Auto-expand if active
+  const [expanded, setExpanded] = useState(isActive);
+
+  return (
+    <div className="space-y-0.5">
+      <div className="relative group">
+        <Link 
+          href={link.href} 
+          className={`flex items-center gap-3 px-3 py-2 transition-colors text-[13px] font-medium rounded-md ${
+            isActive 
+              ? 'bg-black/5 text-black' 
+              : 'text-surface-text/70 hover:bg-black/5 hover:text-surface-text'
+          }`}
+        >
+          <IconComponent size={16} className={isActive ? 'text-black' : 'opacity-70'} />
+          <span className="flex-1">{link.label}</span>
+          {hasChildren && (
+            <button 
+              type="button"
+              onClick={(e) => {
+                e.preventDefault(); // Prevent navigating when just toggling accordion
+                setExpanded(!expanded);
+              }}
+              className="p-1 rounded-md hover:bg-black/10 transition-colors"
+            >
+              <Icons.ChevronDown size={14} className={`opacity-50 transition-transform ${expanded ? 'rotate-180' : ''}`} />
+            </button>
+          )}
+        </Link>
+      </div>
+      
+      {hasChildren && expanded && (
+        <div className="pl-9 pr-2 space-y-0.5 pb-1 mt-0.5">
+          {link.children.map((child: any) => {
+            const isChildActive = fullPath === child.href || fullPath.startsWith(child.href + '&');
+            return (
+              <Link
+                key={child.href + child.label}
+                href={child.href}
+                className={`flex items-center gap-2 px-3 py-1.5 transition-colors text-[12px] font-medium rounded-md ${
+                  isChildActive
+                    ? 'text-black font-semibold'
+                    : 'text-surface-text/60 hover:text-surface-text hover:bg-black/5'
+                }`}
+              >
+                {child.label}
+              </Link>
+            )
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
 
 export default function AdminShell({ children, initialNav }: { children: React.ReactNode, initialNav?: any }) {
   const pathname = usePathname();
@@ -34,7 +96,27 @@ export default function AdminShell({ children, initialNav }: { children: React.R
 
   const defaultPageLinks = [
     { href: '/admin/email', label: 'Email', icon: 'Mail' },
-    { href: '/admin/settings', label: 'System Design', icon: 'Settings' },
+    { 
+      href: '/admin/settings', 
+      label: 'System Design Studio', 
+      icon: 'Settings',
+      children: [
+        { href: '/admin/settings?tab=design-buttons', label: 'Buttons' },
+        { href: '/admin/settings?tab=design-cards', label: 'Cards & Surfaces' },
+        { href: '/admin/settings?tab=design-container', label: 'Container' },
+        { href: '/admin/settings?tab=design-navbars', label: 'Navbars' },
+        { href: '/admin/settings?tab=design-footers', label: 'Footers' },
+        { href: '/admin/settings?tab=design-forms', label: 'Form UI Elements' },
+        { href: '/admin/settings?tab=text-colors', label: 'Colors' },
+        { href: '/admin/settings?tab=text-sizes', label: 'Sizes & Fluid Scale' },
+        { href: '/admin/settings?tab=text-fonts', label: 'Fonts' },
+        { href: '/admin/settings?tab=comp-confirmation', label: 'Confirmation Messages' },
+        { href: '/admin/settings?tab=comp-form-builder', label: 'Dynamic Form Builder' },
+        { href: '/admin/settings?tab=advanced-motion', label: 'Motion & Micro-interactions' },
+        { href: '/admin/settings?tab=advanced-css', label: 'Custom Scripts & CSS' },
+        { href: '/admin/settings?tab=advanced-seo', label: 'Global SEO & Metadata' },
+      ]
+    },
   ];
 
   const normalizedNav = (initialNav?.sections) ? initialNav : {
@@ -91,24 +173,9 @@ export default function AdminShell({ children, initialNav }: { children: React.R
             <div key={section.id}>
               <div className="px-3 mb-2 text-[11px] font-semibold text-slate-500 tracking-wider">{section.title}</div>
               <div className="space-y-0.5">
-                {section.links.map((link: any) => {
-                  const isActive = pathname.startsWith(link.href) || (link.href === '/admin/academy' && pathname === '/admin');
-                  const IconComponent = (Icons as any)[link.icon] || Icons.Circle;
-                  return (
-                    <Link 
-                      key={link.href + link.label} 
-                      href={link.href} 
-                      className={`flex items-center gap-3 px-3 py-2 transition-colors text-[13px] font-medium rounded-md ${
-                        isActive 
-                          ? 'bg-black/5 text-black' 
-                          : 'text-surface-text/70 hover:bg-black/5 hover:text-surface-text'
-                      }`}
-                    >
-                      <IconComponent size={16} className={isActive ? 'text-black' : 'opacity-70'} />
-                      {link.label}
-                    </Link>
-                  );
-                })}
+                {section.links.map((link: any) => (
+                  <NavItem key={link.href + link.label} link={link} pathname={pathname} />
+                ))}
               </div>
             </div>
           ))}

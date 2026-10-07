@@ -161,47 +161,107 @@ export default function QuickAddPanel({
 
                 <div className="space-y-2">
                   {section.links.map((link: any, lIdx: number) => (
-                    <div key={lIdx} className="flex items-center gap-2 bg-black/5 p-2 rounded-lg">
-                      <input 
-                        type="text" 
-                        value={link.label} 
-                        onChange={(e) => {
-                          const newSections = [...navState.sections];
-                          newSections[sIdx].links[lIdx].label = e.target.value;
-                          setNavState({ ...navState, sections: newSections });
-                        }}
-                        className="flex-1 px-2 py-1.5 text-xs border border-transparent rounded bg-white outline-none" 
-                        placeholder="Label"
-                      />
-                      <input 
-                        type="text" 
-                        value={link.href} 
-                        onChange={(e) => {
-                          const newSections = [...navState.sections];
-                          newSections[sIdx].links[lIdx].href = e.target.value;
-                          setNavState({ ...navState, sections: newSections });
-                        }}
-                        className="flex-1 px-2 py-1.5 text-xs border border-transparent rounded bg-white outline-none" 
-                        placeholder="URL path"
-                      />
-                      <IconPicker 
-                        value={link.icon} 
-                        onChange={(val) => {
-                          const newSections = [...navState.sections];
-                          newSections[sIdx].links[lIdx].icon = val;
-                          setNavState({ ...navState, sections: newSections });
-                        }}
-                      />
+                    <div key={lIdx} className="bg-black/5 p-2 rounded-lg space-y-2">
+                      <div className="flex items-center gap-2">
+                        <input 
+                          type="text" 
+                          value={link.label} 
+                          onChange={(e) => {
+                            const newSections = [...navState.sections];
+                            newSections[sIdx].links[lIdx].label = e.target.value;
+                            setNavState({ ...navState, sections: newSections });
+                          }}
+                          className="flex-1 px-2 py-1.5 text-xs border border-transparent rounded bg-white outline-none" 
+                          placeholder="Label"
+                        />
+                        <input 
+                          type="text" 
+                          value={link.href} 
+                          onChange={(e) => {
+                            const newSections = [...navState.sections];
+                            newSections[sIdx].links[lIdx].href = e.target.value;
+                            setNavState({ ...navState, sections: newSections });
+                          }}
+                          className="flex-1 px-2 py-1.5 text-xs border border-transparent rounded bg-white outline-none" 
+                          placeholder="URL path"
+                        />
+                        <IconPicker 
+                          value={link.icon} 
+                          onChange={(val) => {
+                            const newSections = [...navState.sections];
+                            newSections[sIdx].links[lIdx].icon = val;
+                            setNavState({ ...navState, sections: newSections });
+                          }}
+                        />
+                        <button 
+                          type="button" 
+                          onClick={() => {
+                            const newSections = [...navState.sections];
+                            newSections[sIdx].links.splice(lIdx, 1);
+                            setNavState({ ...navState, sections: newSections });
+                          }}
+                          className="p-1.5 text-rose-500 hover:bg-rose-50 rounded bg-white"
+                        >
+                          <Trash2 size={14} />
+                        </button>
+                      </div>
+
+                      {/* Sub-links */}
+                      {(link.children || []).length > 0 && (
+                        <div className="pl-4 border-l-2 border-black/10 space-y-2 mt-2">
+                          {(link.children || []).map((child: any, cIdx: number) => (
+                            <div key={cIdx} className="flex items-center gap-2">
+                              <input 
+                                type="text" 
+                                value={child.label} 
+                                onChange={(e) => {
+                                  const newSections = [...navState.sections];
+                                  newSections[sIdx].links[lIdx].children[cIdx].label = e.target.value;
+                                  setNavState({ ...navState, sections: newSections });
+                                }}
+                                className="flex-1 px-2 py-1 text-[11px] border border-transparent rounded bg-white outline-none" 
+                                placeholder="Sub-link Label"
+                              />
+                              <input 
+                                type="text" 
+                                value={child.href} 
+                                onChange={(e) => {
+                                  const newSections = [...navState.sections];
+                                  newSections[sIdx].links[lIdx].children[cIdx].href = e.target.value;
+                                  setNavState({ ...navState, sections: newSections });
+                                }}
+                                className="flex-1 px-2 py-1 text-[11px] border border-transparent rounded bg-white outline-none" 
+                                placeholder="Sub-link URL"
+                              />
+                              <button 
+                                type="button" 
+                                onClick={() => {
+                                  const newSections = [...navState.sections];
+                                  newSections[sIdx].links[lIdx].children.splice(cIdx, 1);
+                                  setNavState({ ...navState, sections: newSections });
+                                }}
+                                className="p-1 text-rose-500 hover:bg-rose-50 rounded bg-white"
+                              >
+                                <Trash2 size={12} />
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                      
                       <button 
                         type="button" 
                         onClick={() => {
                           const newSections = [...navState.sections];
-                          newSections[sIdx].links.splice(lIdx, 1);
+                          if (!newSections[sIdx].links[lIdx].children) {
+                            newSections[sIdx].links[lIdx].children = [];
+                          }
+                          newSections[sIdx].links[lIdx].children.push({ label: 'New Sub-link', href: '/' });
                           setNavState({ ...navState, sections: newSections });
                         }}
-                        className="p-1.5 text-rose-500 hover:bg-rose-50 rounded bg-white"
+                        className="text-[10px] font-medium text-slate-500 hover:text-primary mt-1 inline-block"
                       >
-                        <Trash2 size={14} />
+                        + Add sub-link
                       </button>
                     </div>
                   ))}

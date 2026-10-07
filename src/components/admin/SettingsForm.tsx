@@ -1,19 +1,20 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import { useState, useTransition, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { updateSystemSettingsAction } from '@/app/actions/admin-mutations';
 import { 
-  Palette, Type, Layout, Code, Save, CheckCircle2, Box, MousePointer2, 
-  Download, ChevronDown, Menu, Trash2, Plus, 
+  Palette, Type, Layout, Code, Save, CheckCircle2, Box, 
+  Download, ChevronDown, Trash2, Plus, 
   PanelTop, PanelBottom, FormInput, Text, Globe, Activity, MessageSquare, Maximize
 } from 'lucide-react';
-import Link from 'next/link';
 
 export default function SettingsForm({ initialSettings }: { initialSettings: any }) {
+  const searchParams = useSearchParams();
+  const activeTab = searchParams.get('tab') || 'text-colors';
   const [isPending, startTransition] = useTransition();
   const [success, setSuccess] = useState(false);
-  const [activeTab, setActiveTab] = useState('text-colors');
-  const [collapsedGroups, setCollapsedGroups] = useState<string[]>([]);
   
   const tokens = (initialSettings.tokens as any) || {};
   const [liveTokens, setLiveTokens] = useState(tokens);
@@ -76,43 +77,6 @@ export default function SettingsForm({ initialSettings }: { initialSettings: any
     });
   }
 
-  const categoryGroups = [
-    {
-      title: 'Design',
-      items: [
-        { id: 'design-buttons', icon: Box, label: 'Buttons' },
-        { id: 'design-cards', icon: Layout, label: 'Cards & Surfaces' },
-        { id: 'design-container', icon: Maximize, label: 'Container' },
-        { id: 'design-navbars', icon: PanelTop, label: 'Navbars' },
-        { id: 'design-footers', icon: PanelBottom, label: 'Footers' },
-        { id: 'design-forms', icon: FormInput, label: 'Form UI Elements' },
-      ]
-    },
-    {
-      title: 'Text',
-      items: [
-        { id: 'text-colors', icon: Palette, label: 'Colors' },
-        { id: 'text-sizes', icon: Type, label: 'Sizes & Fluid Scale' },
-        { id: 'text-fonts', icon: Text, label: 'Fonts' },
-      ]
-    },
-    {
-      title: 'Components & Logic',
-      items: [
-        { id: 'comp-confirmation', icon: MessageSquare, label: 'Confirmation Messages' },
-        { id: 'comp-form-builder', icon: FormInput, label: 'Dynamic Form Builder' },        
-      ]
-    },
-    {
-      title: 'Advanced System',
-      items: [
-        { id: 'advanced-motion', icon: Activity, label: 'Motion & Micro-interactions' },
-        { id: 'advanced-css', icon: Code, label: 'Custom Scripts & CSS' },
-        { id: 'advanced-seo', icon: Globe, label: 'Global SEO & Metadata' },
-      ]
-    }
-  ];
-
   return (
     <form onSubmit={handleSubmit} className="h-[calc(100vh-2rem)] flex flex-col">
       {/* Top Bar */}
@@ -143,51 +107,6 @@ export default function SettingsForm({ initialSettings }: { initialSettings: any
       {/* Workspace */}
       <div className="flex gap-6 flex-1 min-h-0">
         
-        {/* Left Column: Categorized Tree */}
-        <div className="w-56 shrink-0 flex flex-col gap-4 border-r border-card-border pr-4 overflow-y-auto custom-scrollbar hidden md:flex pb-12">
-          {categoryGroups.map((group, groupIdx) => {
-            const isCollapsed = collapsedGroups.includes(group.title);
-            return (
-              <div key={groupIdx}>
-                <button 
-                  type="button"
-                  onClick={() => {
-                    setCollapsedGroups(prev => 
-                      prev.includes(group.title) 
-                        ? prev.filter(t => t !== group.title) 
-                        : [...prev, group.title]
-                    );
-                  }}
-                  className="w-full flex items-center justify-between text-[10px] font-bold uppercase tracking-widest opacity-50 mb-2 ml-2 hover:opacity-80 transition-opacity"
-                >
-                  {group.title}
-                  <ChevronDown size={12} className={`mr-4 transition-transform duration-200 ${isCollapsed ? '-rotate-90' : ''}`} />
-                </button>
-                
-                <div className={`flex flex-col gap-0.5 overflow-hidden transition-all duration-300 ${isCollapsed ? 'max-h-0 opacity-0' : 'max-h-[500px] opacity-100'}`}>
-                  {group.items.map(tab => (
-                    <button
-                      key={tab.id}
-                      type="button"
-                      onClick={() => setActiveTab(tab.id)}
-                      className={`flex items-center justify-start gap-3 px-3 py-2 rounded-btn transition-all text-sm font-medium text-left ${
-                        activeTab === tab.id 
-                          ? 'bg-btn-bg text-btn-text shadow-md' 
-                          : 'opacity-70 hover:opacity-100 hover:bg-black/5'
-                      }`}
-                    >
-                      <div className="shrink-0">
-                        <tab.icon size={16} />
-                      </div>
-                      <span>{tab.label}</span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-            );
-          })}
-        </div>
-
         {/* Center Column: Precision Control Deck */}
         <div className="flex-1 overflow-y-auto pr-4 pb-20 custom-scrollbar border-r border-card-border mr-2">
           
