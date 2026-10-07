@@ -18,13 +18,13 @@ export default function AcademyDashboard() {
         </div>
         
         <div className="flex items-center gap-2">
-          <button className="flex items-center gap-2 px-3 py-1.5 bg-[#252525] text-white text-xs font-medium rounded-md hover:bg-black transition-colors">
+          <button className="flex items-center gap-2 px-3 py-1.5 bg-btn-bg text-btn-text text-xs font-medium rounded-btn hover:bg-btn-hover transition-colors shadow-sm">
             <Megaphone size={14} /> New Announcement
           </button>
-          <button className="flex items-center gap-2 px-3 py-1.5 bg-white border border-[#ececec] text-slate-700 text-xs font-medium rounded-md hover:bg-slate-50 transition-colors shadow-sm">
+          <button className="flex items-center gap-2 px-3 py-1.5 bg-card-bg border border-card-border text-surface-text opacity-90 text-xs font-medium rounded-btn hover:bg-card-hover transition-colors shadow-sm">
             <BookOpen size={14} /> Gradebook
           </button>
-          <button className="flex items-center gap-2 px-3 py-1.5 bg-white border border-[#ececec] text-slate-700 text-xs font-medium rounded-md hover:bg-slate-50 transition-colors shadow-sm">
+          <button className="flex items-center gap-2 px-3 py-1.5 bg-card-bg border border-card-border text-surface-text opacity-90 text-xs font-medium rounded-btn hover:bg-card-hover transition-colors shadow-sm">
             <Plus size={14} /> Add Assignment
           </button>
         </div>
@@ -34,7 +34,7 @@ export default function AcademyDashboard() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         
         {/* Stat 1 */}
-        <div className="bg-white border border-[#ececec] rounded-xl p-4 shadow-sm flex flex-col justify-between h-[120px]">
+        <div className="bg-card-bg border border-card-border rounded-card p-4 shadow-sm flex flex-col justify-between h-[120px] hover:bg-card-hover transition-colors">
           <div className="flex justify-between items-start">
             <h3 className="text-[13px] font-semibold text-slate-700">Students Taught</h3>
             <Info size={14} className="text-slate-400" />
@@ -51,7 +51,7 @@ export default function AcademyDashboard() {
         </div>
 
         {/* Stat 2 */}
-        <div className="bg-white border border-[#ececec] rounded-xl p-4 shadow-sm flex flex-col justify-between h-[120px]">
+        <div className="bg-card-bg border border-card-border rounded-card p-4 shadow-sm flex flex-col justify-between h-[120px] hover:bg-card-hover transition-colors">
           <div className="flex justify-between items-start">
             <h3 className="text-[13px] font-semibold text-slate-700">Avg. Attendance</h3>
             <Info size={14} className="text-slate-400" />
@@ -68,7 +68,7 @@ export default function AcademyDashboard() {
         </div>
 
         {/* Stat 3 */}
-        <div className="bg-white border border-[#ececec] rounded-xl p-4 shadow-sm flex flex-col justify-between h-[120px]">
+        <div className="bg-card-bg border border-card-border rounded-card p-4 shadow-sm flex flex-col justify-between h-[120px] hover:bg-card-hover transition-colors">
           <div className="flex justify-between items-start">
             <h3 className="text-[13px] font-semibold text-slate-700">Assignments</h3>
             <Info size={14} className="text-slate-400" />
@@ -82,7 +82,7 @@ export default function AcademyDashboard() {
         </div>
 
         {/* Stat 4 */}
-        <div className="bg-white border border-[#ececec] rounded-xl p-4 shadow-sm flex flex-col justify-between h-[120px]">
+        <div className="bg-card-bg border border-card-border rounded-card p-4 shadow-sm flex flex-col justify-between h-[120px] hover:bg-card-hover transition-colors">
           <div className="flex justify-between items-start">
             <h3 className="text-[13px] font-semibold text-slate-700">Classes Today</h3>
             <Info size={14} className="text-slate-400" />
@@ -101,7 +101,7 @@ export default function AcademyDashboard() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         
         {/* Class Schedule */}
-        <div className="bg-white border border-[#ececec] rounded-xl p-5 shadow-sm">
+        <div className="bg-card-bg border border-card-border rounded-card p-5 shadow-sm">
           <div className="flex justify-between items-center mb-6">
             <h3 className="text-sm font-bold text-slate-800">Class Schedule</h3>
             <button className="text-[11px] font-medium text-slate-500 flex items-center gap-1 hover:text-slate-900 transition-colors">
@@ -138,7 +138,7 @@ export default function AcademyDashboard() {
         </div>
 
         {/* Assignment Status (Chart Mockup) */}
-        <div className="bg-white border border-[#ececec] rounded-xl p-5 shadow-sm flex flex-col">
+        <div className="bg-card-bg border border-card-border rounded-card p-5 shadow-sm flex flex-col">
           <div className="flex justify-between items-center mb-6">
             <h3 className="text-sm font-bold text-slate-800">Assignment Status</h3>
             <button className="text-[11px] font-medium text-slate-500 flex items-center gap-1 hover:text-slate-900 transition-colors">
@@ -180,7 +180,7 @@ export default function AcademyDashboard() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 pb-12">
         
         {/* Performance Highlights */}
-        <div className="bg-white border border-[#ececec] rounded-xl p-5 shadow-sm lg:col-span-2">
+        <div className="bg-card-bg border border-card-border rounded-card p-5 shadow-sm lg:col-span-2">
           <div className="flex justify-between items-center mb-6">
             <h3 className="text-sm font-bold text-slate-800">Performance Highlights</h3>
             <button className="text-[11px] font-medium text-slate-500 flex items-center gap-1 hover:text-slate-900 transition-colors">
@@ -239,7 +239,7 @@ export default function AcademyDashboard() {
         </div>
 
         {/* Upcoming Events */}
-        <div className="bg-white border border-[#ececec] rounded-xl p-5 shadow-sm">
+        <div className="bg-card-bg border border-card-border rounded-card p-5 shadow-sm">
           <div className="flex justify-between items-center mb-6">
             <h3 className="text-sm font-bold text-slate-800">Upcoming Events</h3>
             <button className="text-[11px] font-medium text-slate-500 flex items-center gap-1 hover:text-slate-900 transition-colors">

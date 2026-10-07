@@ -7,7 +7,9 @@
   --color-surface-text: var(--text-main);
   --color-card-bg: var(--card-bg);
   --color-card-border: var(--card-border);
+  --color-card-hover: var(--card-hover-bg);
   --color-btn-bg: var(--btn-bg);
+  --color-btn-hover: var(--btn-hover-bg);
   --color-btn-text: var(--btn-text);
   
   --radius-global: var(--radius);
