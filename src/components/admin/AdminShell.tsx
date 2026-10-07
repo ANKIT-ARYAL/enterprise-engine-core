@@ -16,6 +16,7 @@ export default function AdminShell({ children, initialNav }: { children: React.R
   const pathname = usePathname();
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [isQuickAddOpen, setIsQuickAddOpen] = useState(false);
+  const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
 
   // Do not render the shell for the login page
   if (pathname === '/admin/login') {
@@ -112,7 +113,7 @@ export default function AdminShell({ children, initialNav }: { children: React.R
           ))}
         </nav>
 
-        <div className="p-4 shrink-0">
+        <div className="p-4 shrink-0 relative">
           {normalizedNav.promoBox?.enabled && (
             <div className="p-4 bg-white border border-[#ececec] rounded-xl shadow-sm mb-4">
               <h4 className="text-[13px] font-bold mb-1">{normalizedNav.promoBox.title}</h4>
@@ -123,18 +124,47 @@ export default function AdminShell({ children, initialNav }: { children: React.R
           )}
           
           {normalizedNav.userProfile?.type !== 'hidden' && (
-            <button className="w-full flex items-center gap-3 px-2 py-2 hover:bg-black/5 rounded-xl transition-colors text-left">
-              <div className="w-8 h-8 rounded-full bg-slate-200 overflow-hidden shrink-0 flex items-center justify-center text-slate-500">
-                <User size={16} />
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="text-[13px] font-medium truncate">{normalizedNav.userProfile?.name}</div>
-                <div className="text-[11px] text-slate-500 truncate">{normalizedNav.userProfile?.email}</div>
-              </div>
-              {normalizedNav.userProfile?.type === 'dropdown' && (
-                <Icons.ChevronDown size={14} className="text-slate-400" />
+            <>
+              <button 
+                onClick={() => normalizedNav.userProfile?.type === 'dropdown' && setProfileDropdownOpen(!profileDropdownOpen)}
+                className="w-full flex items-center gap-3 px-2 py-2 hover:bg-black/5 rounded-xl transition-colors text-left"
+              >
+                <div className="w-8 h-8 rounded-full bg-slate-200 overflow-hidden shrink-0 flex items-center justify-center text-slate-500">
+                  <User size={16} />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="text-[13px] font-medium truncate">{normalizedNav.userProfile?.name}</div>
+                  <div className="text-[11px] text-slate-500 truncate">{normalizedNav.userProfile?.email}</div>
+                </div>
+                {normalizedNav.userProfile?.type === 'dropdown' && (
+                  <Icons.ChevronDown size={14} className="text-slate-400" />
+                )}
+              </button>
+
+              {normalizedNav.userProfile?.type === 'dropdown' && profileDropdownOpen && (
+                <>
+                  <div 
+                    className="fixed inset-0 z-40"
+                    onClick={() => setProfileDropdownOpen(false)}
+                  />
+                  <div className="absolute bottom-[72px] left-4 right-4 bg-white border border-[#ececec] rounded-xl shadow-lg z-50 py-1 animate-in fade-in zoom-in-95 duration-100">
+                    {(normalizedNav.userProfile.links || []).map((link: any, idx: number) => {
+                      const IconComponent = (Icons as any)[link.icon] || Icons.Circle;
+                      return (
+                        <a 
+                          key={idx}
+                          href={link.href}
+                          className="flex items-center gap-2 px-3 py-2 text-[13px] font-medium text-slate-700 hover:bg-slate-50 hover:text-slate-900 transition-colors"
+                        >
+                          <IconComponent size={14} className="opacity-70" />
+                          {link.label}
+                        </a>
+                      );
+                    })}
+                  </div>
+                </>
               )}
-            </button>
+            </>
           )}
         </div>
       </aside>

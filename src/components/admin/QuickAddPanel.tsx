@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import React, { useState, useTransition } from 'react';
@@ -206,21 +207,95 @@ export default function QuickAddPanel({
             </select>
             
             {navState.userProfile.type !== 'hidden' && (
-              <div className="flex gap-2">
-                <input 
-                  type="text" 
-                  value={navState.userProfile.name} 
-                  onChange={(e) => setNavState({...navState, userProfile: {...navState.userProfile, name: e.target.value}})}
-                  className="w-1/2 px-3 py-2 text-sm border rounded-lg bg-black/5" 
-                  placeholder="Display Name"
-                />
-                <input 
-                  type="text" 
-                  value={navState.userProfile.email} 
-                  onChange={(e) => setNavState({...navState, userProfile: {...navState.userProfile, email: e.target.value}})}
-                  className="w-1/2 px-3 py-2 text-sm border rounded-lg bg-black/5" 
-                  placeholder="Email Subtitle"
-                />
+              <div className="space-y-3">
+                <div className="flex gap-2">
+                  <input 
+                    type="text" 
+                    value={navState.userProfile.name} 
+                    onChange={(e) => setNavState({...navState, userProfile: {...navState.userProfile, name: e.target.value}})}
+                    className="w-1/2 px-3 py-2 text-sm border rounded-lg bg-black/5" 
+                    placeholder="Display Name"
+                  />
+                  <input 
+                    type="text" 
+                    value={navState.userProfile.email} 
+                    onChange={(e) => setNavState({...navState, userProfile: {...navState.userProfile, email: e.target.value}})}
+                    className="w-1/2 px-3 py-2 text-sm border rounded-lg bg-black/5" 
+                    placeholder="Email Subtitle"
+                  />
+                </div>
+
+                {navState.userProfile.type === 'dropdown' && (
+                  <div className="pt-2 border-t border-[#ececec]">
+                    <div className="flex justify-between items-center mb-2">
+                      <span className="text-xs font-bold opacity-70 uppercase">Dropdown Links</span>
+                      <button 
+                        type="button" 
+                        onClick={() => {
+                          const links = navState.userProfile.links || [];
+                          setNavState({...navState, userProfile: {...navState.userProfile, links: [...links, { label: 'New Link', href: '/', icon: 'Circle' }]}});
+                        }}
+                        className="text-[10px] flex items-center gap-1 font-medium bg-black/5 hover:bg-black/10 px-2 py-1 rounded"
+                      >
+                        <Plus size={12} /> Add Link
+                      </button>
+                    </div>
+                    
+                    <div className="space-y-2">
+                      {(navState.userProfile.links || []).map((link: any, idx: number) => (
+                        <div key={idx} className="flex items-center gap-2">
+                          <input 
+                            type="text" 
+                            value={link.label} 
+                            onChange={(e) => {
+                              const newLinks = [...(navState.userProfile.links || [])];
+                              newLinks[idx].label = e.target.value;
+                              setNavState({...navState, userProfile: {...navState.userProfile, links: newLinks}});
+                            }}
+                            className="flex-1 px-2 py-1.5 text-xs border border-transparent rounded bg-black/5 focus:bg-white focus:border-card-border outline-none" 
+                            placeholder="Label"
+                          />
+                          <input 
+                            type="text" 
+                            value={link.href} 
+                            onChange={(e) => {
+                              const newLinks = [...(navState.userProfile.links || [])];
+                              newLinks[idx].href = e.target.value;
+                              setNavState({...navState, userProfile: {...navState.userProfile, links: newLinks}});
+                            }}
+                            className="flex-1 px-2 py-1.5 text-xs border border-transparent rounded bg-black/5 focus:bg-white focus:border-card-border outline-none" 
+                            placeholder="URL"
+                          />
+                          <input 
+                            type="text" 
+                            value={link.icon} 
+                            onChange={(e) => {
+                              const newLinks = [...(navState.userProfile.links || [])];
+                              newLinks[idx].icon = e.target.value;
+                              setNavState({...navState, userProfile: {...navState.userProfile, links: newLinks}});
+                            }}
+                            className="w-20 px-2 py-1.5 text-xs border border-transparent rounded bg-black/5 focus:bg-white focus:border-card-border outline-none" 
+                            placeholder="Icon"
+                          />
+                          <button 
+                            type="button" 
+                            onClick={() => {
+                              const newLinks = [...(navState.userProfile.links || [])];
+                              newLinks.splice(idx, 1);
+                              setNavState({...navState, userProfile: {...navState.userProfile, links: newLinks}});
+                            }}
+                            className="p-1.5 text-rose-500 hover:bg-rose-50 rounded"
+                          >
+                            <Trash2 size={14} />
+                          </button>
+                        </div>
+                      ))}
+                      {(!navState.userProfile.links || navState.userProfile.links.length === 0) && (
+                        <div className="text-[11px] opacity-50 italic">No links configured. Dropdown will be empty.</div>
+                      )}
+                    </div>
+                  </div>
+                )}
               </div>
             )}
           </div>
