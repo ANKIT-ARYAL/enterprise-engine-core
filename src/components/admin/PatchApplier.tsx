@@ -12,7 +12,18 @@ export default function PatchApplier({ patches }: { patches: any[] }) {
           const el = document.querySelector(patch.selector);
           if (el) {
             if (patch.type === 'text') {
-              el.textContent = patch.value;
+              // Safely update text without destroying icons or child elements
+              const textNodes = Array.from(el.childNodes).filter(n => n.nodeType === Node.TEXT_NODE && n.nodeValue?.trim() !== '');
+              if (textNodes.length > 0) {
+                textNodes[0].nodeValue = patch.value;
+                // clear other text nodes if any to prevent duplicates
+                for (let i = 1; i < textNodes.length; i++) {
+                  textNodes[i].nodeValue = '';
+                }
+              } else {
+                // If there was no text node, append one
+                el.appendChild(document.createTextNode(patch.value));
+              }
             } else if (patch.type === 'class') {
               el.className = patch.value;
             }
