@@ -1,13 +1,43 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { MousePointer2, X, Settings2, Code, Type, Palette } from 'lucide-react';
+import React, { useState, useEffect, useTransition } from 'react';
+import { MousePointer2, X, Settings2, Code, Type, Palette, Save } from 'lucide-react';
+import { saveVisualPatch } from '@/app/actions/patch-action';
+
+// Helper to generate a robust CSS selector
+function getCssPath(el: HTMLElement): string {
+  if (!(el instanceof Element)) return '';
+  const path = [];
+  while (el.nodeType === Node.ELEMENT_NODE) {
+    let selector = el.nodeName.toLowerCase();
+    if (el.id) {
+      selector += '#' + el.id;
+      path.unshift(selector);
+      break;
+    } else {
+      let sib = el, nth = 1;
+      while ((sib = sib.previousElementSibling as HTMLElement)) {
+        if (sib.nodeName.toLowerCase() == selector) nth++;
+      }
+      if (nth != 1) selector += ":nth-of-type(" + nth + ")";
+    }
+    path.unshift(selector);
+    el = el.parentNode as HTMLElement;
+  }
+  return path.join(" > ");
+}
 
 export default function VisualInspector() {
   const [isActive, setIsActive] = useState(false);
+  const [isPending, startTransition] = useTransition();
   const [hoveredElement, setHoveredElement] = useState<HTMLElement | null>(null);
   const [selectedElement, setSelectedElement] = useState<HTMLElement | null>(null);
   const [panelPos, setPanelPos] = useState({ x: 0, y: 0 });
+
+  // Only run in development
+  if (process.env.NODE_ENV !== 'development') {
+    return null;
+  }
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -145,6 +175,15 @@ export default function VisualInspector() {
                     selectedElement.style.outlineOffset = '';
                     selectedElement.removeEventListener('blur', handleBlur);
                     selectedElement.removeEventListener('keydown', handleKey);
+                    
+                    // Save patch
+                    startTransition(async () => {
+                      await saveVisualPatch({
+                        selector: getCssPath(selectedElement),
+                        type: 'text',
+                        value: selectedElement.textContent || ''
+                      });
+                    });
                   };
                   
                   const handleKey = (e: KeyboardEvent) => {
@@ -182,6 +221,15 @@ export default function VisualInspector() {
                       } else {
                         selectedElement.setAttribute('class', updatedClass);
                       }
+                      
+                      // Save patch
+                      startTransition(async () => {
+                        await saveVisualPatch({
+                          selector: getCssPath(selectedElement),
+                          type: 'class',
+                          value: updatedClass
+                        });
+                      });
                     }
                     e.target.value = ''; // Reset select
                   }}
@@ -215,11 +263,21 @@ export default function VisualInspector() {
                 <textarea 
                   defaultValue={typeof selectedElement.className === 'string' ? selectedElement.className : selectedElement.getAttribute('class') || ''}
                   onChange={(e) => {
+                    const newClass = e.target.value;
                     if (typeof selectedElement.className === 'string') {
-                      selectedElement.className = e.target.value;
+                      selectedElement.className = newClass;
                     } else {
-                      selectedElement.setAttribute('class', e.target.value);
+                      selectedElement.setAttribute('class', newClass);
                     }
+                    
+                    // Save patch
+                    startTransition(async () => {
+                      await saveVisualPatch({
+                        selector: getCssPath(selectedElement),
+                        type: 'class',
+                        value: newClass
+                      });
+                    });
                   }}
                   className="w-full h-24 p-2 text-xs font-mono border rounded bg-transparent border-card-border focus:ring-1 focus:ring-accent outline-none resize-none"
                 />
