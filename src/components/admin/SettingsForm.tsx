@@ -2,15 +2,13 @@
 
 import { useState, useTransition, useMemo, useEffect } from 'react';
 import { updateSystemSettingsAction } from '@/app/actions/admin-mutations';
-import { Palette, Type, Layout, Code, Save, CheckCircle2, Box, MousePointer2, Layers, Settings2, Download, Monitor, Tablet, Smartphone, ChevronDown, Zap } from 'lucide-react';
+import { Palette, Type, Layout, Code, Save, CheckCircle2, Box, MousePointer2, Layers, Download, ChevronDown } from 'lucide-react';
 
 export default function SettingsForm({ initialSettings }: { initialSettings: any }) {
   const [isPending, startTransition] = useTransition();
   const [success, setSuccess] = useState(false);
   const [activeTab, setActiveTab] = useState('palette');
-  const [previewDevice, setPreviewDevice] = useState<'desktop' | 'tablet' | 'mobile'>('desktop');
   
-  // Load default tokens if they exist, fallback safely
   const tokens = (initialSettings.tokens as any) || {};
   const [liveTokens, setLiveTokens] = useState(tokens);
 
@@ -59,7 +57,6 @@ export default function SettingsForm({ initialSettings }: { initialSettings: any
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     
-    // We use liveTokens state instead of FormData because unrendered tabs wouldn't be included in FormData
     const data = {
       siteName: liveTokens.siteName || initialSettings.siteName,
       customCss: liveTokens.customCss || initialSettings.customCss || '',
@@ -82,33 +79,24 @@ export default function SettingsForm({ initialSettings }: { initialSettings: any
     { id: 'css', icon: Code, label: 'Raw CSS' },
   ];
 
-  // Dynamic values for rendering preview
-  const previewWidth = previewDevice === 'desktop' ? '100%' : previewDevice === 'tablet' ? '768px' : '390px';
-  const cardShadowVal = liveTokens.cardShadow === 'md' ? '0 4px 6px -1px rgb(0 0 0 / 0.1)' : liveTokens.cardShadow === 'lg' ? '0 10px 15px -3px rgb(0 0 0 / 0.1)' : 'none';
-
-  // Compute live CSS preview string
-  const activeCssPreview = useMemo(() => {
-    return `:root {\n  --primary: ${liveTokens.primaryColor || '#2563eb'};\n  --bg-surface: ${liveTokens.backgroundColor || '#ffffff'};\n  --radius-card: ${liveTokens.cardRadius || '0.75rem'};\n  --font-h1: ${liveTokens.fontHeading || 'Inter'};\n}`;
-  }, [liveTokens]);
-
   return (
     <form onSubmit={handleSubmit} className="h-[calc(100vh-2rem)] flex flex-col">
       {/* Top Bar */}
-      <div className="flex items-center justify-between mb-6 pb-4 border-b border-slate-200 dark:border-slate-800 shrink-0">
+      <div className="flex items-center justify-between mb-6 pb-4 border-b border-card-border shrink-0">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">System Design Studio</h1>
         </div>
         <div className="flex items-center gap-3">
-          <button type="button" className="flex items-center gap-2 px-4 py-2 text-sm font-medium border rounded-lg dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+          <button type="button" className="flex items-center gap-2 px-4 py-2 text-sm font-medium border rounded-lg border-card-border hover:bg-black/5 transition-colors">
             Preset: Obsidian Pro <ChevronDown size={16} />
           </button>
-          <button type="button" className="flex items-center gap-2 px-4 py-2 text-sm font-medium border rounded-lg dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+          <button type="button" className="flex items-center gap-2 px-4 py-2 text-sm font-medium border rounded-lg border-card-border hover:bg-black/5 transition-colors">
             <Download size={16} /> Export JSON
           </button>
           <button 
             disabled={isPending}
             type="submit" 
-            className="flex items-center gap-2 px-6 py-2 bg-[var(--primary)] text-white text-sm font-semibold rounded-lg hover:brightness-110 transition-all disabled:opacity-70 shadow-lg shadow-[var(--primary)]/20"
+            className="flex items-center gap-2 px-6 py-2 bg-primary text-white text-sm font-semibold rounded-lg hover:brightness-110 transition-all disabled:opacity-70 shadow-lg shadow-primary/20"
           >
             {success ? <CheckCircle2 size={16} /> : <Save size={16} />}
             {isPending ? 'Deploying...' : success ? 'Deployed!' : 'Deploy Tokens'}
@@ -116,12 +104,12 @@ export default function SettingsForm({ initialSettings }: { initialSettings: any
         </div>
       </div>
 
-      {/* 3-Column Workspace Workspace */}
+      {/* Workspace */}
       <div className="flex gap-6 flex-1 min-h-0">
         
         {/* Left Column: Category Drawer */}
-        <div className="w-48 shrink-0 flex flex-col gap-1.5 border-r border-slate-200 dark:border-slate-800 pr-4 overflow-y-auto hidden md:flex">
-          <div className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-2 mt-2 ml-2">Categories</div>
+        <div className="w-48 shrink-0 flex flex-col gap-1.5 border-r border-card-border pr-4 overflow-y-auto hidden md:flex">
+          <div className="text-[10px] font-bold uppercase tracking-widest opacity-50 mb-2 mt-2 ml-2">Categories</div>
           {tabs.map(tab => (
             <button
               key={tab.id}
@@ -140,16 +128,16 @@ export default function SettingsForm({ initialSettings }: { initialSettings: any
         </div>
 
         {/* Center Column: Precision Control Deck */}
-        <div className="flex-1 overflow-y-auto pr-4 pb-20 custom-scrollbar border-r border-slate-200 dark:border-slate-800 mr-2">
+        <div className="flex-1 overflow-y-auto pr-4 pb-20 custom-scrollbar border-r border-card-border mr-2">
           
           <div className="max-w-xl">
-            <div className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-4 ml-1">Token Controller & Inspector</div>
+            <div className="text-[10px] font-bold uppercase tracking-widest opacity-50 mb-4 ml-1">Token Controller & Inspector</div>
             
             {activeTab === 'palette' && (
               <div className="space-y-6 animate-in fade-in duration-200">
                 <div className="border border-card-border rounded-card overflow-hidden bg-card-bg shadow-sm">
                   <div className="px-4 py-3 border-b border-card-border bg-black/5 flex items-center gap-2 font-medium text-sm">
-                    <Palette size={16} className="text-slate-400" /> SEMANTIC PALETTE ENGINE
+                    <Palette size={16} className="opacity-70" /> SEMANTIC PALETTE ENGINE
                   </div>
                   <div className="p-4 space-y-4">
                     {[
@@ -175,7 +163,7 @@ export default function SettingsForm({ initialSettings }: { initialSettings: any
               <div className="space-y-6 animate-in fade-in duration-200">
                 <div className="border border-card-border rounded-card overflow-hidden bg-card-bg shadow-sm">
                   <div className="px-4 py-3 border-b border-card-border bg-black/5 flex items-center gap-2 font-medium text-sm">
-                    <Type size={16} className="text-slate-400" /> FLUID TYPOGRAPHY CALCULATOR
+                    <Type size={16} className="opacity-70" /> FLUID TYPOGRAPHY CALCULATOR
                   </div>
                   <div className="p-4 space-y-5">
                     <div>
@@ -187,11 +175,11 @@ export default function SettingsForm({ initialSettings }: { initialSettings: any
                       <input type="text" name="fontBody" value={liveTokens.fontBody || 'Inter'} onChange={handleLiveChange} className="w-full px-3 py-2 text-sm border rounded-lg bg-transparent border-card-border" />
                     </div>
                     
-                    <div className="pt-4 border-t dark:border-slate-800">
+                    <div className="pt-4 border-t border-card-border">
                       <div className="flex justify-between text-xs mb-2">
-                        <span className="font-medium text-slate-500">Heading Scale (H1)</span>
+                        <span className="font-medium opacity-70">Heading Scale (H1)</span>
                       </div>
-                      <div className="bg-slate-100 dark:bg-slate-950 rounded-lg p-3 text-xs font-mono text-center border dark:border-slate-800">
+                      <div className="bg-black/5 rounded-lg p-3 text-xs font-mono text-center border border-card-border">
                         Generated: clamp(2.25rem, 5vw + 1rem, 4.5rem)
                       </div>
                     </div>
@@ -204,7 +192,7 @@ export default function SettingsForm({ initialSettings }: { initialSettings: any
               <div className="space-y-6 animate-in fade-in duration-200">
                 <div className="border border-card-border rounded-card overflow-hidden bg-card-bg shadow-sm">
                   <div className="px-4 py-3 border-b border-card-border bg-black/5 flex items-center gap-2 font-medium text-sm">
-                    <Layout size={16} className="text-slate-400" /> GEOMETRY & STRUCTURE
+                    <Layout size={16} className="opacity-70" /> GEOMETRY & STRUCTURE
                   </div>
                   <div className="p-4 space-y-4">
                     {[
@@ -213,10 +201,54 @@ export default function SettingsForm({ initialSettings }: { initialSettings: any
                       { id: 'containerWidth', label: 'Max Container Width', options: ['1200px', '1440px', '1600px', '100%'] },
                     ].map(field => (
                       <div key={field.id} className="flex justify-between items-center">
-                        <label className="text-sm font-medium w-1/2">{field.label}</label>
+                        <label className="text-sm font-medium w-1/2 opacity-90">{field.label}</label>
                         <select name={field.id} value={liveTokens[field.id] || field.options[0].split(' ')[0]} onChange={handleLiveChange as any} className="w-1/2 px-2 py-1.5 text-sm border rounded-lg bg-transparent border-card-border">
                           {field.options.map(opt => <option key={opt.split(' ')[0]} value={opt.split(' ')[0]}>{opt}</option>)}
                         </select>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'components' && (
+              <div className="space-y-6 animate-in fade-in duration-200">
+                <div className="border border-card-border rounded-card overflow-hidden bg-card-bg shadow-sm">
+                  <div className="px-4 py-3 border-b border-card-border bg-black/5 flex items-center gap-2 font-medium text-sm">
+                    <Box size={16} className="opacity-70" /> UI COMPONENTS OVERRIDES
+                  </div>
+                  
+                  <div className="p-4 space-y-4">
+                    <h3 className="font-bold text-xs uppercase tracking-wider opacity-60">Button Styling</h3>
+                    {[
+                      { id: 'buttonBgColor', label: 'Background', val: liveTokens.buttonBgColor || '#2563eb' },
+                      { id: 'buttonHoverBgColor', label: 'Hover Background', val: liveTokens.buttonHoverBgColor || '#1d4ed8' },
+                      { id: 'buttonTextColor', label: 'Text Color', val: liveTokens.buttonTextColor || '#ffffff' },
+                    ].map(color => (
+                      <div key={color.id} className="flex items-center justify-between">
+                        <label className="text-sm font-medium w-1/2 opacity-90">{color.label}</label>
+                        <div className="flex items-center justify-end gap-2 w-1/2">
+                          <input type="text" name={color.id} value={color.val} onChange={handleLiveChange} className="w-20 px-2 py-1 text-xs font-mono border rounded bg-transparent border-card-border" />
+                          <input type="color" name={color.id} value={color.val} onChange={handleLiveChange} className="w-6 h-6 rounded cursor-pointer border-0 p-0" />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="p-4 border-t border-card-border space-y-4">
+                    <h3 className="font-bold text-xs uppercase tracking-wider opacity-60">Card Styling</h3>
+                    {[
+                      { id: 'cardBgColor', label: 'Card Background', val: liveTokens.cardBgColor || '#ffffff' },
+                      { id: 'cardHoverBgColor', label: 'Card Hover Background', val: liveTokens.cardHoverBgColor || '#f8fafc' },
+                      { id: 'cardBorderColor', label: 'Card Border', val: liveTokens.cardBorderColor || '#e2e8f0' },
+                    ].map(color => (
+                      <div key={color.id} className="flex items-center justify-between">
+                        <label className="text-sm font-medium w-1/2 opacity-90">{color.label}</label>
+                        <div className="flex items-center justify-end gap-2 w-1/2">
+                          <input type="text" name={color.id} value={color.val} onChange={handleLiveChange} className="w-20 px-2 py-1 text-xs font-mono border rounded bg-transparent border-card-border" />
+                          <input type="color" name={color.id} value={color.val} onChange={handleLiveChange} className="w-6 h-6 rounded cursor-pointer border-0 p-0" />
+                        </div>
                       </div>
                     ))}
                   </div>
@@ -228,20 +260,20 @@ export default function SettingsForm({ initialSettings }: { initialSettings: any
               <div className="space-y-6 animate-in fade-in duration-200">
                 <div className="border border-card-border rounded-card overflow-hidden bg-card-bg shadow-sm">
                   <div className="px-4 py-3 border-b border-card-border bg-black/5 flex items-center gap-2 font-medium text-sm">
-                    <Layers size={16} className="text-slate-400" /> ELEVATION & MOTION
+                    <Layers size={16} className="opacity-70" /> ELEVATION & MOTION
                   </div>
                   <div className="p-4 space-y-5">
                     <div className="flex justify-between items-center">
-                      <label className="text-sm font-medium">Card Base Shadow</label>
+                      <label className="text-sm font-medium opacity-90">Card Base Shadow</label>
                       <select name="cardShadow" value={liveTokens.cardShadow || 'md'} onChange={handleLiveChange as any} className="w-1/2 px-2 py-1.5 text-sm border rounded-lg bg-transparent border-card-border">
                         <option value="none">None</option><option value="sm">Small</option><option value="md">Ambient Tinted Glow</option><option value="lg">Heavy Lift</option>
                       </select>
                     </div>
                     
-                    <div className="pt-4 border-t dark:border-slate-800 flex justify-between items-center">
+                    <div className="pt-4 border-t border-card-border flex justify-between items-center">
                       <div>
-                        <label className="text-sm font-medium block">Micro-Motion (Hover Lift)</label>
-                        <span className="text-xs text-slate-500">Enable card lifting on hover.</span>
+                        <label className="text-sm font-medium block opacity-90">Micro-Motion (Hover Lift)</label>
+                        <span className="text-xs opacity-60">Enable card lifting on hover.</span>
                       </div>
                       <input type="checkbox" name="hoverEffects" checked={liveTokens.hoverEffects !== false} onChange={handleLiveChange} className="w-4 h-4 rounded cursor-pointer" />
                     </div>
@@ -253,8 +285,8 @@ export default function SettingsForm({ initialSettings }: { initialSettings: any
             {activeTab === 'css' && (
               <div className="space-y-6 animate-in fade-in duration-200">
                 <div className="border border-card-border rounded-card overflow-hidden bg-card-bg shadow-sm">
-                  <div className="px-4 py-3 border-b border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 flex items-center gap-2 font-medium text-sm">
-                    <Code size={16} className="text-slate-400" /> RAW CSS OVERRIDES
+                  <div className="px-4 py-3 border-b border-card-border bg-black/5 flex items-center gap-2 font-medium text-sm">
+                    <Code size={16} className="opacity-70" /> RAW CSS OVERRIDES
                   </div>
                   <textarea 
                     name="customCss" 
@@ -266,11 +298,6 @@ export default function SettingsForm({ initialSettings }: { initialSettings: any
               </div>
             )}
             
-            {activeTab === 'components' && (
-              <div className="p-4 border rounded-xl dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 text-sm text-slate-500">
-                Select other tabs to configure global layouts. Component-level specific tokens are syncing.
-              </div>
-            )}
           </div>
         </div>
       </div>
