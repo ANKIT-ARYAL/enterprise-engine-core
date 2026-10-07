@@ -66,7 +66,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
                 href={link.href} 
                 className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all font-medium ${
                   isActive 
-                    ? 'bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400' 
+                    ? 'bg-[var(--primary)] text-white shadow-md shadow-[var(--primary)]/20' 
                     : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-900'
                 }`}
               >

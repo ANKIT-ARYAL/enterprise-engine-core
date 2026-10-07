@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from 'react';
 import { updateSystemSettingsAction } from '@/app/actions/admin-mutations';
-import { Palette, Type, Layout, Code, Save, CheckCircle2 } from 'lucide-react';
+import { Palette, Type, Layout, Code, Save, CheckCircle2, Sliders, Box, MousePointer2 } from 'lucide-react';
 
 export default function SettingsForm({ initialSettings }: { initialSettings: any }) {
   const [isPending, startTransition] = useTransition();
@@ -20,53 +20,156 @@ export default function SettingsForm({ initialSettings }: { initialSettings: any
       fontHeading: formData.get('fontHeading') as string,
       fontBody: formData.get('fontBody') as string,
       radius: formData.get('radius') as string,
+      buttonRadius: formData.get('buttonRadius') as string,
+      cardRadius: formData.get('cardRadius') as string,
+      containerWidth: formData.get('containerWidth') as string,
+      shadowStyle: formData.get('shadowStyle') as string,
+      hoverEffects: formData.get('hoverEffects') === 'on',
+      animations: formData.get('animations') === 'on',
       customCss: formData.get('customCss') as string,
     };
 
     startTransition(async () => {
-      await updateSystemSettingsAction(data);
+      await updateSystemSettingsAction(data as any);
       setSuccess(true);
       setTimeout(() => setSuccess(false), 3000);
     });
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-8 max-w-4xl">
-      <div className="flex items-center justify-between mb-8">
+    <form onSubmit={handleSubmit} className="space-y-8 max-w-[1200px]">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
         <div>
-          <h1 className="h2-title">System Design Studio</h1>
-          <p className="desc-text mt-2">These global tokens cascade across the entire Headless Engine, dynamically altering the UI without touching code.</p>
+          <h1 className="text-3xl font-bold tracking-tight">System Design Studio</h1>
+          <p className="text-slate-500 dark:text-slate-400 mt-2">The central nervous system of your UI. Changes made here globally cascade to all components, buttons, and layouts instantly.</p>
         </div>
         <button 
           disabled={isPending}
           type="submit" 
-          className="flex items-center gap-2 px-6 py-3 bg-[var(--primary)] text-white font-medium rounded-[var(--radius)] hover:brightness-110 transition-all disabled:opacity-70 shadow-lg shadow-blue-500/20"
+          className="flex items-center gap-2 px-8 py-3 bg-[var(--primary)] text-white font-semibold rounded-[var(--radius)] hover:brightness-110 transition-all disabled:opacity-70 shadow-lg shadow-[var(--primary)]/20 whitespace-nowrap"
         >
-          {success ? <CheckCircle2 size={18} /> : <Save size={18} />}
-          {isPending ? 'Deploying...' : success ? 'Deployed!' : 'Save & Deploy'}
+          {success ? <CheckCircle2 size={20} /> : <Save size={20} />}
+          {isPending ? 'Deploying...' : success ? 'Deployed!' : 'Save & Deploy Tokens'}
         </button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        {/* Colors Panel */}
-        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm">
-          <div className="flex items-center gap-3 mb-6 pb-4 border-b border-slate-100 dark:border-slate-800">
-            <div className="p-2 bg-pink-50 text-pink-500 rounded-lg"><Palette size={20} /></div>
-            <h2 className="font-semibold text-lg">Brand Colors</h2>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        
+        {/* Core Geometry (Radius) */}
+        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 md:p-8 shadow-sm">
+          <div className="flex items-center gap-3 mb-8 pb-4 border-b border-slate-100 dark:border-slate-800">
+            <div className="p-2 bg-emerald-50 text-emerald-500 rounded-lg"><Layout size={20} /></div>
+            <h2 className="font-semibold text-lg">Border Radii & Geometry</h2>
           </div>
           
-          <div className="space-y-5">
+          <div className="space-y-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <div>
+                <label className="block text-sm font-medium mb-1">Global Base Radius</label>
+                <select name="radius" defaultValue={initialSettings.radius} className="w-full px-3 py-2.5 border rounded-lg dark:bg-slate-800 dark:border-slate-700">
+                  <option value="0px">Sharp (0px)</option>
+                  <option value="0.25rem">Subtle (4px)</option>
+                  <option value="0.5rem">Standard (8px)</option>
+                  <option value="0.75rem">Modern (12px)</option>
+                  <option value="1rem">Playful (16px)</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">Button Radius Override</label>
+                <select name="buttonRadius" defaultValue={initialSettings.buttonRadius} className="w-full px-3 py-2.5 border rounded-lg dark:bg-slate-800 dark:border-slate-700">
+                  <option value="var(--radius)">Same as Base</option>
+                  <option value="0px">Sharp Corners (0px)</option>
+                  <option value="0.5rem">Rounded (8px)</option>
+                  <option value="9999px">Pill / Fully Rounded</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">Card Radius Override</label>
+                <select name="cardRadius" defaultValue={initialSettings.cardRadius} className="w-full px-3 py-2.5 border rounded-lg dark:bg-slate-800 dark:border-slate-700">
+                  <option value="var(--radius)">Same as Base</option>
+                  <option value="0.5rem">Standard (8px)</option>
+                  <option value="1rem">Soft (16px)</option>
+                  <option value="1.5rem">Bubbly (24px)</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">Max Container Width</label>
+                <select name="containerWidth" defaultValue={initialSettings.containerWidth} className="w-full px-3 py-2.5 border rounded-lg dark:bg-slate-800 dark:border-slate-700">
+                  <option value="1200px">Narrow (1200px)</option>
+                  <option value="1440px">Standard Desktop (1440px)</option>
+                  <option value="1600px">Ultrawide (1600px)</option>
+                  <option value="100%">Full Width Fluid</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Depth & Interaction */}
+        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 md:p-8 shadow-sm">
+          <div className="flex items-center gap-3 mb-8 pb-4 border-b border-slate-100 dark:border-slate-800">
+            <div className="p-2 bg-purple-50 text-purple-500 rounded-lg"><MousePointer2 size={20} /></div>
+            <h2 className="font-semibold text-lg">Depth & Interaction</h2>
+          </div>
+          
+          <div className="space-y-6">
+            <div>
+              <label className="block text-sm font-medium mb-1">Global Shadow Intensity</label>
+              <select name="shadowStyle" defaultValue={initialSettings.shadowStyle} className="w-full px-3 py-2.5 border rounded-lg dark:bg-slate-800 dark:border-slate-700">
+                <option value="none">Flat Design (No Shadows)</option>
+                <option value="sm">Subtle / Hairline</option>
+                <option value="md">Standard Material</option>
+                <option value="lg">Soft & Elevated</option>
+                <option value="xl">Floaty / Neumorphic</option>
+              </select>
+            </div>
+            
+            <div className="flex items-center justify-between p-4 border rounded-xl dark:border-slate-800">
+              <div>
+                <h3 className="font-medium">Micro-Interactions (Hover)</h3>
+                <p className="text-sm text-slate-500">Enable card lifting and button brightness shifts on hover.</p>
+              </div>
+              <label className="relative inline-flex items-center cursor-pointer">
+                <input type="checkbox" name="hoverEffects" defaultChecked={initialSettings.hoverEffects} className="sr-only peer" />
+                <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-slate-600 peer-checked:bg-[var(--primary)]"></div>
+              </label>
+            </div>
+
+            <div className="flex items-center justify-between p-4 border rounded-xl dark:border-slate-800">
+              <div>
+                <h3 className="font-medium">Animations & Transitions</h3>
+                <p className="text-sm text-slate-500">Enable smooth fading, sliding, and layout transitions.</p>
+              </div>
+              <label className="relative inline-flex items-center cursor-pointer">
+                <input type="checkbox" name="animations" defaultChecked={initialSettings.animations} className="sr-only peer" />
+                <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-slate-600 peer-checked:bg-[var(--primary)]"></div>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        {/* Brand Colors */}
+        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 md:p-8 shadow-sm">
+          <div className="flex items-center gap-3 mb-8 pb-4 border-b border-slate-100 dark:border-slate-800">
+            <div className="p-2 bg-pink-50 text-pink-500 rounded-lg"><Palette size={20} /></div>
+            <h2 className="font-semibold text-lg">Palette Studio</h2>
+          </div>
+          
+          <div className="space-y-6">
             {[
-              { id: 'primaryColor', label: 'Primary Brand Color', val: initialSettings.primaryColor },
-              { id: 'accentColor', label: 'Accent / CTA Color', val: initialSettings.accentColor },
-              { id: 'backgroundColor', label: 'App Background', val: initialSettings.backgroundColor },
-              { id: 'textColor', label: 'Base Text Color', val: initialSettings.textColor },
+              { id: 'primaryColor', label: 'Primary Brand Color', desc: 'Main buttons, active links, primary borders.', val: initialSettings.primaryColor },
+              { id: 'accentColor', label: 'Accent / CTA Color', desc: 'Highlight elements, secondary buttons, alerts.', val: initialSettings.accentColor },
+              { id: 'backgroundColor', label: 'App Background', desc: 'The root body background color.', val: initialSettings.backgroundColor },
+              { id: 'textColor', label: 'Base Text Color', desc: 'The default color for all body typography.', val: initialSettings.textColor },
             ].map(color => (
-              <div key={color.id} className="flex items-center justify-between">
-                <label className="text-sm font-medium">{color.label}</label>
-                <div className="flex items-center gap-3">
-                  <input type="text" name={color.id} defaultValue={color.val} className="w-24 px-2 py-1.5 text-sm font-mono border rounded-lg dark:bg-slate-800 dark:border-slate-700" />
-                  <input type="color" defaultValue={color.val} className="w-10 h-10 rounded-lg cursor-pointer border-0 p-0"
+              <div key={color.id} className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                  <label className="text-sm font-medium">{color.label}</label>
+                  <p className="text-xs text-slate-500 max-w-[200px] mt-0.5">{color.desc}</p>
+                </div>
+                <div className="flex items-center gap-3 shrink-0">
+                  <input type="text" name={color.id} defaultValue={color.val} className="w-24 px-3 py-2 text-sm font-mono border rounded-lg dark:bg-slate-800 dark:border-slate-700" />
+                  <input type="color" defaultValue={color.val} className="w-12 h-12 rounded-lg cursor-pointer border-0 p-0"
                     onChange={(e) => {
                       const textInput = e.currentTarget.previousSibling as HTMLInputElement;
                       if (textInput) textInput.value = e.currentTarget.value;
@@ -78,68 +181,43 @@ export default function SettingsForm({ initialSettings }: { initialSettings: any
           </div>
         </div>
 
-        {/* Typography Panel */}
-        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm">
-          <div className="flex items-center gap-3 mb-6 pb-4 border-b border-slate-100 dark:border-slate-800">
-            <div className="p-2 bg-indigo-50 text-indigo-500 rounded-lg"><Type size={20} /></div>
-            <h2 className="font-semibold text-lg">Typography & Text</h2>
-          </div>
-          
-          <div className="space-y-5">
-            <div>
-              <label className="block text-sm font-medium mb-1">Heading Font Family (Google Fonts)</label>
-              <input type="text" name="fontHeading" defaultValue={initialSettings.fontHeading} className="w-full px-3 py-2 border rounded-lg dark:bg-slate-800 dark:border-slate-700" placeholder="'Inter', sans-serif" />
+        {/* Typography & Identity */}
+        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 md:p-8 shadow-sm flex flex-col justify-between">
+          <div>
+            <div className="flex items-center gap-3 mb-8 pb-4 border-b border-slate-100 dark:border-slate-800">
+              <div className="p-2 bg-indigo-50 text-indigo-500 rounded-lg"><Type size={20} /></div>
+              <h2 className="font-semibold text-lg">Typography & Identity</h2>
             </div>
-            <div>
-              <label className="block text-sm font-medium mb-1">Body Font Family</label>
-              <input type="text" name="fontBody" defaultValue={initialSettings.fontBody} className="w-full px-3 py-2 border rounded-lg dark:bg-slate-800 dark:border-slate-700" placeholder="'Inter', sans-serif" />
+            
+            <div className="space-y-6">
+              <div>
+                <label className="block text-sm font-medium mb-1">Global Site Name</label>
+                <input type="text" name="siteName" defaultValue={initialSettings.siteName} className="w-full px-3 py-2.5 border rounded-lg dark:bg-slate-800 dark:border-slate-700" placeholder="My Enterprise Engine" />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">Heading Font Family (Google Fonts)</label>
+                <input type="text" name="fontHeading" defaultValue={initialSettings.fontHeading} className="w-full px-3 py-2.5 border rounded-lg dark:bg-slate-800 dark:border-slate-700" placeholder="'Inter', sans-serif" />
+                <p className="text-xs text-slate-500 mt-1.5">Used for h1, h2, h3 and title elements.</p>
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">Body Font Family</label>
+                <input type="text" name="fontBody" defaultValue={initialSettings.fontBody} className="w-full px-3 py-2.5 border rounded-lg dark:bg-slate-800 dark:border-slate-700" placeholder="'Inter', sans-serif" />
+                <p className="text-xs text-slate-500 mt-1.5">Used for paragraph text, descriptions, and labels.</p>
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* Layout & Structure */}
-        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm">
-          <div className="flex items-center gap-3 mb-6 pb-4 border-b border-slate-100 dark:border-slate-800">
-            <div className="p-2 bg-emerald-50 text-emerald-500 rounded-lg"><Layout size={20} /></div>
-            <h2 className="font-semibold text-lg">UI Geometry</h2>
-          </div>
-          
-          <div className="space-y-5">
-            <div>
-              <label className="block text-sm font-medium mb-1">Global Border Radius</label>
-              <select name="radius" defaultValue={initialSettings.radius} className="w-full px-3 py-2 border rounded-lg dark:bg-slate-800 dark:border-slate-700">
-                <option value="0px">0px (Sharp Corners)</option>
-                <option value="0.25rem">0.25rem (Subtle)</option>
-                <option value="0.5rem">0.5rem (Standard)</option>
-                <option value="0.75rem">0.75rem (Modern)</option>
-                <option value="1rem">1rem (Playful)</option>
-                <option value="2rem">2rem (Pill)</option>
-              </select>
+          <div className="mt-8 pt-6 border-t border-slate-100 dark:border-slate-800">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="p-2 bg-slate-100 text-slate-500 rounded-lg"><Code size={16} /></div>
+              <h2 className="font-semibold">CSS Overrides</h2>
             </div>
-            <div>
-              <label className="block text-sm font-medium mb-1">Global Site Name</label>
-              <input type="text" name="siteName" defaultValue={initialSettings.siteName} className="w-full px-3 py-2 border rounded-lg dark:bg-slate-800 dark:border-slate-700" placeholder="My Enterprise Engine" />
-            </div>
-          </div>
-        </div>
-
-        {/* Advanced CSS */}
-        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm">
-          <div className="flex items-center gap-3 mb-6 pb-4 border-b border-slate-100 dark:border-slate-800">
-            <div className="p-2 bg-slate-100 text-slate-500 rounded-lg"><Code size={20} /></div>
-            <h2 className="font-semibold text-lg">Advanced CSS Injection</h2>
-          </div>
-          
-          <div className="space-y-5">
-            <div>
-              <label className="block text-sm font-medium mb-1 text-slate-500">Inject custom utility classes or CSS overrides globally (Applies at the root level).</label>
-              <textarea 
-                name="customCss" 
-                defaultValue={initialSettings.customCss || ''} 
-                className="w-full h-32 px-3 py-2 font-mono text-sm border rounded-lg dark:bg-slate-800 dark:border-slate-700 focus:ring-2 ring-blue-500" 
-                placeholder="body { scroll-behavior: smooth; }" 
-              />
-            </div>
+            <textarea 
+              name="customCss" 
+              defaultValue={initialSettings.customCss || ''} 
+              className="w-full h-24 px-3 py-3 font-mono text-sm border rounded-xl dark:bg-slate-800 dark:border-slate-700 focus:ring-2 ring-[var(--primary)]" 
+              placeholder="/* Inject global styles here */&#10;body { scroll-behavior: smooth; }" 
+            />
           </div>
         </div>
       </div>

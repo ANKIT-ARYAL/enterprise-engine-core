@@ -13,6 +13,12 @@ const SettingsSchema = z.object({
   fontHeading: z.string().min(1),
   fontBody: z.string().min(1),
   radius: z.string().min(1),
+  buttonRadius: z.string().min(1),
+  cardRadius: z.string().min(1),
+  containerWidth: z.string().min(1),
+  shadowStyle: z.string().min(1),
+  hoverEffects: z.boolean().default(true).or(z.string().transform(val => val === 'on' || val === 'true')),
+  animations: z.boolean().default(true).or(z.string().transform(val => val === 'on' || val === 'true')),
   customCss: z.string().optional().nullable(),
 });
 

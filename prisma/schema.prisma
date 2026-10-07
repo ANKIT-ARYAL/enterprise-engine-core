@@ -63,6 +63,12 @@ model SystemSettings {
   fontHeading     String   @default("Inter")
   fontBody        String   @default("Inter")
   radius          String   @default("0.5rem")
+  buttonRadius    String   @default("0.5rem")
+  cardRadius      String   @default("0.75rem")
+  containerWidth  String   @default("1440px")
+  shadowStyle     String   @default("md")
+  hoverEffects    Boolean  @default(true)
+  animations      Boolean  @default(true)
   customCss       String?  @db.Text
   updatedAt       DateTime @updatedAt
 }
