@@ -130,7 +130,7 @@ export default function SettingsForm({ initialSettings }: { initialSettings: any
           <button 
             disabled={isPending}
             type="submit" 
-            className="flex items-center gap-2 px-6 py-2 bg-primary text-white text-sm font-semibold rounded-lg hover:brightness-110 transition-all disabled:opacity-70 shadow-lg shadow-primary/20"
+            className="flex items-center gap-2 px-6 py-2 bg-btn-bg text-btn-text text-sm font-semibold rounded-btn hover:bg-btn-hover transition-all disabled:opacity-70 shadow-lg shadow-black/10"
           >
             {success ? <CheckCircle2 size={16} /> : <Save size={16} />}
             {isPending ? 'Deploying...' : success ? 'Deployed!' : 'Deploy Tokens'}
@@ -197,16 +197,16 @@ export default function SettingsForm({ initialSettings }: { initialSettings: any
               <div className="space-y-6 animate-in fade-in duration-200">
                 <div className="border border-card-border rounded-card overflow-hidden bg-card-bg shadow-sm">
                   <div className="px-4 py-3 border-b border-card-border bg-black/5 flex items-center gap-2 font-medium text-sm">
-                    <Palette size={16} className="opacity-70" /> SEMANTIC COLOR PALETTE
+                    <Palette size={16} className="opacity-70" /> GLOBAL BRAND PALETTE
                   </div>
                   <div className="p-4 space-y-4">
                     {[
-                      { id: 'primaryColor', label: 'Primary Brand', val: liveTokens.primaryColor || '#2563eb' },
-                      { id: 'accentColor', label: 'Accent / CTA', val: liveTokens.accentColor || '#f97316' },
-                      { id: 'backgroundColor', label: 'Surface Base (App Background)', val: liveTokens.backgroundColor || '#ffffff' },
-                      { id: 'textColor', label: 'Base Text Foreground', val: liveTokens.textColor || '#0f172a' },
-                      { id: 'successColor', label: 'Success / Validation', val: liveTokens.successColor || '#10b981' },
-                      { id: 'errorColor', label: 'Error / Destructive', val: liveTokens.errorColor || '#ef4444' },
+                      { id: 'primaryColor', label: 'Primary Brand Color (Active Tabs & Highlights)', val: liveTokens.primaryColor || '#2563eb' },
+                      { id: 'accentColor', label: 'Secondary Accent / Call to Action', val: liveTokens.accentColor || '#f97316' },
+                      { id: 'backgroundColor', label: 'Global App Background (Body Base)', val: liveTokens.backgroundColor || '#ffffff' },
+                      { id: 'textColor', label: 'Global Default Text Color', val: liveTokens.textColor || '#0f172a' },
+                      { id: 'successColor', label: 'Success & Validation Messages', val: liveTokens.successColor || '#10b981' },
+                      { id: 'errorColor', label: 'Error & Destructive Actions', val: liveTokens.errorColor || '#ef4444' },
                     ].map(color => (
                       <div key={color.id} className="flex items-center justify-between">
                         <label className="text-sm font-medium opacity-90 w-1/2">{color.label}</label>
@@ -231,9 +231,9 @@ export default function SettingsForm({ initialSettings }: { initialSettings: any
                   
                   <div className="p-4 space-y-4">
                     {[
-                      { id: 'buttonBgColor', label: 'Background Color', val: liveTokens.buttonBgColor || '#2563eb' },
-                      { id: 'buttonHoverBgColor', label: 'Hover Background Color', val: liveTokens.buttonHoverBgColor || '#1d4ed8' },
-                      { id: 'buttonTextColor', label: 'Text Color', val: liveTokens.buttonTextColor || '#ffffff' },
+                      { id: 'buttonBgColor', label: 'Default Button Background Color', val: liveTokens.buttonBgColor || '#2563eb' },
+                      { id: 'buttonHoverBgColor', label: 'Button Hover Background Color', val: liveTokens.buttonHoverBgColor || '#1d4ed8' },
+                      { id: 'buttonTextColor', label: 'Button Text Color', val: liveTokens.buttonTextColor || '#ffffff' },
                     ].map(color => (
                       <div key={color.id} className="flex items-center justify-between">
                         <label className="text-sm font-medium w-1/2 opacity-90">{color.label}</label>
