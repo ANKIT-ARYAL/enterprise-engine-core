@@ -130,7 +130,7 @@ export default function SettingsForm({ initialSettings }: { initialSettings: any
           <button 
             disabled={isPending}
             type="submit" 
-            className="flex items-center gap-2 px-6 py-2 bg-btn-bg text-btn-text text-sm font-semibold rounded-btn hover:bg-btn-hover hover:text-btn-hover-text transition-all disabled:opacity-70 shadow-lg shadow-black/10"
+            className="flex items-center gap-2 px-6 py-2 bg-btn-bg text-btn-text text-sm font-semibold rounded-btn hover:bg-btn-hover hover:text-[color:var(--btn-hover-text)] transition-all disabled:opacity-70 shadow-lg shadow-black/10"
           >
             <span className="flex items-center gap-2">
               {success ? <CheckCircle2 size={16} /> : <Save size={16} />}

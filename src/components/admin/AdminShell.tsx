@@ -99,7 +99,7 @@ export default function AdminShell({ children, initialNav }: { children: React.R
                       href={link.href} 
                       className={`flex items-center gap-3 px-3 py-2 transition-colors text-[13px] font-medium rounded-btn ${
                         isActive 
-                          ? 'bg-btn-bg text-btn-text shadow-sm hover:bg-btn-hover hover:text-btn-hover-text' 
+                          ? 'bg-btn-bg text-btn-text shadow-sm hover:bg-btn-hover hover:text-[color:var(--btn-hover-text)]' 
                           : 'text-surface-text/70 hover:bg-card-hover hover:text-surface-text'
                       }`}
                     >
