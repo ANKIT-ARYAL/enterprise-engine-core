@@ -1,13 +1,14 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use server';
 
-import { revalidateTag } from 'next/cache';
+import { revalidatePath } from 'next/cache';
 import { prisma } from '@/lib/db/client';
 import { z } from 'zod';
 
 const SettingsSchema = z.object({
   siteName: z.string().min(1),
   customCss: z.string().optional().nullable(),
-  tokens: z.record(z.any()).default({}),
+  tokens: z.record(z.string(), z.any()).default({}),
 });
 
 export async function updateSystemSettingsAction(input: z.infer<typeof SettingsSchema>) {
@@ -15,23 +16,27 @@ export async function updateSystemSettingsAction(input: z.infer<typeof SettingsS
 
   await prisma.systemSettings.update({
     where: { id: 'global_config' },
-    data: validated,
+    data: {
+      siteName: validated.siteName,
+      customCss: validated.customCss,
+      tokens: validated.tokens as any,
+    },
   });
 
   // Purges Vercel Edge node cache globally in real time
-  revalidateTag('system-settings');
+  revalidatePath('/', 'layout');
   return { success: true };
 }
 
 export async function mutateSectionAction(sectionId: string, pageSlug: string, content: unknown) {
   await prisma.pageSection.update({
     where: { id: sectionId },
-    data: { content },
+    data: { content: content as any },
   });
 
   // Invalidate page-specific cache tags
-  revalidateTag(`page:${pageSlug}`);
-  revalidateTag('sections');
+  revalidatePath(`/${pageSlug}`);
+  revalidatePath('/', 'layout');
   return { success: true };
 }
 
@@ -41,7 +46,7 @@ export async function softDeleteSectionAction(sectionId: string, pageSlug: strin
     data: { isDeleted: true },
   });
 
-  revalidateTag(`page:${pageSlug}`);
-  revalidateTag('sections');
+  revalidatePath(`/${pageSlug}`);
+  revalidatePath('/', 'layout');
   return { success: true };
 }

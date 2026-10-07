@@ -1,11 +1,14 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export const instant = false;
 
 import AdminShell from '@/components/admin/AdminShell';
 import VisualInspector from '@/components/admin/VisualInspector';
 import PatchApplier from '@/components/admin/PatchApplier';
 import { prisma } from '@/lib/db/client';
+import { connection } from 'next/server';
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
+  await connection();
   const settings = await prisma.systemSettings.findUnique({ where: { id: 'global_config' } });
   
   // Default fallback links if none are in the DB

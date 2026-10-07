@@ -14,7 +14,7 @@ export default function AcademyDashboard() {
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight text-slate-900">Academy Dashboard</h1>
-          <p className="text-sm text-slate-500 mt-1">Good morning, Teacher. Here's a quick overview of today's activity.</p>
+          <p className="text-sm text-slate-500 mt-1">Good morning, Teacher. Here is a quick overview of todays activity.</p>
         </div>
         
         <div className="flex items-center gap-2">

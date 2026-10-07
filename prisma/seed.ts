@@ -10,13 +10,15 @@ async function main() {
     create: {
       id: 'global_config',
       siteName: 'Modular Engine',
-      primaryColor: '#2563eb',
-      accentColor: '#f97316',
-      backgroundColor: '#ffffff',
-      textColor: '#0f172a',
-      fontHeading: 'Inter',
-      fontBody: 'Inter',
-      radius: '0.5rem',
+      tokens: {
+        primaryColor: '#2563eb',
+        accentColor: '#f97316',
+        backgroundColor: '#ffffff',
+        textColor: '#0f172a',
+        fontHeading: 'Inter',
+        fontBody: 'Inter',
+        radius: '0.5rem',
+      }
     }
   });
 
