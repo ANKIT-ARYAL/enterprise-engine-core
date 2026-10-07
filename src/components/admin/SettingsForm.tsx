@@ -132,8 +132,10 @@ export default function SettingsForm({ initialSettings }: { initialSettings: any
             type="submit" 
             className="flex items-center gap-2 px-6 py-2 bg-btn-bg text-btn-text text-sm font-semibold rounded-btn hover:bg-btn-hover hover:text-btn-hover-text transition-all disabled:opacity-70 shadow-lg shadow-black/10"
           >
-            {success ? <CheckCircle2 size={16} /> : <Save size={16} />}
-            {isPending ? 'Deploying...' : success ? 'Deployed!' : 'Deploy Tokens'}
+            <span className="flex items-center gap-2">
+              {success ? <CheckCircle2 size={16} /> : <Save size={16} />}
+              <span>{isPending ? 'Deploying...' : success ? 'Deployed!' : 'Deploy Tokens'}</span>
+            </span>
           </button>
         </div>
       </div>
