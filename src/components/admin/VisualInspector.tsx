@@ -88,7 +88,7 @@ export default function VisualInspector() {
           }}
         >
           <div className="absolute -top-6 -left-0.5 bg-primary text-white text-[10px] font-mono px-2 py-1 rounded shadow-sm whitespace-nowrap">
-            &lt;{hoveredElement.tagName.toLowerCase()}&gt; {hoveredElement.className.split(' ')[0]}
+            &lt;{hoveredElement.tagName.toLowerCase()}&gt; {typeof hoveredElement.className === 'string' ? hoveredElement.className.split(' ')[0] : (hoveredElement.getAttribute('class') || '').split(' ')[0]}
           </div>
         </div>
       )}
@@ -127,7 +127,7 @@ export default function VisualInspector() {
 
           <div className="p-4 space-y-4 max-h-[400px] overflow-y-auto custom-scrollbar">
             <div className="text-[10px] font-mono bg-black/5 p-2 rounded text-surface-text break-all">
-              &lt;{selectedElement.tagName.toLowerCase()} className="{selectedElement.className}"&gt;
+              &lt;{selectedElement.tagName.toLowerCase()} className="{typeof selectedElement.className === 'string' ? selectedElement.className : selectedElement.getAttribute('class') || ''}"&gt;
             </div>
             
             {/* Quick Actions (Stubbed for now, visually fully represented) */}
