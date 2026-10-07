@@ -129,8 +129,8 @@ export default function SettingsForm({ initialSettings }: { initialSettings: any
               onClick={() => setActiveTab(tab.id)}
               className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all text-sm font-medium ${
                 activeTab === tab.id 
-                  ? 'bg-slate-900 text-white dark:bg-white dark:text-slate-900 shadow-md' 
-                  : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/50'
+                  ? 'bg-primary text-white shadow-md' 
+                  : 'opacity-70 hover:opacity-100 hover:bg-black/5'
               }`}
             >
               <tab.icon size={16} />
@@ -148,7 +148,7 @@ export default function SettingsForm({ initialSettings }: { initialSettings: any
             {activeTab === 'palette' && (
               <div className="space-y-6 animate-in fade-in duration-200">
                 <div className="border border-card-border rounded-card overflow-hidden bg-card-bg shadow-sm">
-                  <div className="px-4 py-3 border-b border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 flex items-center gap-2 font-medium text-sm">
+                  <div className="px-4 py-3 border-b border-card-border bg-black/5 flex items-center gap-2 font-medium text-sm">
                     <Palette size={16} className="text-slate-400" /> SEMANTIC PALETTE ENGINE
                   </div>
                   <div className="p-4 space-y-4">
@@ -161,7 +161,7 @@ export default function SettingsForm({ initialSettings }: { initialSettings: any
                       <div key={color.id} className="flex items-center justify-between">
                         <label className="text-sm font-medium text-slate-700 dark:text-slate-300 w-1/2">{color.label}</label>
                         <div className="flex items-center justify-end gap-2 w-1/2">
-                          <input type="text" name={color.id} value={color.val} onChange={handleLiveChange} className="w-20 px-2 py-1 text-xs font-mono border rounded dark:bg-slate-950 dark:border-slate-700" />
+                          <input type="text" name={color.id} value={color.val} onChange={handleLiveChange} className="w-20 px-2 py-1 text-xs font-mono border rounded bg-transparent border-card-border" />
                           <input type="color" name={color.id} value={color.val} onChange={handleLiveChange} className="w-6 h-6 rounded cursor-pointer border-0 p-0" />
                         </div>
                       </div>
@@ -174,17 +174,17 @@ export default function SettingsForm({ initialSettings }: { initialSettings: any
             {activeTab === 'typography' && (
               <div className="space-y-6 animate-in fade-in duration-200">
                 <div className="border border-card-border rounded-card overflow-hidden bg-card-bg shadow-sm">
-                  <div className="px-4 py-3 border-b border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 flex items-center gap-2 font-medium text-sm">
+                  <div className="px-4 py-3 border-b border-card-border bg-black/5 flex items-center gap-2 font-medium text-sm">
                     <Type size={16} className="text-slate-400" /> FLUID TYPOGRAPHY CALCULATOR
                   </div>
                   <div className="p-4 space-y-5">
                     <div>
                       <label className="block text-sm font-medium mb-1">Heading Font Family</label>
-                      <input type="text" name="fontHeading" value={liveTokens.fontHeading || 'Inter'} onChange={handleLiveChange} className="w-full px-3 py-2 text-sm border rounded-lg dark:bg-slate-950 dark:border-slate-700" />
+                      <input type="text" name="fontHeading" value={liveTokens.fontHeading || 'Inter'} onChange={handleLiveChange} className="w-full px-3 py-2 text-sm border rounded-lg bg-transparent border-card-border" />
                     </div>
                     <div>
                       <label className="block text-sm font-medium mb-1">Body Font Family</label>
-                      <input type="text" name="fontBody" value={liveTokens.fontBody || 'Inter'} onChange={handleLiveChange} className="w-full px-3 py-2 text-sm border rounded-lg dark:bg-slate-950 dark:border-slate-700" />
+                      <input type="text" name="fontBody" value={liveTokens.fontBody || 'Inter'} onChange={handleLiveChange} className="w-full px-3 py-2 text-sm border rounded-lg bg-transparent border-card-border" />
                     </div>
                     
                     <div className="pt-4 border-t dark:border-slate-800">
@@ -203,7 +203,7 @@ export default function SettingsForm({ initialSettings }: { initialSettings: any
             {activeTab === 'geometry' && (
               <div className="space-y-6 animate-in fade-in duration-200">
                 <div className="border border-card-border rounded-card overflow-hidden bg-card-bg shadow-sm">
-                  <div className="px-4 py-3 border-b border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 flex items-center gap-2 font-medium text-sm">
+                  <div className="px-4 py-3 border-b border-card-border bg-black/5 flex items-center gap-2 font-medium text-sm">
                     <Layout size={16} className="text-slate-400" /> GEOMETRY & STRUCTURE
                   </div>
                   <div className="p-4 space-y-4">
@@ -214,7 +214,7 @@ export default function SettingsForm({ initialSettings }: { initialSettings: any
                     ].map(field => (
                       <div key={field.id} className="flex justify-between items-center">
                         <label className="text-sm font-medium w-1/2">{field.label}</label>
-                        <select name={field.id} value={liveTokens[field.id] || field.options[0].split(' ')[0]} onChange={handleLiveChange as any} className="w-1/2 px-2 py-1.5 text-sm border rounded-lg dark:bg-slate-950 dark:border-slate-700">
+                        <select name={field.id} value={liveTokens[field.id] || field.options[0].split(' ')[0]} onChange={handleLiveChange as any} className="w-1/2 px-2 py-1.5 text-sm border rounded-lg bg-transparent border-card-border">
                           {field.options.map(opt => <option key={opt.split(' ')[0]} value={opt.split(' ')[0]}>{opt}</option>)}
                         </select>
                       </div>
@@ -227,13 +227,13 @@ export default function SettingsForm({ initialSettings }: { initialSettings: any
             {activeTab === 'depth' && (
               <div className="space-y-6 animate-in fade-in duration-200">
                 <div className="border border-card-border rounded-card overflow-hidden bg-card-bg shadow-sm">
-                  <div className="px-4 py-3 border-b border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 flex items-center gap-2 font-medium text-sm">
+                  <div className="px-4 py-3 border-b border-card-border bg-black/5 flex items-center gap-2 font-medium text-sm">
                     <Layers size={16} className="text-slate-400" /> ELEVATION & MOTION
                   </div>
                   <div className="p-4 space-y-5">
                     <div className="flex justify-between items-center">
                       <label className="text-sm font-medium">Card Base Shadow</label>
-                      <select name="cardShadow" value={liveTokens.cardShadow || 'md'} onChange={handleLiveChange as any} className="w-1/2 px-2 py-1.5 text-sm border rounded-lg dark:bg-slate-950 dark:border-slate-700">
+                      <select name="cardShadow" value={liveTokens.cardShadow || 'md'} onChange={handleLiveChange as any} className="w-1/2 px-2 py-1.5 text-sm border rounded-lg bg-transparent border-card-border">
                         <option value="none">None</option><option value="sm">Small</option><option value="md">Ambient Tinted Glow</option><option value="lg">Heavy Lift</option>
                       </select>
                     </div>
