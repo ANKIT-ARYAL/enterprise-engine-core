@@ -109,8 +109,10 @@ export function SectionDndList({ initialSections, pageSlug }: SectionDndListProp
     }
   };
 
+  const dndId = React.useId();
+
   return (
-    <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+    <DndContext id={dndId} sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
       <SortableContext items={sections.map(s => s.id)} strategy={verticalListSortingStrategy}>
         <div className="w-full max-w-3xl">
           {sections.map((section) => (
