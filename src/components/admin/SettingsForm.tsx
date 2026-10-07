@@ -12,6 +12,7 @@ export default function SettingsForm({ initialSettings }: { initialSettings: any
   const [isPending, startTransition] = useTransition();
   const [success, setSuccess] = useState(false);
   const [activeTab, setActiveTab] = useState('text-colors');
+  const [collapsedGroups, setCollapsedGroups] = useState<string[]>([]);
   
   const tokens = (initialSettings.tokens as any) || {};
   const [liveTokens, setLiveTokens] = useState(tokens);
@@ -142,30 +143,47 @@ export default function SettingsForm({ initialSettings }: { initialSettings: any
         
         {/* Left Column: Categorized Tree */}
         <div className="w-56 shrink-0 flex flex-col gap-4 border-r border-card-border pr-4 overflow-y-auto custom-scrollbar hidden md:flex pb-12">
-          {categoryGroups.map((group, groupIdx) => (
-            <div key={groupIdx}>
-              <div className="text-[10px] font-bold uppercase tracking-widest opacity-50 mb-2 ml-2">{group.title}</div>
-              <div className="flex flex-col gap-0.5">
-                {group.items.map(tab => (
-                  <button
-                    key={tab.id}
-                    type="button"
-                    onClick={() => setActiveTab(tab.id)}
-                    className={`flex items-center justify-start gap-3 px-3 py-2 rounded-lg transition-all text-sm font-medium text-left ${
-                      activeTab === tab.id 
-                        ? 'bg-primary text-white shadow-md' 
-                        : 'opacity-70 hover:opacity-100 hover:bg-black/5'
-                    }`}
-                  >
-                    <div className="shrink-0">
-                      <tab.icon size={16} />
-                    </div>
-                    <span>{tab.label}</span>
-                  </button>
-                ))}
+          {categoryGroups.map((group, groupIdx) => {
+            const isCollapsed = collapsedGroups.includes(group.title);
+            return (
+              <div key={groupIdx}>
+                <button 
+                  type="button"
+                  onClick={() => {
+                    setCollapsedGroups(prev => 
+                      prev.includes(group.title) 
+                        ? prev.filter(t => t !== group.title) 
+                        : [...prev, group.title]
+                    );
+                  }}
+                  className="w-full flex items-center justify-between text-[10px] font-bold uppercase tracking-widest opacity-50 mb-2 ml-2 hover:opacity-80 transition-opacity"
+                >
+                  {group.title}
+                  <ChevronDown size={12} className={`mr-4 transition-transform duration-200 ${isCollapsed ? '-rotate-90' : ''}`} />
+                </button>
+                
+                <div className={`flex flex-col gap-0.5 overflow-hidden transition-all duration-300 ${isCollapsed ? 'max-h-0 opacity-0' : 'max-h-[500px] opacity-100'}`}>
+                  {group.items.map(tab => (
+                    <button
+                      key={tab.id}
+                      type="button"
+                      onClick={() => setActiveTab(tab.id)}
+                      className={`flex items-center justify-start gap-3 px-3 py-2 rounded-lg transition-all text-sm font-medium text-left ${
+                        activeTab === tab.id 
+                          ? 'bg-primary text-white shadow-md' 
+                          : 'opacity-70 hover:opacity-100 hover:bg-black/5'
+                      }`}
+                    >
+                      <div className="shrink-0">
+                        <tab.icon size={16} />
+                      </div>
+                      <span>{tab.label}</span>
+                    </button>
+                  ))}
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
         {/* Center Column: Precision Control Deck */}

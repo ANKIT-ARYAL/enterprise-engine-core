@@ -23,7 +23,7 @@ export async function updateSystemSettingsAction(input: z.infer<typeof SettingsS
   return { success: true };
 }
 
-export async function mutateSectionAction(sectionId: string, pageSlug: string, content: any) {
+export async function mutateSectionAction(sectionId: string, pageSlug: string, content: unknown) {
   await prisma.pageSection.update({
     where: { id: sectionId },
     data: { content },
