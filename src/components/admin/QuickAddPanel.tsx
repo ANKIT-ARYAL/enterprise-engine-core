@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useTransition } from 'react';
-import { X, Plus, Trash2, Save, Menu } from 'lucide-react';
+import { X, Plus, Trash2, Save, Menu, User, Bell } from 'lucide-react';
 import { updateNavigationAction } from '@/app/actions/update-navigation-action';
 
 export default function QuickAddPanel({ 
@@ -13,7 +13,17 @@ export default function QuickAddPanel({
   onClose: () => void, 
   initialNav: any 
 }) {
-  const [navState, setNavState] = useState(initialNav);
+  // Normalize legacy format
+  const normalized = (initialNav?.sections) ? initialNav : {
+    sections: [
+      { id: 's1', title: 'Dashboards', links: initialNav?.dashboards || [] },
+      { id: 's2', title: 'Pages', links: initialNav?.pages || [] }
+    ],
+    promoBox: { enabled: true, title: 'Have something in mind?', description: 'Suggest a feature or discuss custom work with me on 𝕏 or by email.' },
+    userProfile: { type: 'button', name: 'Admin', email: 'hello@admin.com' }
+  };
+
+  const [navState, setNavState] = useState(normalized);
   const [isPending, startTransition] = useTransition();
 
   if (!isOpen) return null;
@@ -26,156 +36,196 @@ export default function QuickAddPanel({
   }
 
   return (
-    <div className="fixed inset-y-0 right-0 w-full max-w-md bg-[#fdfdfd] border-l border-[#ececec] shadow-2xl z-[100] flex flex-col transform transition-transform animate-in slide-in-from-right duration-300">
+    <div className="fixed inset-y-0 right-0 w-full max-w-2xl bg-[#fdfdfd] border-l border-[#ececec] shadow-2xl z-[100] flex flex-col transform transition-transform animate-in slide-in-from-right duration-300">
       <div className="h-16 px-6 border-b border-[#ececec] flex items-center justify-between shrink-0 bg-white">
         <h2 className="font-bold text-[15px] flex items-center gap-2">
-          <Menu size={16} className="text-primary" /> Edit Sidebar Navigation
+          <Menu size={16} className="text-primary" /> Edit Sidebar Engine
         </h2>
         <button onClick={onClose} className="p-2 hover:bg-black/5 rounded-full transition-colors">
           <X size={18} />
         </button>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-6 space-y-8 custom-scrollbar">
-        {/* Dashboards Section */}
+      <div className="flex-1 overflow-y-auto p-6 space-y-10 custom-scrollbar">
+        
+        {/* Dynamic Sections */}
         <div>
-          <div className="flex justify-between items-center mb-3">
-            <h3 className="font-bold text-xs uppercase tracking-wider opacity-60">Dashboards</h3>
+          <div className="flex justify-between items-center mb-4 border-b border-[#ececec] pb-2">
+            <h3 className="font-bold text-sm">Navigation Sections</h3>
             <button 
               type="button" 
               onClick={() => {
                 setNavState({
                   ...navState,
-                  dashboards: [...(navState.dashboards || []), { label: 'New Link', href: '/admin/new', icon: 'LayoutDashboard' }]
+                  sections: [...navState.sections, { id: Date.now().toString(), title: 'New Section', links: [] }]
                 });
               }}
-              className="text-[10px] flex items-center gap-1 font-medium bg-black/5 hover:bg-black/10 px-2 py-1 rounded"
+              className="text-[11px] flex items-center gap-1 font-medium bg-black/5 hover:bg-black/10 px-2 py-1 rounded"
             >
-              <Plus size={12} /> Add Link
+              <Plus size={12} /> Add Section
             </button>
           </div>
           
-          <div className="space-y-2">
-            {((navState.dashboards) || []).map((link: any, idx: number) => (
-              <div key={idx} className="flex items-center gap-2 bg-white p-2 rounded-lg border border-[#ececec] shadow-sm">
-                <input 
-                  type="text" 
-                  value={link.label} 
-                  onChange={(e) => {
-                    const newNav = { ...navState };
-                    newNav.dashboards[idx].label = e.target.value;
-                    setNavState(newNav);
-                  }}
-                  className="w-1/3 px-2 py-1.5 text-xs border border-transparent rounded bg-black/5 focus:bg-white focus:border-card-border outline-none transition-colors" 
-                  placeholder="Label"
-                />
-                <input 
-                  type="text" 
-                  value={link.href} 
-                  onChange={(e) => {
-                    const newNav = { ...navState };
-                    newNav.dashboards[idx].href = e.target.value;
-                    setNavState(newNav);
-                  }}
-                  className="w-1/3 px-2 py-1.5 text-xs border border-transparent rounded bg-black/5 focus:bg-white focus:border-card-border outline-none transition-colors" 
-                  placeholder="URL path"
-                />
-                <input 
-                  type="text" 
-                  value={link.icon} 
-                  onChange={(e) => {
-                    const newNav = { ...navState };
-                    newNav.dashboards[idx].icon = e.target.value;
-                    setNavState(newNav);
-                  }}
-                  className="w-1/4 px-2 py-1.5 text-xs border border-transparent rounded bg-black/5 focus:bg-white focus:border-card-border outline-none transition-colors" 
-                  placeholder="Icon"
-                />
+          <div className="space-y-8">
+            {navState.sections.map((section: any, sIdx: number) => (
+              <div key={section.id} className="bg-white p-4 rounded-xl border border-[#ececec] shadow-sm relative">
                 <button 
-                  type="button" 
                   onClick={() => {
-                    const newNav = { ...navState };
-                    newNav.dashboards.splice(idx, 1);
-                    setNavState(newNav);
+                    const newSections = [...navState.sections];
+                    newSections.splice(sIdx, 1);
+                    setNavState({ ...navState, sections: newSections });
                   }}
-                  className="p-1.5 text-rose-500 hover:bg-rose-50 rounded"
+                  className="absolute top-4 right-4 text-rose-500 hover:text-rose-600"
                 >
                   <Trash2 size={14} />
                 </button>
+                
+                <input 
+                  type="text" 
+                  value={section.title} 
+                  onChange={(e) => {
+                    const newSections = [...navState.sections];
+                    newSections[sIdx].title = e.target.value;
+                    setNavState({ ...navState, sections: newSections });
+                  }}
+                  className="font-bold text-xs uppercase tracking-wider opacity-60 bg-transparent outline-none border-b border-dashed border-transparent hover:border-black/20 focus:border-black/40 pb-1 mb-4" 
+                  placeholder="Section Title"
+                />
+
+                <div className="space-y-2">
+                  {section.links.map((link: any, lIdx: number) => (
+                    <div key={lIdx} className="flex items-center gap-2 bg-black/5 p-2 rounded-lg">
+                      <input 
+                        type="text" 
+                        value={link.label} 
+                        onChange={(e) => {
+                          const newSections = [...navState.sections];
+                          newSections[sIdx].links[lIdx].label = e.target.value;
+                          setNavState({ ...navState, sections: newSections });
+                        }}
+                        className="flex-1 px-2 py-1.5 text-xs border border-transparent rounded bg-white outline-none" 
+                        placeholder="Label"
+                      />
+                      <input 
+                        type="text" 
+                        value={link.href} 
+                        onChange={(e) => {
+                          const newSections = [...navState.sections];
+                          newSections[sIdx].links[lIdx].href = e.target.value;
+                          setNavState({ ...navState, sections: newSections });
+                        }}
+                        className="flex-1 px-2 py-1.5 text-xs border border-transparent rounded bg-white outline-none" 
+                        placeholder="URL path"
+                      />
+                      <input 
+                        type="text" 
+                        value={link.icon} 
+                        onChange={(e) => {
+                          const newSections = [...navState.sections];
+                          newSections[sIdx].links[lIdx].icon = e.target.value;
+                          setNavState({ ...navState, sections: newSections });
+                        }}
+                        className="w-24 px-2 py-1.5 text-xs border border-transparent rounded bg-white outline-none" 
+                        placeholder="Icon"
+                      />
+                      <button 
+                        type="button" 
+                        onClick={() => {
+                          const newSections = [...navState.sections];
+                          newSections[sIdx].links.splice(lIdx, 1);
+                          setNavState({ ...navState, sections: newSections });
+                        }}
+                        className="p-1.5 text-rose-500 hover:bg-rose-50 rounded bg-white"
+                      >
+                        <Trash2 size={14} />
+                      </button>
+                    </div>
+                  ))}
+                  
+                  <button 
+                    type="button" 
+                    onClick={() => {
+                      const newSections = [...navState.sections];
+                      newSections[sIdx].links.push({ label: 'New Link', href: '/', icon: 'Circle' });
+                      setNavState({ ...navState, sections: newSections });
+                    }}
+                    className="text-[11px] font-medium text-primary hover:underline mt-2 inline-block"
+                  >
+                    + Add link to {section.title}
+                  </button>
+                </div>
               </div>
             ))}
           </div>
         </div>
 
-        {/* Pages Section */}
+        {/* Promo Box Config */}
         <div>
-          <div className="flex justify-between items-center mb-3">
-            <h3 className="font-bold text-xs uppercase tracking-wider opacity-60">Pages</h3>
-            <button 
-              type="button" 
-              onClick={() => {
-                setNavState({
-                  ...navState,
-                  pages: [...(navState.pages || []), { label: 'New Page', href: '/admin/new-page', icon: 'FileText' }]
-                });
-              }}
-              className="text-[10px] flex items-center gap-1 font-medium bg-black/5 hover:bg-black/10 px-2 py-1 rounded"
-            >
-              <Plus size={12} /> Add Link
-            </button>
-          </div>
-          
-          <div className="space-y-2">
-            {((navState.pages) || []).map((link: any, idx: number) => (
-              <div key={idx} className="flex items-center gap-2 bg-white p-2 rounded-lg border border-[#ececec] shadow-sm">
+          <h3 className="font-bold text-sm mb-4 border-b border-[#ececec] pb-2">Promo Box (Have something in mind?)</h3>
+          <div className="bg-white p-4 rounded-xl border border-[#ececec] shadow-sm space-y-3">
+            <label className="flex items-center gap-2 text-sm font-medium">
+              <input 
+                type="checkbox" 
+                checked={navState.promoBox.enabled}
+                onChange={(e) => setNavState({...navState, promoBox: {...navState.promoBox, enabled: e.target.checked}})}
+              /> Show Promo Box in Sidebar
+            </label>
+            
+            {navState.promoBox.enabled && (
+              <>
                 <input 
                   type="text" 
-                  value={link.label} 
-                  onChange={(e) => {
-                    const newNav = { ...navState };
-                    newNav.pages[idx].label = e.target.value;
-                    setNavState(newNav);
-                  }}
-                  className="w-1/3 px-2 py-1.5 text-xs border border-transparent rounded bg-black/5 focus:bg-white focus:border-card-border outline-none transition-colors" 
-                  placeholder="Label"
+                  value={navState.promoBox.title} 
+                  onChange={(e) => setNavState({...navState, promoBox: {...navState.promoBox, title: e.target.value}})}
+                  className="w-full px-3 py-2 text-sm border rounded-lg bg-black/5" 
+                  placeholder="Title"
                 />
-                <input 
-                  type="text" 
-                  value={link.href} 
-                  onChange={(e) => {
-                    const newNav = { ...navState };
-                    newNav.pages[idx].href = e.target.value;
-                    setNavState(newNav);
-                  }}
-                  className="w-1/3 px-2 py-1.5 text-xs border border-transparent rounded bg-black/5 focus:bg-white focus:border-card-border outline-none transition-colors" 
-                  placeholder="URL path"
+                <textarea 
+                  value={navState.promoBox.description} 
+                  onChange={(e) => setNavState({...navState, promoBox: {...navState.promoBox, description: e.target.value}})}
+                  className="w-full px-3 py-2 text-sm border rounded-lg bg-black/5 h-20 resize-none" 
+                  placeholder="Description"
                 />
-                <input 
-                  type="text" 
-                  value={link.icon} 
-                  onChange={(e) => {
-                    const newNav = { ...navState };
-                    newNav.pages[idx].icon = e.target.value;
-                    setNavState(newNav);
-                  }}
-                  className="w-1/4 px-2 py-1.5 text-xs border border-transparent rounded bg-black/5 focus:bg-white focus:border-card-border outline-none transition-colors" 
-                  placeholder="Icon"
-                />
-                <button 
-                  type="button" 
-                  onClick={() => {
-                    const newNav = { ...navState };
-                    newNav.pages.splice(idx, 1);
-                    setNavState(newNav);
-                  }}
-                  className="p-1.5 text-rose-500 hover:bg-rose-50 rounded"
-                >
-                  <Trash2 size={14} />
-                </button>
-              </div>
-            ))}
+              </>
+            )}
           </div>
         </div>
+
+        {/* Bottom Profile Config */}
+        <div>
+          <h3 className="font-bold text-sm mb-4 border-b border-[#ececec] pb-2">Admin Profile Button</h3>
+          <div className="bg-white p-4 rounded-xl border border-[#ececec] shadow-sm space-y-3">
+            <select 
+              value={navState.userProfile.type}
+              onChange={(e) => setNavState({...navState, userProfile: {...navState.userProfile, type: e.target.value}})}
+              className="w-full px-3 py-2 text-sm border rounded-lg bg-black/5"
+            >
+              <option value="button">Single Profile Button</option>
+              <option value="dropdown">Interactive Dropdown Menu</option>
+              <option value="hidden">Hide Profile Area entirely</option>
+            </select>
+            
+            {navState.userProfile.type !== 'hidden' && (
+              <div className="flex gap-2">
+                <input 
+                  type="text" 
+                  value={navState.userProfile.name} 
+                  onChange={(e) => setNavState({...navState, userProfile: {...navState.userProfile, name: e.target.value}})}
+                  className="w-1/2 px-3 py-2 text-sm border rounded-lg bg-black/5" 
+                  placeholder="Display Name"
+                />
+                <input 
+                  type="text" 
+                  value={navState.userProfile.email} 
+                  onChange={(e) => setNavState({...navState, userProfile: {...navState.userProfile, email: e.target.value}})}
+                  className="w-1/2 px-3 py-2 text-sm border rounded-lg bg-black/5" 
+                  placeholder="Email Subtitle"
+                />
+              </div>
+            )}
+          </div>
+        </div>
+
       </div>
 
       <div className="p-6 border-t border-[#ececec] bg-white">
@@ -184,7 +234,7 @@ export default function QuickAddPanel({
           disabled={isPending}
           className="w-full flex justify-center items-center gap-2 px-6 py-3 bg-btn-bg text-btn-text text-sm font-semibold rounded-btn hover:bg-btn-hover transition-colors shadow-lg disabled:opacity-70"
         >
-          <Save size={16} /> {isPending ? 'Saving...' : 'Save Navigation'}
+          <Save size={16} /> {isPending ? 'Saving...' : 'Deploy Global Navigation Changes'}
         </button>
       </div>
     </div>

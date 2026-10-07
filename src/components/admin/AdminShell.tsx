@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import React, { useState } from 'react';
@@ -21,6 +22,7 @@ export default function AdminShell({ children, initialNav }: { children: React.R
     return <>{children}</>;
   }
 
+  // Normalize legacy nav to new sections array
   const defaultDashboardLinks = [
     { href: '/admin/default', label: 'Default', icon: 'LayoutDashboard' },
     { href: '/admin/crm', label: 'CRM', icon: 'User' },
@@ -33,8 +35,14 @@ export default function AdminShell({ children, initialNav }: { children: React.R
     { href: '/admin/settings', label: 'System Design', icon: 'Settings' },
   ];
 
-  const dashboards = initialNav?.dashboards || defaultDashboardLinks;
-  const pages = initialNav?.pages || defaultPageLinks;
+  const normalizedNav = (initialNav?.sections) ? initialNav : {
+    sections: [
+      { id: 's1', title: 'Dashboards', links: initialNav?.dashboards || defaultDashboardLinks },
+      { id: 's2', title: 'Pages', links: initialNav?.pages || defaultPageLinks }
+    ],
+    promoBox: { enabled: true, title: 'Have something in mind?', description: 'Suggest a feature or discuss custom work with me on 𝕏 or by email.' },
+    userProfile: { type: 'button', name: 'Admin', email: 'hello@admin.com' }
+  };
 
   return (
     <div className="flex h-screen overflow-hidden bg-surface text-surface-text font-sans">
@@ -77,73 +85,57 @@ export default function AdminShell({ children, initialNav }: { children: React.R
         </div>
 
         <nav className="flex-1 px-3 py-4 space-y-6 overflow-y-auto custom-scrollbar">          
-          <div>
-            <div className="px-3 mb-2 text-[11px] font-semibold text-slate-500 tracking-wider">Dashboards</div>
-            <div className="space-y-0.5">
-              {dashboards.map((link: any) => {
-                const isActive = pathname.startsWith(link.href) || (link.href === '/admin/academy' && pathname === '/admin');
-                const IconComponent = (Icons as any)[link.icon] || Icons.Circle;
-                return (
-                  <a 
-                    key={link.href} 
-                    href={link.href} 
-                    className={`flex items-center gap-3 px-3 py-2 transition-colors text-[13px] font-medium rounded-btn ${
-                      isActive 
-                        ? 'bg-btn-bg text-btn-text shadow-sm hover:bg-btn-hover hover:text-btn-hover-text' 
-                        : 'text-surface-text/70 hover:bg-card-hover hover:text-surface-text'
-                    }`}
-                  >
-                    <IconComponent size={16} className={isActive ? 'text-btn-text' : 'opacity-70'} />
-                    {link.label}
-                  </a>
-                );
-              })}
+          {normalizedNav.sections.map((section: any) => (
+            <div key={section.id}>
+              <div className="px-3 mb-2 text-[11px] font-semibold text-slate-500 tracking-wider">{section.title}</div>
+              <div className="space-y-0.5">
+                {section.links.map((link: any) => {
+                  const isActive = pathname.startsWith(link.href) || (link.href === '/admin/academy' && pathname === '/admin');
+                  const IconComponent = (Icons as any)[link.icon] || Icons.Circle;
+                  return (
+                    <a 
+                      key={link.href + link.label} 
+                      href={link.href} 
+                      className={`flex items-center gap-3 px-3 py-2 transition-colors text-[13px] font-medium rounded-btn ${
+                        isActive 
+                          ? 'bg-btn-bg text-btn-text shadow-sm hover:bg-btn-hover hover:text-btn-hover-text' 
+                          : 'text-surface-text/70 hover:bg-card-hover hover:text-surface-text'
+                      }`}
+                    >
+                      <IconComponent size={16} className={isActive ? 'text-btn-text' : 'opacity-70'} />
+                      {link.label}
+                    </a>
+                  );
+                })}
+              </div>
             </div>
-          </div>
-
-          <div>
-            <div className="px-3 mb-2 text-[11px] font-semibold text-slate-500 tracking-wider">Pages</div>
-            <div className="space-y-0.5">
-              {pages.map((link: unknown) => {
-                const isActive = pathname.startsWith(link.href);
-                const IconComponent = (Icons as unknown)[link.icon] || Icons.Circle;
-                return (
-                  <a 
-                    key={link.href} 
-                    href={link.href} 
-                    className={`flex items-center gap-3 px-3 py-2 transition-colors text-[13px] font-medium rounded-btn ${
-                      isActive 
-                        ? 'bg-btn-bg text-btn-text shadow-sm hover:bg-btn-hover hover:text-btn-hover-text' 
-                        : 'text-surface-text/70 hover:bg-card-hover hover:text-surface-text'
-                    }`}
-                  >
-                    <IconComponent size={16} className={isActive ? 'text-btn-text' : 'opacity-70'} />
-                    {link.label}
-                  </a>
-                );
-              })}
-            </div>
-          </div>
+          ))}
         </nav>
 
         <div className="p-4 shrink-0">
-          <div className="p-4 bg-white border border-[#ececec] rounded-xl shadow-sm mb-4">
-            <h4 className="text-[13px] font-bold mb-1">Have something in mind?</h4>
-            <p className="text-[12px] text-slate-500 mb-1 leading-relaxed">
-              Suggest a feature or discuss custom work with me on <span className="font-semibold text-slate-700">𝕏</span> or by email.
-            </p>
-          </div>
+          {normalizedNav.promoBox?.enabled && (
+            <div className="p-4 bg-white border border-[#ececec] rounded-xl shadow-sm mb-4">
+              <h4 className="text-[13px] font-bold mb-1">{normalizedNav.promoBox.title}</h4>
+              <p className="text-[12px] text-slate-500 mb-1 leading-relaxed">
+                {normalizedNav.promoBox.description}
+              </p>
+            </div>
+          )}
           
-          <div className="flex items-center gap-3 px-2">
-            <div className="w-8 h-8 rounded-full bg-slate-200 overflow-hidden shrink-0">
-              {/* Profile placeholder */}
-              <div className="w-full h-full bg-slate-300"></div>
-            </div>
-            <div className="flex-1 min-w-0">
-              <div className="text-[13px] font-medium truncate">Arham Khan</div>
-              <div className="text-[11px] text-slate-500 truncate">hello@arhamkhnz.com</div>
-            </div>
-          </div>
+          {normalizedNav.userProfile?.type !== 'hidden' && (
+            <button className="w-full flex items-center gap-3 px-2 py-2 hover:bg-black/5 rounded-xl transition-colors text-left">
+              <div className="w-8 h-8 rounded-full bg-slate-200 overflow-hidden shrink-0 flex items-center justify-center text-slate-500">
+                <User size={16} />
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="text-[13px] font-medium truncate">{normalizedNav.userProfile?.name}</div>
+                <div className="text-[11px] text-slate-500 truncate">{normalizedNav.userProfile?.email}</div>
+              </div>
+              {normalizedNav.userProfile?.type === 'dropdown' && (
+                <Icons.ChevronDown size={14} className="text-slate-400" />
+              )}
+            </button>
+          )}
         </div>
       </aside>
 
