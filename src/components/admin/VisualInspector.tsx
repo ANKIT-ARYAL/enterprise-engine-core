@@ -1,8 +1,9 @@
 'use client';
 
 import React, { useState, useEffect, useTransition } from 'react';
-import { MousePointer2, X, Settings2, Code, Type, Palette, Save } from 'lucide-react';
+import { MousePointer2, X, Settings2, Code, Type, Palette, Save, Trash2 } from 'lucide-react';
 import { saveVisualPatch } from '@/app/actions/patch-action';
+import { clearAllPatches } from '@/app/actions/clear-patches';
 
 // Helper to generate a robust CSS selector
 function getCssPath(el: HTMLElement): string {
@@ -289,7 +290,21 @@ export default function VisualInspector() {
 
       {/* Persistent Toggle Button when active */}
       {!selectedElement && (
-        <div className="fixed bottom-6 right-6 z-[10000]">
+        <div className="fixed bottom-6 right-6 z-[10000] flex gap-2">
+          <button 
+            onClick={() => {
+              if (confirm('Are you sure you want to clear all visual patches? This will reset the UI to its original code state.')) {
+                startTransition(async () => {
+                  await clearAllPatches();
+                });
+              }
+            }}
+            disabled={isPending}
+            className="flex items-center gap-2 px-4 py-2 bg-card-bg text-surface-text border border-card-border rounded-btn shadow-lg hover:bg-card-hover transition-colors text-xs font-bold disabled:opacity-50"
+          >
+            <Trash2 size={14} /> Clear Patches
+          </button>
+          
           <button 
             onClick={() => setIsActive(false)}
             className="flex items-center gap-2 px-4 py-2 bg-rose-500 text-white rounded-btn shadow-lg hover:bg-rose-600 transition-colors text-xs font-bold"
