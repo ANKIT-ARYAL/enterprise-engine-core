@@ -22,12 +22,12 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
   ];
 
   return (
-    <div className="flex h-screen overflow-hidden bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 font-sans">
+    <div className="flex h-screen overflow-hidden bg-surface text-surface-text font-sans">
       
       {/* Mobile Hamburger Button */}
       <button 
         onClick={() => setSidebarOpen(true)}
-        className="xl:hidden fixed top-4 left-4 z-50 p-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg shadow-sm"
+        className="xl:hidden fixed top-4 left-4 z-50 p-2 bg-card-bg border border-card-border rounded-lg shadow-sm"
       >
         <Menu size={24} />
       </button>
@@ -42,7 +42,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
 
       {/* Sidebar */}
       <aside className={`
-        fixed xl:static inset-y-0 left-0 z-50 w-72 bg-white dark:bg-slate-950 border-r border-slate-200 dark:border-slate-800 
+        fixed xl:static inset-y-0 left-0 z-50 w-72 bg-card-bg border-r border-card-border 
         transform transition-transform duration-300 ease-in-out flex flex-col
         ${sidebarOpen ? 'translate-x-0' : '-translate-x-full xl:translate-x-0'}
       `}>
@@ -64,10 +64,10 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
               <a 
                 key={link.href} 
                 href={link.href} 
-                className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all font-medium ${
+                className={`flex items-center gap-3 px-4 py-3 rounded-btn transition-all font-medium ${
                   isActive 
-                    ? 'bg-[var(--primary)] text-white shadow-md shadow-[var(--primary)]/20' 
-                    : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-900'
+                    ? 'bg-primary text-white shadow-md shadow-primary/20' 
+                    : 'opacity-70 hover:opacity-100 hover:bg-black/5'
                 }`}
               >
                 <Icon size={20} />
@@ -77,9 +77,9 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
           })}
         </nav>
 
-        <div className="p-6 border-t border-slate-200 dark:border-slate-800">
+        <div className="p-6 border-t border-card-border">
           <form action="/api/auth/logout" method="POST">
-            <button className="w-full py-2.5 px-4 bg-slate-100 dark:bg-slate-900 text-slate-700 dark:text-slate-300 rounded-xl font-medium hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors">
+            <button className="w-full py-2.5 px-4 bg-btn-bg text-btn-text rounded-btn font-medium hover:bg-btn-hover-bg transition-colors shadow-sm">
               Sign Out
             </button>
           </form>

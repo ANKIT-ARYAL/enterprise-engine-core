@@ -28,12 +28,32 @@ export default function SettingsForm({ initialSettings }: { initialSettings: any
   // Dynamically inject CSS variables to the document root to update the Admin UI live
   useEffect(() => {
     const root = document.documentElement;
+    // Core
     if (liveTokens.primaryColor) root.style.setProperty('--primary', liveTokens.primaryColor);
+    if (liveTokens.accentColor) root.style.setProperty('--accent', liveTokens.accentColor);
     if (liveTokens.backgroundColor) root.style.setProperty('--bg-body', liveTokens.backgroundColor);
     if (liveTokens.textColor) root.style.setProperty('--text-main', liveTokens.textColor);
+    
+    // Geometry
     if (liveTokens.radius) root.style.setProperty('--radius', liveTokens.radius);
-    if (liveTokens.fontHeading) root.style.setProperty('--font-heading', liveTokens.fontHeading);
-    if (liveTokens.fontBody) root.style.setProperty('--font-body', liveTokens.fontBody);
+    if (liveTokens.buttonRadius) root.style.setProperty('--button-radius', liveTokens.buttonRadius === 'var(--radius)' ? liveTokens.radius : liveTokens.buttonRadius);
+    if (liveTokens.cardRadius) root.style.setProperty('--card-radius', liveTokens.cardRadius === 'var(--radius)' ? liveTokens.radius : liveTokens.cardRadius);
+    if (liveTokens.containerWidth) root.style.setProperty('--container-max', liveTokens.containerWidth);
+    
+    // Typography
+    if (liveTokens.fontHeading) root.style.setProperty('--font-heading', `"${liveTokens.fontHeading}", -apple-system, sans-serif`);
+    if (liveTokens.fontBody) root.style.setProperty('--font-body', `"${liveTokens.fontBody}", -apple-system, sans-serif`);
+    
+    // Components (Cards)
+    if (liveTokens.cardBgColor) root.style.setProperty('--card-bg', liveTokens.cardBgColor);
+    if (liveTokens.cardHoverBgColor) root.style.setProperty('--card-hover-bg', liveTokens.cardHoverBgColor);
+    if (liveTokens.cardBorderColor) root.style.setProperty('--card-border', liveTokens.cardBorderColor);
+    
+    // Components (Buttons)
+    if (liveTokens.buttonBgColor) root.style.setProperty('--btn-bg', liveTokens.buttonBgColor);
+    if (liveTokens.buttonHoverBgColor) root.style.setProperty('--btn-hover-bg', liveTokens.buttonHoverBgColor);
+    if (liveTokens.buttonTextColor) root.style.setProperty('--btn-text', liveTokens.buttonTextColor);
+    if (liveTokens.buttonHoverTextColor) root.style.setProperty('--btn-hover-text', liveTokens.buttonHoverTextColor);
   }, [liveTokens]);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -127,7 +147,7 @@ export default function SettingsForm({ initialSettings }: { initialSettings: any
             
             {activeTab === 'palette' && (
               <div className="space-y-6 animate-in fade-in duration-200">
-                <div className="border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden bg-white dark:bg-slate-900 shadow-sm">
+                <div className="border border-card-border rounded-card overflow-hidden bg-card-bg shadow-sm">
                   <div className="px-4 py-3 border-b border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 flex items-center gap-2 font-medium text-sm">
                     <Palette size={16} className="text-slate-400" /> SEMANTIC PALETTE ENGINE
                   </div>
@@ -153,7 +173,7 @@ export default function SettingsForm({ initialSettings }: { initialSettings: any
 
             {activeTab === 'typography' && (
               <div className="space-y-6 animate-in fade-in duration-200">
-                <div className="border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden bg-white dark:bg-slate-900 shadow-sm">
+                <div className="border border-card-border rounded-card overflow-hidden bg-card-bg shadow-sm">
                   <div className="px-4 py-3 border-b border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 flex items-center gap-2 font-medium text-sm">
                     <Type size={16} className="text-slate-400" /> FLUID TYPOGRAPHY CALCULATOR
                   </div>
@@ -182,7 +202,7 @@ export default function SettingsForm({ initialSettings }: { initialSettings: any
 
             {activeTab === 'geometry' && (
               <div className="space-y-6 animate-in fade-in duration-200">
-                <div className="border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden bg-white dark:bg-slate-900 shadow-sm">
+                <div className="border border-card-border rounded-card overflow-hidden bg-card-bg shadow-sm">
                   <div className="px-4 py-3 border-b border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 flex items-center gap-2 font-medium text-sm">
                     <Layout size={16} className="text-slate-400" /> GEOMETRY & STRUCTURE
                   </div>
@@ -206,7 +226,7 @@ export default function SettingsForm({ initialSettings }: { initialSettings: any
 
             {activeTab === 'depth' && (
               <div className="space-y-6 animate-in fade-in duration-200">
-                <div className="border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden bg-white dark:bg-slate-900 shadow-sm">
+                <div className="border border-card-border rounded-card overflow-hidden bg-card-bg shadow-sm">
                   <div className="px-4 py-3 border-b border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 flex items-center gap-2 font-medium text-sm">
                     <Layers size={16} className="text-slate-400" /> ELEVATION & MOTION
                   </div>
@@ -232,7 +252,7 @@ export default function SettingsForm({ initialSettings }: { initialSettings: any
 
             {activeTab === 'css' && (
               <div className="space-y-6 animate-in fade-in duration-200">
-                <div className="border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden bg-white dark:bg-slate-900 shadow-sm">
+                <div className="border border-card-border rounded-card overflow-hidden bg-card-bg shadow-sm">
                   <div className="px-4 py-3 border-b border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 flex items-center gap-2 font-medium text-sm">
                     <Code size={16} className="text-slate-400" /> RAW CSS OVERRIDES
                   </div>

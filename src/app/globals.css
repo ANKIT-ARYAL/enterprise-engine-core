@@ -1,5 +1,23 @@
 @import "tailwindcss";
 
+@theme {
+  --color-primary: var(--primary);
+  --color-accent: var(--accent);
+  --color-surface: var(--bg-body);
+  --color-surface-text: var(--text-main);
+  --color-card-bg: var(--card-bg);
+  --color-card-border: var(--card-border);
+  --color-btn-bg: var(--btn-bg);
+  --color-btn-text: var(--btn-text);
+  
+  --radius-global: var(--radius);
+  --radius-card: var(--card-radius);
+  --radius-btn: var(--button-radius);
+  
+  --font-heading: var(--font-heading);
+  --font-body: var(--font-body);
+}
+
 :root {
   /* Dynamic Injection Defaults (Replaced at runtime by TokenProvider) */
   --primary: #2563eb;
