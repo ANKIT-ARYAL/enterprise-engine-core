@@ -1,3 +1,5 @@
+export const instant = false;
+
 import { notFound } from 'next/navigation';
 import { getCachedPagePayload } from '@/lib/db/queries';
 import { SectionDispatcher } from '@/components/engine/SectionDispatcher';
