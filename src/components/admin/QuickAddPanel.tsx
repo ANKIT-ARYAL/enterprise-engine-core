@@ -1,9 +1,75 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
-import React, { useState, useTransition } from 'react';
-import { X, Plus, Trash2, Save, Menu, User, Bell } from 'lucide-react';
+import React, { useState, useTransition, useRef, useEffect } from 'react';
+import { X, Plus, Trash2, Save, Menu, User, Bell, ChevronDown } from 'lucide-react';
+import * as Icons from 'lucide-react';
 import { updateNavigationAction } from '@/app/actions/update-navigation-action';
+
+const popularIcons = [
+  'None',
+  'LayoutDashboard', 'Package', 'ShoppingCart', 'Users', 'Settings', 'Mail', 
+  'CreditCard', 'GraduationCap', 'User', 'Bell', 'Search', 'FileText', 
+  'PieChart', 'Activity', 'Truck', 'Server', 'Plus', 'Trash2', 'Home', 
+  'Folder', 'Calendar', 'Map', 'Camera', 'Image', 'Box', 'Briefcase', 'Book',
+  'Link', 'Globe', 'Compass', 'Lock', 'Shield', 'Star', 'Heart', 'Zap'
+];
+
+function IconPicker({ value, onChange }: { value: string, onChange: (val: string) => void }) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (ref.current && !ref.current.contains(event.target as Node)) {
+        setOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const ActiveIcon = value && value !== 'None' ? (Icons as any)[value] : null;
+
+  return (
+    <div className="relative" ref={ref}>
+      <button 
+        type="button" 
+        onClick={() => setOpen(!open)}
+        className="flex items-center justify-between gap-2 w-28 px-2 py-1.5 text-xs border border-transparent rounded bg-white hover:bg-black/5 outline-none transition-colors"
+      >
+        <span className="flex items-center gap-1.5 truncate">
+          {ActiveIcon ? <ActiveIcon size={14} className="opacity-70 shrink-0" /> : <div className="w-3.5 h-3.5 rounded-full border border-dashed border-black/30 shrink-0" />}
+          <span className="truncate">{value || 'None'}</span>
+        </span>
+        <ChevronDown size={12} className="opacity-50 shrink-0" />
+      </button>
+
+      {open && (
+        <div className="absolute right-0 top-full mt-1 w-64 bg-white border border-[#ececec] shadow-xl rounded-lg z-[200] p-2 max-h-64 overflow-y-auto custom-scrollbar grid grid-cols-4 gap-1 animate-in fade-in zoom-in-95 duration-100">
+          {popularIcons.map(iconName => {
+            const IconComp = iconName !== 'None' ? (Icons as any)[iconName] : null;
+            return (
+              <button
+                key={iconName}
+                type="button"
+                title={iconName}
+                onClick={() => {
+                  onChange(iconName === 'None' ? '' : iconName);
+                  setOpen(false);
+                }}
+                className={`flex flex-col items-center justify-center p-2 rounded-md hover:bg-black/5 transition-colors gap-1 ${value === iconName ? 'bg-primary/10 text-primary' : 'text-slate-600'}`}
+              >
+                {IconComp ? <IconComp size={18} /> : <div className="w-[18px] h-[18px] rounded-full border border-dashed border-black/30" />}
+                <span className="text-[9px] w-full text-center truncate">{iconName}</span>
+              </button>
+            )
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
 
 export default function QuickAddPanel({ 
   isOpen, 
@@ -118,16 +184,13 @@ export default function QuickAddPanel({
                         className="flex-1 px-2 py-1.5 text-xs border border-transparent rounded bg-white outline-none" 
                         placeholder="URL path"
                       />
-                      <input 
-                        type="text" 
+                      <IconPicker 
                         value={link.icon} 
-                        onChange={(e) => {
+                        onChange={(val) => {
                           const newSections = [...navState.sections];
-                          newSections[sIdx].links[lIdx].icon = e.target.value;
+                          newSections[sIdx].links[lIdx].icon = val;
                           setNavState({ ...navState, sections: newSections });
                         }}
-                        className="w-24 px-2 py-1.5 text-xs border border-transparent rounded bg-white outline-none" 
-                        placeholder="Icon"
                       />
                       <button 
                         type="button" 
@@ -266,16 +329,13 @@ export default function QuickAddPanel({
                             className="flex-1 px-2 py-1.5 text-xs border border-transparent rounded bg-black/5 focus:bg-white focus:border-card-border outline-none" 
                             placeholder="URL"
                           />
-                          <input 
-                            type="text" 
+                          <IconPicker 
                             value={link.icon} 
-                            onChange={(e) => {
+                            onChange={(val) => {
                               const newLinks = [...(navState.userProfile.links || [])];
-                              newLinks[idx].icon = e.target.value;
+                              newLinks[idx].icon = val;
                               setNavState({...navState, userProfile: {...navState.userProfile, links: newLinks}});
                             }}
-                            className="w-20 px-2 py-1.5 text-xs border border-transparent rounded bg-black/5 focus:bg-white focus:border-card-border outline-none" 
-                            placeholder="Icon"
                           />
                           <button 
                             type="button" 
