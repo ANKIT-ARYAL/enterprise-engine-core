@@ -151,14 +151,16 @@ export default function SettingsForm({ initialSettings }: { initialSettings: any
                     key={tab.id}
                     type="button"
                     onClick={() => setActiveTab(tab.id)}
-                    className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-all text-sm font-medium ${
+                    className={`flex items-center justify-start gap-3 px-3 py-2 rounded-lg transition-all text-sm font-medium text-left ${
                       activeTab === tab.id 
                         ? 'bg-primary text-white shadow-md' 
                         : 'opacity-70 hover:opacity-100 hover:bg-black/5'
                     }`}
                   >
-                    <tab.icon size={16} />
-                    {tab.label}
+                    <div className="shrink-0">
+                      <tab.icon size={16} />
+                    </div>
+                    <span>{tab.label}</span>
                   </button>
                 ))}
               </div>
