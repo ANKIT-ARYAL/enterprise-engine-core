@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { usePathname } from 'next/navigation';
 import * as Icons from 'lucide-react';
+import QuickAddPanel from '@/components/admin/QuickAddPanel';
 import { 
   Menu, X, LayoutDashboard, Settings, Image as ImageIcon, Trash2, Box, 
   Search, Bell, Moon, User, Plus, Mail, CreditCard, 
@@ -13,6 +14,7 @@ import {
 export default function AdminShell({ children, initialNav }: { children: React.ReactNode, initialNav?: any }) {
   const pathname = usePathname();
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [isQuickAddOpen, setIsQuickAddOpen] = useState(false);
 
   // Do not render the shell for the login page
   if (pathname === '/admin/login') {
@@ -62,7 +64,10 @@ export default function AdminShell({ children, initialNav }: { children: React.R
         
         <div className="px-4 py-2 shrink-0">
           <div className="flex gap-2">
-            <button className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-btn-bg text-btn-text rounded-btn text-sm font-medium hover:bg-btn-hover hover:text-btn-hover-text transition-colors shadow-sm">
+            <button 
+              onClick={() => setIsQuickAddOpen(true)}
+              className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-btn-bg text-btn-text rounded-btn text-sm font-medium hover:bg-btn-hover hover:text-btn-hover-text transition-colors shadow-sm"
+            >
               <Plus size={16} /> Quick Create
             </button>
             <button className="px-3 py-2 border border-[#ececec] rounded-md text-slate-600 hover:bg-slate-50 transition-colors">
@@ -71,8 +76,7 @@ export default function AdminShell({ children, initialNav }: { children: React.R
           </div>
         </div>
 
-        <nav className="flex-1 px-3 py-4 space-y-6 overflow-y-auto custom-scrollbar">
-          
+        <nav className="flex-1 px-3 py-4 space-y-6 overflow-y-auto custom-scrollbar">          
           <div>
             <div className="px-3 mb-2 text-[11px] font-semibold text-slate-500 tracking-wider">Dashboards</div>
             <div className="space-y-0.5">
@@ -100,9 +104,9 @@ export default function AdminShell({ children, initialNav }: { children: React.R
           <div>
             <div className="px-3 mb-2 text-[11px] font-semibold text-slate-500 tracking-wider">Pages</div>
             <div className="space-y-0.5">
-              {pages.map((link: any) => {
+              {pages.map((link: unknown) => {
                 const isActive = pathname.startsWith(link.href);
-                const IconComponent = (Icons as any)[link.icon] || Icons.Circle;
+                const IconComponent = (Icons as unknown)[link.icon] || Icons.Circle;
                 return (
                   <a 
                     key={link.href} 
@@ -190,6 +194,13 @@ export default function AdminShell({ children, initialNav }: { children: React.R
           </div>
         </main>
       </div>
+
+      {/* Slide-over Panel for Sidebar Navigation Configuration */}
+      <QuickAddPanel 
+        isOpen={isQuickAddOpen} 
+        onClose={() => setIsQuickAddOpen(false)} 
+        initialNav={initialNav || { dashboards: [], pages: [] }} 
+      />
     </div>
   );
 }
