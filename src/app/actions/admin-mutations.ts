@@ -5,6 +5,7 @@ import { prisma } from '@/lib/db/client';
 import { z } from 'zod';
 
 const SettingsSchema = z.object({
+  siteName: z.string().min(1),
   primaryColor: z.string().regex(/^#([0-9a-fA-F]{3}){1,2}$/),
   accentColor: z.string().regex(/^#([0-9a-fA-F]{3}){1,2}$/),
   backgroundColor: z.string().regex(/^#([0-9a-fA-F]{3}){1,2}$/),
@@ -12,6 +13,7 @@ const SettingsSchema = z.object({
   fontHeading: z.string().min(1),
   fontBody: z.string().min(1),
   radius: z.string().min(1),
+  customCss: z.string().optional().nullable(),
 });
 
 export async function updateSystemSettingsAction(input: z.infer<typeof SettingsSchema>) {
