@@ -163,10 +163,51 @@ export default function VisualInspector() {
               </button>
 
               <div className="text-[10px] font-bold uppercase tracking-widest opacity-50 mb-2 mt-4">Design Tokens</div>
-              <button className="w-full flex justify-between items-center px-3 py-2 text-xs font-medium border border-card-border rounded-btn bg-card-bg hover:bg-card-hover text-surface-text transition-colors opacity-50 cursor-not-allowed">
-                <span className="flex items-center gap-2"><Palette size={12} /> Bind to Token</span>
-                <span className="opacity-50">Coming Soon</span>
-              </button>
+              <div className="flex flex-col gap-2">
+                <select 
+                  className="w-full px-3 py-2 text-xs font-medium border border-card-border rounded-btn bg-card-bg text-surface-text focus:outline-none focus:ring-1 focus:ring-accent"
+                  onChange={(e) => {
+                    if (!e.target.value) return;
+                    
+                    const newClass = e.target.value;
+                    const currentClass = typeof selectedElement.className === 'string' 
+                      ? selectedElement.className 
+                      : (selectedElement.getAttribute('class') || '');
+                      
+                    // Basic duplicate check
+                    if (!currentClass.includes(newClass)) {
+                      const updatedClass = `${currentClass} ${newClass}`.trim();
+                      if (typeof selectedElement.className === 'string') {
+                        selectedElement.className = updatedClass;
+                      } else {
+                        selectedElement.setAttribute('class', updatedClass);
+                      }
+                    }
+                    e.target.value = ''; // Reset select
+                  }}
+                >
+                  <option value="">Select a token to bind...</option>
+                  <optgroup label="Backgrounds">
+                    <option value="bg-primary">Primary Brand</option>
+                    <option value="bg-accent">Accent Color</option>
+                    <option value="bg-surface">App Background</option>
+                    <option value="bg-card-bg">Card Background</option>
+                    <option value="bg-btn-bg">Button Background</option>
+                  </optgroup>
+                  <optgroup label="Text Colors">
+                    <option value="text-primary">Primary Brand Text</option>
+                    <option value="text-surface-text">Default Text</option>
+                    <option value="text-btn-text">Button Text</option>
+                  </optgroup>
+                  <optgroup label="Radii & Shapes">
+                    <option value="rounded-btn">Button Roundness</option>
+                    <option value="rounded-card">Card Roundness</option>
+                  </optgroup>
+                </select>
+                <p className="text-[9px] opacity-60 leading-tight">
+                  Binding appends the token's Tailwind class to the element, linking it to the global design system.
+                </p>
+              </div>
 
               <div className="text-[10px] font-bold uppercase tracking-widest opacity-50 mb-2 mt-4">Developer Tools</div>
               <div className="space-y-2">
