@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { usePathname } from 'next/navigation';
 import { 
   Menu, X, LayoutDashboard, Settings, Image as ImageIcon, Trash2, Box, 
-  Search, Bell, Moon, Github, User, Plus, Mail, CreditCard, 
+  Search, Bell, Moon, User, Plus, Mail, CreditCard, 
   PieChart, Activity, ShoppingCart, GraduationCap, Truck, Server, FileText, ActivitySquare,
   PanelLeftClose, PanelLeftOpen
 } from 'lucide-react';
@@ -180,9 +180,6 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
             </button>
             <button className="p-2 text-slate-500 hover:bg-slate-100 rounded-md transition-colors">
               <Moon size={18} />
-            </button>
-            <button className="p-2 text-slate-500 hover:bg-slate-100 rounded-md transition-colors">
-              <Github size={18} />
             </button>
             <div className="w-8 h-8 rounded-full bg-slate-200 overflow-hidden ml-2 cursor-pointer border border-[#ececec]">
               <div className="w-full h-full bg-slate-300"></div>
