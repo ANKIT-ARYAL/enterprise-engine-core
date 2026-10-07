@@ -56,36 +56,7 @@ model Session {
 model SystemSettings {
   id              String   @id @default("global_config")
   siteName        String   @default("Modular Engine")
-  primaryColor    String   @default("#2563eb")
-  accentColor     String   @default("#f97316")
-  backgroundColor String   @default("#ffffff")
-  textColor       String   @default("#0f172a")
-  fontHeading     String   @default("Inter")
-  fontBody        String   @default("Inter")
-  radius          String   @default("0.5rem")
-  buttonRadius    String   @default("0.5rem")
-  cardRadius      String   @default("0.75rem")
-  containerWidth  String   @default("1440px")
-  shadowStyle     String   @default("md")
-  hoverEffects    Boolean  @default(true)
-  animations      Boolean  @default(true)
-  
-  // Advanced Card Tokens
-  cardBgColor          String @default("#ffffff")
-  cardHoverBgColor     String @default("#f8fafc")
-  cardBorderColor      String @default("#e2e8f0")
-  cardHoverBorderColor String @default("#cbd5e1")
-  cardShadow           String @default("sm")
-  cardHoverShadow      String @default("md")
-  
-  // Advanced Button Tokens
-  buttonBgColor        String @default("#2563eb")
-  buttonHoverBgColor   String @default("#1d4ed8")
-  buttonTextColor      String @default("#ffffff")
-  buttonHoverTextColor String @default("#ffffff")
-  buttonShadow         String @default("sm")
-  buttonHoverShadow    String @default("md")
-
+  tokens          Json     @default("{}")
   customCss       String?  @db.Text
   updatedAt       DateTime @updatedAt
 }

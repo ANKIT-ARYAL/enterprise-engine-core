@@ -2,46 +2,49 @@
 
 import { useState, useTransition } from 'react';
 import { updateSystemSettingsAction } from '@/app/actions/admin-mutations';
-import { Palette, Type, Layout, Code, Save, CheckCircle2, Sliders, Box, MousePointer2 } from 'lucide-react';
+import { Palette, Type, Layout, Code, Save, CheckCircle2, Box, MousePointer2, Layers, Settings2 } from 'lucide-react';
 
 export default function SettingsForm({ initialSettings }: { initialSettings: any }) {
   const [isPending, startTransition] = useTransition();
   const [success, setSuccess] = useState(false);
+  const [activeTab, setActiveTab] = useState('palette');
+  
+  // Load default tokens if they exist, fallback safely
+  const tokens = (initialSettings.tokens as any) || {};
+
+  // For the Live Preview, we'll keep local state of the form to react instantly
+  const [liveTokens, setLiveTokens] = useState(tokens);
+
+  const handleLiveChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value, type } = e.target;
+    const isCheckbox = type === 'checkbox';
+    const checked = isCheckbox ? (e.target as HTMLInputElement).checked : false;
+    
+    setLiveTokens((prev: any) => ({
+      ...prev,
+      [name]: isCheckbox ? checked : value
+    }));
+  };
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
+    
+    const newTokens: any = {};
+    formData.forEach((value, key) => {
+      if (key !== 'siteName' && key !== 'customCss') {
+        newTokens[key] = value === 'on' ? true : value;
+      }
+    });
+
+    // Handle checkboxes that might be unchecked (and thus absent from FormData)
+    newTokens.hoverEffects = formData.get('hoverEffects') === 'on';
+    newTokens.animations = formData.get('animations') === 'on';
+
     const data = {
       siteName: formData.get('siteName') as string,
-      primaryColor: formData.get('primaryColor') as string,
-      accentColor: formData.get('accentColor') as string,
-      backgroundColor: formData.get('backgroundColor') as string,
-      textColor: formData.get('textColor') as string,
-      fontHeading: formData.get('fontHeading') as string,
-      fontBody: formData.get('fontBody') as string,
-      radius: formData.get('radius') as string,
-      buttonRadius: formData.get('buttonRadius') as string,
-      cardRadius: formData.get('cardRadius') as string,
-      containerWidth: formData.get('containerWidth') as string,
-      shadowStyle: formData.get('shadowStyle') as string,
-      hoverEffects: formData.get('hoverEffects') === 'on',
-      animations: formData.get('animations') === 'on',
-      
-      cardBgColor: formData.get('cardBgColor') as string,
-      cardHoverBgColor: formData.get('cardHoverBgColor') as string,
-      cardBorderColor: formData.get('cardBorderColor') as string,
-      cardHoverBorderColor: formData.get('cardHoverBorderColor') as string,
-      cardShadow: formData.get('cardShadow') as string,
-      cardHoverShadow: formData.get('cardHoverShadow') as string,
-      
-      buttonBgColor: formData.get('buttonBgColor') as string,
-      buttonHoverBgColor: formData.get('buttonHoverBgColor') as string,
-      buttonTextColor: formData.get('buttonTextColor') as string,
-      buttonHoverTextColor: formData.get('buttonHoverTextColor') as string,
-      buttonShadow: formData.get('buttonShadow') as string,
-      buttonHoverShadow: formData.get('buttonHoverShadow') as string,
-      
       customCss: formData.get('customCss') as string,
+      tokens: newTokens,
     };
 
     startTransition(async () => {
@@ -51,284 +54,310 @@ export default function SettingsForm({ initialSettings }: { initialSettings: any
     });
   }
 
+  const tabs = [
+    { id: 'palette', icon: Palette, label: 'Palette & Semantics' },
+    { id: 'typography', icon: Type, label: 'Typography' },
+    { id: 'geometry', icon: Layout, label: 'Geometry & Radius' },
+    { id: 'components', icon: Box, label: 'UI Components' },
+    { id: 'motion', icon: MousePointer2, label: 'Motion & Depth' },
+    { id: 'css', icon: Code, label: 'Raw CSS' },
+  ];
+
   return (
-    <form onSubmit={handleSubmit} className="space-y-8 max-w-[1200px]">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+    <form onSubmit={handleSubmit} className="h-[calc(100vh-2rem)] flex flex-col">
+      {/* Top Bar */}
+      <div className="flex items-center justify-between mb-4 pb-4 border-b border-slate-200 dark:border-slate-800 shrink-0">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">System Design Studio</h1>
-          <p className="text-slate-500 dark:text-slate-400 mt-2">The central nervous system of your UI. Changes made here globally cascade to all components, buttons, and layouts instantly.</p>
+          <h1 className="text-2xl font-bold tracking-tight">System Design Studio</h1>
+          <p className="text-sm text-slate-500 mt-1">Configure global tokens. All changes sync in real-time across the app.</p>
         </div>
         <button 
           disabled={isPending}
           type="submit" 
-          className="flex items-center gap-2 px-8 py-3 bg-[var(--primary)] text-white font-semibold rounded-[var(--radius)] hover:brightness-110 transition-all disabled:opacity-70 shadow-lg shadow-[var(--primary)]/20 whitespace-nowrap"
+          className="flex items-center gap-2 px-6 py-2 bg-[var(--primary)] text-white font-semibold rounded-lg hover:brightness-110 transition-all disabled:opacity-70 shadow-lg shadow-[var(--primary)]/20"
         >
-          {success ? <CheckCircle2 size={20} /> : <Save size={20} />}
-          {isPending ? 'Deploying...' : success ? 'Deployed!' : 'Save & Deploy Tokens'}
+          {success ? <CheckCircle2 size={18} /> : <Save size={18} />}
+          {isPending ? 'Deploying...' : success ? 'Deployed!' : 'Save & Deploy'}
         </button>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      {/* 3-Column Workspace Workspace */}
+      <div className="flex gap-6 flex-1 min-h-0">
         
-        {/* Core Geometry (Radius) */}
-        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 md:p-8 shadow-sm">
-          <div className="flex items-center gap-3 mb-8 pb-4 border-b border-slate-100 dark:border-slate-800">
-            <div className="p-2 bg-emerald-50 text-emerald-500 rounded-lg"><Layout size={20} /></div>
-            <h2 className="font-semibold text-lg">Border Radii & Geometry</h2>
-          </div>
-          
-          <div className="space-y-6">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-              <div>
-                <label className="block text-sm font-medium mb-1">Global Base Radius</label>
-                <select name="radius" defaultValue={initialSettings.radius} className="w-full px-3 py-2.5 border rounded-lg dark:bg-slate-800 dark:border-slate-700">
-                  <option value="0px">Sharp (0px)</option>
-                  <option value="0.25rem">Subtle (4px)</option>
-                  <option value="0.5rem">Standard (8px)</option>
-                  <option value="0.75rem">Modern (12px)</option>
-                  <option value="1rem">Playful (16px)</option>
-                </select>
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-1">Button Radius Override</label>
-                <select name="buttonRadius" defaultValue={initialSettings.buttonRadius} className="w-full px-3 py-2.5 border rounded-lg dark:bg-slate-800 dark:border-slate-700">
-                  <option value="var(--radius)">Same as Base</option>
-                  <option value="0px">Sharp Corners (0px)</option>
-                  <option value="0.5rem">Rounded (8px)</option>
-                  <option value="9999px">Pill / Fully Rounded</option>
-                </select>
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-1">Card Radius Override</label>
-                <select name="cardRadius" defaultValue={initialSettings.cardRadius} className="w-full px-3 py-2.5 border rounded-lg dark:bg-slate-800 dark:border-slate-700">
-                  <option value="var(--radius)">Same as Base</option>
-                  <option value="0.5rem">Standard (8px)</option>
-                  <option value="1rem">Soft (16px)</option>
-                  <option value="1.5rem">Bubbly (24px)</option>
-                </select>
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-1">Max Container Width</label>
-                <select name="containerWidth" defaultValue={initialSettings.containerWidth} className="w-full px-3 py-2.5 border rounded-lg dark:bg-slate-800 dark:border-slate-700">
-                  <option value="1200px">Narrow (1200px)</option>
-                  <option value="1440px">Standard Desktop (1440px)</option>
-                  <option value="1600px">Ultrawide (1600px)</option>
-                  <option value="100%">Full Width Fluid</option>
-                </select>
-              </div>
-            </div>
-          </div>
+        {/* Left Column: Category Drawer */}
+        <div className="w-64 shrink-0 flex flex-col gap-2 border-r border-slate-200 dark:border-slate-800 pr-6 overflow-y-auto hidden md:flex">
+          <div className="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2 mt-2">Design Categories</div>
+          {tabs.map(tab => (
+            <button
+              key={tab.id}
+              type="button"
+              onClick={() => setActiveTab(tab.id)}
+              className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-sm font-medium ${
+                activeTab === tab.id 
+                  ? 'bg-slate-900 text-white dark:bg-white dark:text-slate-900 shadow-md' 
+                  : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
+              }`}
+            >
+              <tab.icon size={16} />
+              {tab.label}
+            </button>
+          ))}
         </div>
 
-        {/* Depth & Interaction */}
-        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 md:p-8 shadow-sm">
-          <div className="flex items-center gap-3 mb-8 pb-4 border-b border-slate-100 dark:border-slate-800">
-            <div className="p-2 bg-purple-50 text-purple-500 rounded-lg"><MousePointer2 size={20} /></div>
-            <h2 className="font-semibold text-lg">Depth & Interaction</h2>
-          </div>
+        {/* Center Column: Precision Control Deck */}
+        <div className="flex-1 overflow-y-auto pr-2 pb-20 custom-scrollbar">
           
-          <div className="space-y-6">
-            <div>
-              <label className="block text-sm font-medium mb-1">Global Shadow Intensity</label>
-              <select name="shadowStyle" defaultValue={initialSettings.shadowStyle} className="w-full px-3 py-2.5 border rounded-lg dark:bg-slate-800 dark:border-slate-700">
-                <option value="none">Flat Design (No Shadows)</option>
-                <option value="sm">Subtle / Hairline</option>
-                <option value="md">Standard Material</option>
-                <option value="lg">Soft & Elevated</option>
-                <option value="xl">Floaty / Neumorphic</option>
-              </select>
-            </div>
-            
-            <div className="flex items-center justify-between p-4 border rounded-xl dark:border-slate-800">
-              <div>
-                <h3 className="font-medium">Micro-Interactions (Hover)</h3>
-                <p className="text-sm text-slate-500">Enable card lifting and button brightness shifts on hover.</p>
-              </div>
-              <label className="relative inline-flex items-center cursor-pointer">
-                <input type="checkbox" name="hoverEffects" defaultChecked={initialSettings.hoverEffects} className="sr-only peer" />
-                <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-slate-600 peer-checked:bg-[var(--primary)]"></div>
-              </label>
-            </div>
-
-            <div className="flex items-center justify-between p-4 border rounded-xl dark:border-slate-800">
-              <div>
-                <h3 className="font-medium">Animations & Transitions</h3>
-                <p className="text-sm text-slate-500">Enable smooth fading, sliding, and layout transitions.</p>
-              </div>
-              <label className="relative inline-flex items-center cursor-pointer">
-                <input type="checkbox" name="animations" defaultChecked={initialSettings.animations} className="sr-only peer" />
-                <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-slate-600 peer-checked:bg-[var(--primary)]"></div>
-              </label>
-            </div>
-          </div>
-        </div>
-
-        {/* Brand Colors */}
-        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 md:p-8 shadow-sm">
-          <div className="flex items-center gap-3 mb-8 pb-4 border-b border-slate-100 dark:border-slate-800">
-            <div className="p-2 bg-pink-50 text-pink-500 rounded-lg"><Palette size={20} /></div>
-            <h2 className="font-semibold text-lg">Palette Studio</h2>
-          </div>
-          
-          <div className="space-y-6">
-            {[
-              { id: 'primaryColor', label: 'Primary Brand Color', desc: 'Main buttons, active links, primary borders.', val: initialSettings.primaryColor },
-              { id: 'accentColor', label: 'Accent / CTA Color', desc: 'Highlight elements, secondary buttons, alerts.', val: initialSettings.accentColor },
-              { id: 'backgroundColor', label: 'App Background', desc: 'The root body background color.', val: initialSettings.backgroundColor },
-              { id: 'textColor', label: 'Base Text Color', desc: 'The default color for all body typography.', val: initialSettings.textColor },
-            ].map(color => (
-              <div key={color.id} className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="max-w-2xl">
+            {activeTab === 'palette' && (
+              <div className="space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-300">
                 <div>
-                  <label className="text-sm font-medium">{color.label}</label>
-                  <p className="text-xs text-slate-500 max-w-[200px] mt-0.5">{color.desc}</p>
-                </div>
-                <div className="flex items-center gap-3 shrink-0">
-                  <input type="text" name={color.id} defaultValue={color.val} className="w-24 px-3 py-2 text-sm font-mono border rounded-lg dark:bg-slate-800 dark:border-slate-700" />
-                  <input type="color" defaultValue={color.val} className="w-12 h-12 rounded-lg cursor-pointer border-0 p-0"
-                    onChange={(e) => {
-                      const textInput = e.currentTarget.previousSibling as HTMLInputElement;
-                      if (textInput) textInput.value = e.currentTarget.value;
-                    }}
-                  />
+                  <h2 className="text-lg font-semibold mb-4">Core Colors</h2>
+                  <div className="space-y-4">
+                    {[
+                      { id: 'primaryColor', label: 'Primary Brand Color', val: liveTokens.primaryColor || '#2563eb' },
+                      { id: 'accentColor', label: 'Accent Color', val: liveTokens.accentColor || '#f97316' },
+                      { id: 'backgroundColor', label: 'App Background', val: liveTokens.backgroundColor || '#ffffff' },
+                      { id: 'textColor', label: 'Base Text Color', val: liveTokens.textColor || '#0f172a' },
+                    ].map(color => (
+                      <div key={color.id} className="flex items-center justify-between p-4 bg-white dark:bg-slate-900 border rounded-xl dark:border-slate-800 shadow-sm">
+                        <label className="text-sm font-medium">{color.label}</label>
+                        <div className="flex items-center gap-2 shrink-0">
+                          <input type="text" name={color.id} value={color.val} onChange={handleLiveChange} className="w-20 px-2 py-1.5 text-xs font-mono border rounded-lg dark:bg-slate-800 dark:border-slate-700" />
+                          <input type="color" name={color.id} value={color.val} onChange={handleLiveChange} className="w-8 h-8 rounded cursor-pointer border-0 p-0" />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
-            ))}
-          </div>
-        </div>
+            )}
 
-        {/* Specific UI Component Configuration */}
-        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 md:p-8 shadow-sm lg:col-span-2">
-          <div className="flex items-center gap-3 mb-8 pb-4 border-b border-slate-100 dark:border-slate-800">
-            <div className="p-2 bg-indigo-50 text-indigo-500 rounded-lg"><Box size={20} /></div>
-            <h2 className="font-semibold text-lg">Component-Specific Styling</h2>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-            {/* Card Tokens */}
-            <div>
-              <h3 className="font-medium text-lg mb-4 text-slate-700 dark:text-slate-300">Card Design</h3>
-              <div className="space-y-4">
-                {[
-                  { id: 'cardBgColor', label: 'Background Color', val: initialSettings.cardBgColor },
-                  { id: 'cardHoverBgColor', label: 'Hover Background Color', val: initialSettings.cardHoverBgColor },
-                  { id: 'cardBorderColor', label: 'Border Color', val: initialSettings.cardBorderColor },
-                  { id: 'cardHoverBorderColor', label: 'Hover Border Color', val: initialSettings.cardHoverBorderColor },
-                ].map(color => (
-                  <div key={color.id} className="flex items-center justify-between">
-                    <label className="text-sm font-medium text-slate-600 dark:text-slate-400">{color.label}</label>
-                    <div className="flex items-center gap-2">
-                      <input type="text" name={color.id} defaultValue={color.val} className="w-20 px-2 py-1 text-xs font-mono border rounded dark:bg-slate-800 dark:border-slate-700" />
-                      <input type="color" defaultValue={color.val} className="w-8 h-8 rounded cursor-pointer border-0 p-0" onChange={(e) => { const textInput = e.currentTarget.previousSibling as HTMLInputElement; if (textInput) textInput.value = e.currentTarget.value; }} />
+            {activeTab === 'typography' && (
+              <div className="space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-300">
+                <div>
+                  <h2 className="text-lg font-semibold mb-4">Site Typography</h2>
+                  <div className="space-y-4">
+                    <div className="p-4 bg-white dark:bg-slate-900 border rounded-xl dark:border-slate-800 shadow-sm">
+                      <label className="block text-sm font-medium mb-1">Heading Font Family</label>
+                      <input type="text" name="fontHeading" value={liveTokens.fontHeading || 'Inter'} onChange={handleLiveChange} className="w-full px-3 py-2 border rounded-lg dark:bg-slate-800 dark:border-slate-700" />
+                    </div>
+                    <div className="p-4 bg-white dark:bg-slate-900 border rounded-xl dark:border-slate-800 shadow-sm">
+                      <label className="block text-sm font-medium mb-1">Body Font Family</label>
+                      <input type="text" name="fontBody" value={liveTokens.fontBody || 'Inter'} onChange={handleLiveChange} className="w-full px-3 py-2 border rounded-lg dark:bg-slate-800 dark:border-slate-700" />
+                    </div>
+                    <div className="p-4 bg-white dark:bg-slate-900 border rounded-xl dark:border-slate-800 shadow-sm">
+                      <label className="block text-sm font-medium mb-1">Global Site Name</label>
+                      <input type="text" name="siteName" defaultValue={initialSettings.siteName} className="w-full px-3 py-2 border rounded-lg dark:bg-slate-800 dark:border-slate-700" />
                     </div>
                   </div>
-                ))}
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'geometry' && (
+              <div className="space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-300">
+                <h2 className="text-lg font-semibold mb-4">Geometry & Borders</h2>
+                <div className="space-y-4">
+                  {[
+                    { id: 'radius', label: 'Global Base Radius', options: ['0px', '0.25rem', '0.5rem', '0.75rem', '1rem'] },
+                    { id: 'buttonRadius', label: 'Button Radius', options: ['var(--radius)', '0px', '0.5rem', '9999px'] },
+                    { id: 'cardRadius', label: 'Card Radius', options: ['var(--radius)', '0.5rem', '1rem', '1.5rem'] },
+                    { id: 'containerWidth', label: 'Container Max Width', options: ['1200px', '1440px', '1600px', '100%'] },
+                  ].map(field => (
+                    <div key={field.id} className="p-4 bg-white dark:bg-slate-900 border rounded-xl dark:border-slate-800 shadow-sm flex justify-between items-center">
+                      <label className="text-sm font-medium">{field.label}</label>
+                      <select name={field.id} value={liveTokens[field.id] || field.options[0]} onChange={handleLiveChange as any} className="w-40 px-3 py-2 text-sm border rounded-lg dark:bg-slate-800 dark:border-slate-700">
+                        {field.options.map(opt => <option key={opt} value={opt}>{opt}</option>)}
+                      </select>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'components' && (
+              <div className="space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-300">
+                <h2 className="text-lg font-semibold mb-4">Detailed Component Overrides</h2>
                 
-                <div className="flex items-center justify-between pt-2">
-                  <label className="text-sm font-medium text-slate-600 dark:text-slate-400">Card Base Shadow</label>
-                  <select name="cardShadow" defaultValue={initialSettings.cardShadow} className="w-32 px-2 py-1.5 text-sm border rounded-lg dark:bg-slate-800 dark:border-slate-700">
-                    <option value="none">None</option>
-                    <option value="sm">Small</option>
-                    <option value="md">Medium</option>
-                    <option value="lg">Large</option>
-                    <option value="xl">X-Large</option>
-                  </select>
-                </div>
-                <div className="flex items-center justify-between">
-                  <label className="text-sm font-medium text-slate-600 dark:text-slate-400">Card Hover Shadow</label>
-                  <select name="cardHoverShadow" defaultValue={initialSettings.cardHoverShadow} className="w-32 px-2 py-1.5 text-sm border rounded-lg dark:bg-slate-800 dark:border-slate-700">
-                    <option value="none">None</option>
-                    <option value="sm">Small</option>
-                    <option value="md">Medium</option>
-                    <option value="lg">Large</option>
-                    <option value="xl">X-Large</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-
-            {/* Button Tokens */}
-            <div>
-              <h3 className="font-medium text-lg mb-4 text-slate-700 dark:text-slate-300">Button Design</h3>
-              <div className="space-y-4">
-                {[
-                  { id: 'buttonBgColor', label: 'Background Color', val: initialSettings.buttonBgColor },
-                  { id: 'buttonHoverBgColor', label: 'Hover Background Color', val: initialSettings.buttonHoverBgColor },
-                  { id: 'buttonTextColor', label: 'Text Color', val: initialSettings.buttonTextColor },
-                  { id: 'buttonHoverTextColor', label: 'Hover Text Color', val: initialSettings.buttonHoverTextColor },
-                ].map(color => (
-                  <div key={color.id} className="flex items-center justify-between">
-                    <label className="text-sm font-medium text-slate-600 dark:text-slate-400">{color.label}</label>
-                    <div className="flex items-center gap-2">
-                      <input type="text" name={color.id} defaultValue={color.val} className="w-20 px-2 py-1 text-xs font-mono border rounded dark:bg-slate-800 dark:border-slate-700" />
-                      <input type="color" defaultValue={color.val} className="w-8 h-8 rounded cursor-pointer border-0 p-0" onChange={(e) => { const textInput = e.currentTarget.previousSibling as HTMLInputElement; if (textInput) textInput.value = e.currentTarget.value; }} />
+                <div className="space-y-4">
+                  <h3 className="font-medium text-sm text-slate-500 uppercase tracking-wider">Button Styling</h3>
+                  {[
+                    { id: 'buttonBgColor', label: 'Background', val: liveTokens.buttonBgColor || '#2563eb' },
+                    { id: 'buttonHoverBgColor', label: 'Hover Background', val: liveTokens.buttonHoverBgColor || '#1d4ed8' },
+                    { id: 'buttonTextColor', label: 'Text Color', val: liveTokens.buttonTextColor || '#ffffff' },
+                    { id: 'buttonHoverTextColor', label: 'Hover Text Color', val: liveTokens.buttonHoverTextColor || '#ffffff' },
+                  ].map(color => (
+                    <div key={color.id} className="flex items-center justify-between p-3 bg-white dark:bg-slate-900 border rounded-xl dark:border-slate-800 shadow-sm">
+                      <label className="text-sm font-medium">{color.label}</label>
+                      <div className="flex items-center gap-2">
+                        <input type="color" name={color.id} value={color.val} onChange={handleLiveChange} className="w-8 h-8 rounded cursor-pointer border-0 p-0" />
+                      </div>
                     </div>
+                  ))}
+                </div>
+
+                <div className="space-y-4 pt-4 border-t dark:border-slate-800">
+                  <h3 className="font-medium text-sm text-slate-500 uppercase tracking-wider">Card Styling</h3>
+                  {[
+                    { id: 'cardBgColor', label: 'Background', val: liveTokens.cardBgColor || '#ffffff' },
+                    { id: 'cardHoverBgColor', label: 'Hover Background', val: liveTokens.cardHoverBgColor || '#f8fafc' },
+                    { id: 'cardBorderColor', label: 'Border Color', val: liveTokens.cardBorderColor || '#e2e8f0' },
+                    { id: 'cardHoverBorderColor', label: 'Hover Border Color', val: liveTokens.cardHoverBorderColor || '#cbd5e1' },
+                  ].map(color => (
+                    <div key={color.id} className="flex items-center justify-between p-3 bg-white dark:bg-slate-900 border rounded-xl dark:border-slate-800 shadow-sm">
+                      <label className="text-sm font-medium">{color.label}</label>
+                      <div className="flex items-center gap-2">
+                        <input type="color" name={color.id} value={color.val} onChange={handleLiveChange} className="w-8 h-8 rounded cursor-pointer border-0 p-0" />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'motion' && (
+              <div className="space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-300">
+                <h2 className="text-lg font-semibold mb-4">Motion & Elevation</h2>
+                <div className="space-y-4">
+                  {[
+                    { id: 'shadowStyle', label: 'Global Shadow Base' },
+                    { id: 'cardShadow', label: 'Card Base Shadow' },
+                    { id: 'cardHoverShadow', label: 'Card Hover Shadow' },
+                    { id: 'buttonShadow', label: 'Button Base Shadow' },
+                    { id: 'buttonHoverShadow', label: 'Button Hover Shadow' },
+                  ].map(field => (
+                    <div key={field.id} className="p-4 bg-white dark:bg-slate-900 border rounded-xl dark:border-slate-800 shadow-sm flex justify-between items-center">
+                      <label className="text-sm font-medium">{field.label}</label>
+                      <select name={field.id} value={liveTokens[field.id] || 'md'} onChange={handleLiveChange as any} className="w-32 px-3 py-2 text-sm border rounded-lg dark:bg-slate-800 dark:border-slate-700">
+                        <option value="none">None</option><option value="sm">Small</option><option value="md">Medium</option><option value="lg">Large</option><option value="xl">X-Large</option>
+                      </select>
+                    </div>
+                  ))}
+                  
+                  <div className="p-4 bg-white dark:bg-slate-900 border rounded-xl dark:border-slate-800 shadow-sm flex justify-between items-center mt-6">
+                    <div>
+                      <label className="text-sm font-medium">Enable Hover Interactions</label>
+                      <p className="text-xs text-slate-500">Enable card lifting and button brightness.</p>
+                    </div>
+                    <input type="checkbox" name="hoverEffects" checked={liveTokens.hoverEffects !== false} onChange={handleLiveChange} className="w-5 h-5 rounded cursor-pointer" />
                   </div>
-                ))}
-
-                <div className="flex items-center justify-between pt-2">
-                  <label className="text-sm font-medium text-slate-600 dark:text-slate-400">Button Base Shadow</label>
-                  <select name="buttonShadow" defaultValue={initialSettings.buttonShadow} className="w-32 px-2 py-1.5 text-sm border rounded-lg dark:bg-slate-800 dark:border-slate-700">
-                    <option value="none">None</option>
-                    <option value="sm">Small</option>
-                    <option value="md">Medium</option>
-                    <option value="lg">Large</option>
-                    <option value="xl">X-Large</option>
-                  </select>
-                </div>
-                <div className="flex items-center justify-between">
-                  <label className="text-sm font-medium text-slate-600 dark:text-slate-400">Button Hover Shadow</label>
-                  <select name="buttonHoverShadow" defaultValue={initialSettings.buttonHoverShadow} className="w-32 px-2 py-1.5 text-sm border rounded-lg dark:bg-slate-800 dark:border-slate-700">
-                    <option value="none">None</option>
-                    <option value="sm">Small</option>
-                    <option value="md">Medium</option>
-                    <option value="lg">Large</option>
-                    <option value="xl">X-Large</option>
-                  </select>
+                  <div className="p-4 bg-white dark:bg-slate-900 border rounded-xl dark:border-slate-800 shadow-sm flex justify-between items-center">
+                    <div>
+                      <label className="text-sm font-medium">Enable Smooth Animations</label>
+                      <p className="text-xs text-slate-500">Enable CSS transitions globally.</p>
+                    </div>
+                    <input type="checkbox" name="animations" checked={liveTokens.animations !== false} onChange={handleLiveChange} className="w-5 h-5 rounded cursor-pointer" />
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
+
+            {activeTab === 'css' && (
+              <div className="space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-300">
+                <h2 className="text-lg font-semibold mb-4">Raw CSS Injection</h2>
+                <textarea 
+                  name="customCss" 
+                  defaultValue={initialSettings.customCss || ''} 
+                  className="w-full h-64 px-4 py-4 font-mono text-sm border rounded-xl dark:bg-slate-900 dark:border-slate-700 focus:ring-2 ring-[var(--primary)] shadow-inner" 
+                  placeholder="/* Write global overrides here */&#10;body { scroll-behavior: smooth; }" 
+                />
+              </div>
+            )}
           </div>
         </div>
 
-        {/* Typography & Identity */}
-        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 md:p-8 shadow-sm flex flex-col justify-between">
-          <div>
-            <div className="flex items-center gap-3 mb-8 pb-4 border-b border-slate-100 dark:border-slate-800">
-              <div className="p-2 bg-indigo-50 text-indigo-500 rounded-lg"><Type size={20} /></div>
-              <h2 className="font-semibold text-lg">Typography & Identity</h2>
+        {/* Right Column: Persistent Live Viewport */}
+        <div className="w-[450px] shrink-0 border border-slate-200 dark:border-slate-800 rounded-2xl bg-[var(--bg-body)] overflow-hidden shadow-xl hidden lg:flex flex-col relative transition-colors duration-300"
+             style={{ 
+               backgroundColor: liveTokens.backgroundColor || '#ffffff',
+               color: liveTokens.textColor || '#0f172a',
+             }}>
+          
+          {/* Header of Viewport */}
+          <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-800/50 bg-black/5 flex items-center justify-between">
+            <div className="flex gap-1.5">
+              <div className="w-3 h-3 rounded-full bg-red-400"></div>
+              <div className="w-3 h-3 rounded-full bg-amber-400"></div>
+              <div className="w-3 h-3 rounded-full bg-green-400"></div>
             </div>
+            <div className="text-xs font-medium opacity-50 uppercase tracking-widest">Live Preview</div>
+          </div>
+
+          {/* Viewport Content Area */}
+          <div className="p-8 space-y-10 overflow-y-auto custom-scrollbar flex-1"
+               style={{ fontFamily: liveTokens.fontBody || 'Inter' }}>
             
-            <div className="space-y-6">
-              <div>
-                <label className="block text-sm font-medium mb-1">Global Site Name</label>
-                <input type="text" name="siteName" defaultValue={initialSettings.siteName} className="w-full px-3 py-2.5 border rounded-lg dark:bg-slate-800 dark:border-slate-700" placeholder="My Enterprise Engine" />
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-1">Heading Font Family (Google Fonts)</label>
-                <input type="text" name="fontHeading" defaultValue={initialSettings.fontHeading} className="w-full px-3 py-2.5 border rounded-lg dark:bg-slate-800 dark:border-slate-700" placeholder="'Inter', sans-serif" />
-                <p className="text-xs text-slate-500 mt-1.5">Used for h1, h2, h3 and title elements.</p>
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-1">Body Font Family</label>
-                <input type="text" name="fontBody" defaultValue={initialSettings.fontBody} className="w-full px-3 py-2.5 border rounded-lg dark:bg-slate-800 dark:border-slate-700" placeholder="'Inter', sans-serif" />
-                <p className="text-xs text-slate-500 mt-1.5">Used for paragraph text, descriptions, and labels.</p>
-              </div>
+            {/* Header Mock */}
+            <div>
+              <h1 className="text-3xl font-bold tracking-tight mb-2" style={{ fontFamily: liveTokens.fontHeading || 'Inter' }}>
+                {initialSettings.siteName || 'Design System'}
+              </h1>
+              <p className="opacity-70 leading-relaxed">
+                This sandbox reflects your tokens in real-time. Change a color on the left and see it applied instantly.
+              </p>
             </div>
-          </div>
 
-          <div className="mt-8 pt-6 border-t border-slate-100 dark:border-slate-800">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="p-2 bg-slate-100 text-slate-500 rounded-lg"><Code size={16} /></div>
-              <h2 className="font-semibold">CSS Overrides</h2>
+            {/* Interactive Card Mock */}
+            <div className="p-6 transition-all duration-300"
+                 style={{
+                   backgroundColor: liveTokens.cardBgColor || '#ffffff',
+                   borderColor: liveTokens.cardBorderColor || '#e2e8f0',
+                   borderWidth: '1px',
+                   borderStyle: 'solid',
+                   borderRadius: liveTokens.cardRadius === 'var(--radius)' ? (liveTokens.radius || '0.5rem') : (liveTokens.cardRadius || '0.75rem'),
+                   boxShadow: liveTokens.cardShadow === 'md' ? '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)' : 
+                              liveTokens.cardShadow === 'lg' ? '0 10px 15px -3px rgb(0 0 0 / 0.1)' : 'none',
+                   transform: liveTokens.hoverEffects !== false ? 'translateY(0)' : 'none',
+                 }}>
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 rounded-full flex items-center justify-center shrink-0" 
+                     style={{ backgroundColor: liveTokens.primaryColor || '#2563eb' }}>
+                  <Layers size={18} color="#fff" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-lg" style={{ fontFamily: liveTokens.fontHeading || 'Inter' }}>Enterprise Engine</h3>
+                  <p className="text-xs opacity-60">Created 2 mins ago</p>
+                </div>
+              </div>
+              <p className="text-sm opacity-80 mb-6">
+                Modular blocks ready to scale. Use the design studio to inject life into standard components.
+              </p>
+              
+              <div className="flex gap-3">
+                <button type="button" className="px-4 py-2 text-sm font-medium transition-all duration-300"
+                        style={{
+                          backgroundColor: liveTokens.buttonBgColor || '#2563eb',
+                          color: liveTokens.buttonTextColor || '#ffffff',
+                          borderRadius: liveTokens.buttonRadius === 'var(--radius)' ? (liveTokens.radius || '0.5rem') : (liveTokens.buttonRadius || '0.5rem'),
+                          boxShadow: liveTokens.buttonShadow === 'md' ? '0 4px 6px -1px rgb(0 0 0 / 0.1)' : 'none',
+                        }}>
+                  Primary CTA
+                </button>
+                <button type="button" className="px-4 py-2 text-sm font-medium transition-all duration-300 border border-transparent hover:border-current opacity-70 hover:opacity-100"
+                        style={{
+                          borderRadius: liveTokens.buttonRadius === 'var(--radius)' ? (liveTokens.radius || '0.5rem') : (liveTokens.buttonRadius || '0.5rem'),
+                        }}>
+                  Ghost Button
+                </button>
+              </div>
             </div>
-            <textarea 
-              name="customCss" 
-              defaultValue={initialSettings.customCss || ''} 
-              className="w-full h-24 px-3 py-3 font-mono text-sm border rounded-xl dark:bg-slate-800 dark:border-slate-700 focus:ring-2 ring-[var(--primary)]" 
-              placeholder="/* Inject global styles here */&#10;body { scroll-behavior: smooth; }" 
-            />
+
+            {/* Form Mock */}
+            <div className="space-y-4 opacity-90">
+              <div>
+                <label className="block text-xs font-medium uppercase tracking-wider opacity-60 mb-1.5">Email Address</label>
+                <input type="email" placeholder="ceo@company.com" disabled className="w-full px-4 py-2 border bg-transparent opacity-50"
+                       style={{ 
+                         borderColor: liveTokens.cardBorderColor || '#e2e8f0',
+                         borderRadius: liveTokens.radius || '0.5rem' 
+                       }} 
+                />
+              </div>
+            </div>
+
           </div>
         </div>
+
       </div>
     </form>
   );

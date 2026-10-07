@@ -2,6 +2,7 @@ import { getCachedSystemSettings } from '@/lib/db/queries';
 
 export async function TokenProvider() {
   const settings = await getCachedSystemSettings();
+  const tokens = (settings.tokens as any) || {};
 
   const getShadowCss = (style: string) => {
     switch(style) {
@@ -15,45 +16,45 @@ export async function TokenProvider() {
 
   const cssPayload = `
     :root {
-      --primary: ${settings.primaryColor};
-      --accent: ${settings.accentColor};
-      --bg-body: ${settings.backgroundColor};
-      --text-main: ${settings.textColor};
-      --radius: ${settings.radius};
-      --button-radius: ${settings.buttonRadius === 'var(--radius)' ? settings.radius : settings.buttonRadius};
-      --card-radius: ${settings.cardRadius === 'var(--radius)' ? settings.radius : settings.cardRadius};
-      --container-max: ${settings.containerWidth};
-      --global-shadow: ${getShadowCss(settings.shadowStyle)};
+      --primary: ${tokens.primaryColor || '#2563eb'};
+      --accent: ${tokens.accentColor || '#f97316'};
+      --bg-body: ${tokens.backgroundColor || '#ffffff'};
+      --text-main: ${tokens.textColor || '#0f172a'};
+      --radius: ${tokens.radius || '0.5rem'};
+      --button-radius: ${tokens.buttonRadius === 'var(--radius)' ? (tokens.radius || '0.5rem') : (tokens.buttonRadius || '0.5rem')};
+      --card-radius: ${tokens.cardRadius === 'var(--radius)' ? (tokens.radius || '0.5rem') : (tokens.cardRadius || '0.75rem')};
+      --container-max: ${tokens.containerWidth || '1440px'};
+      --global-shadow: ${getShadowCss(tokens.shadowStyle || 'md')};
       
       /* Advanced Card Tokens */
-      --card-bg: ${settings.cardBgColor};
-      --card-hover-bg: ${settings.cardHoverBgColor};
-      --card-border: ${settings.cardBorderColor};
-      --card-hover-border: ${settings.cardHoverBorderColor};
-      --card-shadow: ${getShadowCss(settings.cardShadow)};
-      --card-hover-shadow: ${getShadowCss(settings.cardHoverShadow)};
+      --card-bg: ${tokens.cardBgColor || '#ffffff'};
+      --card-hover-bg: ${tokens.cardHoverBgColor || '#f8fafc'};
+      --card-border: ${tokens.cardBorderColor || '#e2e8f0'};
+      --card-hover-border: ${tokens.cardHoverBorderColor || '#cbd5e1'};
+      --card-shadow: ${getShadowCss(tokens.cardShadow || 'sm')};
+      --card-hover-shadow: ${getShadowCss(tokens.cardHoverShadow || 'md')};
       
       /* Advanced Button Tokens */
-      --btn-bg: ${settings.buttonBgColor};
-      --btn-hover-bg: ${settings.buttonHoverBgColor};
-      --btn-text: ${settings.buttonTextColor};
-      --btn-hover-text: ${settings.buttonHoverTextColor};
-      --btn-shadow: ${getShadowCss(settings.buttonShadow)};
-      --btn-hover-shadow: ${getShadowCss(settings.buttonHoverShadow)};
+      --btn-bg: ${tokens.buttonBgColor || '#2563eb'};
+      --btn-hover-bg: ${tokens.buttonHoverBgColor || '#1d4ed8'};
+      --btn-text: ${tokens.buttonTextColor || '#ffffff'};
+      --btn-hover-text: ${tokens.buttonHoverTextColor || '#ffffff'};
+      --btn-shadow: ${getShadowCss(tokens.buttonShadow || 'sm')};
+      --btn-hover-shadow: ${getShadowCss(tokens.buttonHoverShadow || 'md')};
       
-      --font-heading: "${settings.fontHeading}", -apple-system, sans-serif;
-      --font-body: "${settings.fontBody}", -apple-system, sans-serif;
+      --font-heading: "${tokens.fontHeading || 'Inter'}", -apple-system, sans-serif;
+      --font-body: "${tokens.fontBody || 'Inter'}", -apple-system, sans-serif;
       
       /* Toggle Switches */
-      --enable-hover: ${settings.hoverEffects ? '1' : '0'};
-      --enable-animations: ${settings.animations ? '1' : '0'};
+      --enable-hover: ${tokens.hoverEffects !== false ? '1' : '0'};
+      --enable-animations: ${tokens.animations !== false ? '1' : '0'};
     }
     
-    ${settings.animations ? `
+    ${tokens.animations !== false ? `
       * { transition-property: background-color, border-color, color, fill, stroke, opacity, box-shadow, transform; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 150ms; }
     ` : ''}
     
-    ${settings.hoverEffects ? `
+    ${tokens.hoverEffects !== false ? `
       .card-hover { background-color: var(--card-bg); border-color: var(--card-border); box-shadow: var(--card-shadow); border-radius: var(--card-radius); }
       .card-hover:hover { transform: translateY(-4px); background-color: var(--card-hover-bg); border-color: var(--card-hover-border); box-shadow: var(--card-hover-shadow); }
       
