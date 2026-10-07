@@ -159,7 +159,7 @@ export default function SettingsForm({ initialSettings }: { initialSettings: any
                       { id: 'textColor', label: 'Base Text', val: liveTokens.textColor || '#0f172a' },
                     ].map(color => (
                       <div key={color.id} className="flex items-center justify-between">
-                        <label className="text-sm font-medium text-slate-700 dark:text-slate-300 w-1/2">{color.label}</label>
+                        <label className="text-sm font-medium opacity-90 w-1/2">{color.label}</label>
                         <div className="flex items-center justify-end gap-2 w-1/2">
                           <input type="text" name={color.id} value={color.val} onChange={handleLiveChange} className="w-20 px-2 py-1 text-xs font-mono border rounded bg-transparent border-card-border" />
                           <input type="color" name={color.id} value={color.val} onChange={handleLiveChange} className="w-6 h-6 rounded cursor-pointer border-0 p-0" />
