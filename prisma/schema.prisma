@@ -1,0 +1,153 @@
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["fullTextSearch"]
+}
+
+enum Role {
+  SUPER_ADMIN
+  ADMIN
+  EDITOR
+  USER
+}
+
+enum SectionType {
+  HERO
+  FEATURED_GRID
+  PROMO_BANNER
+  FAQ_ACCORDION
+  BLOG_ROLL
+  RICH_TEXT_CONTENT
+  DYNAMIC_FORM
+}
+
+model User {
+  id           String    @id @default(cuid())
+  email        String    @unique
+  passwordHash String
+  name         String?
+  role         Role      @default(USER)
+  sessions     Session[]
+  isBanned     Boolean   @default(false)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  @@index([role, isBanned])
+  @@index([email])
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([token])
+  @@index([userId])
+}
+
+model SystemSettings {
+  id              String   @id @default("global_config")
+  siteName        String   @default("Modular Engine")
+  primaryColor    String   @default("#2563eb")
+  accentColor     String   @default("#f97316")
+  backgroundColor String   @default("#ffffff")
+  textColor       String   @default("#0f172a")
+  fontHeading     String   @default("Inter")
+  fontBody        String   @default("Inter")
+  radius          String   @default("0.5rem")
+  customCss       String?  @db.Text
+  updatedAt       DateTime @updatedAt
+}
+
+model Page {
+  id              String        @id @default(cuid())
+  slug            String        @unique
+  title           String
+  metaDescription String?
+  metaImage       String?
+  isPublished     Boolean       @default(true)
+  isSystem        Boolean       @default(false)
+  sections        PageSection[]
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  @@index([slug, isPublished])
+}
+
+model PageSection {
+  id         String      @id @default(cuid())
+  pageId     String
+  page       Page        @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  type       SectionType
+  order      Int         @default(0)
+  isEnabled  Boolean     @default(true)
+  isDeleted  Boolean     @default(false)
+  content    Json        // Structured schema per SectionType
+  customCss  String?     @db.Text
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+
+  @@index([pageId, isDeleted, isEnabled, order])
+  @@index([type])
+}
+
+model Category {
+  id          String    @id @default(cuid())
+  name        String
+  slug        String    @unique
+  description String?
+  products    Product[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([slug])
+}
+
+model Product {
+  id             String    @id @default(cuid())
+  title          String
+  slug           String    @unique
+  sku            String    @unique
+  description    String    @db.Text
+  price          Decimal   @db.Decimal(12, 2)
+  compareAtPrice Decimal?  @db.Decimal(12, 2)
+  costPerItem    Decimal?  @db.Decimal(12, 2)
+  stock          Int       @default(0)
+  images         String[]
+  categoryId     String
+  category       Category  @relation(fields: [categoryId], references: [id])
+  isPublished    Boolean   @default(true)
+  isDeleted      Boolean   @default(false)
+  attributes     Json?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  // Composite indices designed for keyset/cursor-based navigation across 40k+ products
+  @@index([isDeleted, isPublished, id(sort: Desc)])
+  @@index([categoryId, isDeleted, isPublished])
+  @@index([slug])
+  @@index([title])
+}
+
+model MediaVault {
+  id           String   @id @default(cuid())
+  fileName     String
+  storageKey   String   @unique
+  mimeType     String
+  fileSize     Int
+  width        Int?
+  height       Int?
+  isDeleted    Boolean  @default(false)
+  altText      String?
+  createdAt    DateTime @default(now())
+
+  @@index([isDeleted, createdAt(sort: Desc)])
+}

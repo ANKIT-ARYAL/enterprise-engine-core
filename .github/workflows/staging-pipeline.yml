@@ -1,0 +1,81 @@
+name: Staging Pipeline: Database Sync and Deployment Guard
+
+on:
+  push:
+    branches:
+      - staging
+
+jobs:
+  validate-and-sync-db:
+    name: Validate Migrations and Apply to Supabase
+    runs-on: ubuntu-latest
+
+    services:
+      postgres-verify:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: test_verifier
+          POSTGRES_PASSWORD: verifier_secret_pass
+          POSTGRES_DB: verify_sandbox
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout Code Repository
+        uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 9
+
+      - name: Setup Node.js Runtime
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+
+      - name: Install Dependencies
+        run: pnpm install --frozen-lockfile
+
+      # Step 1: Verify all migrations on an isolated ephemeral Postgres instance
+      - name: Run Schema Migration Against Ephemeral Runner
+        env:
+          DATABASE_URL: "postgresql://test_verifier:verifier_secret_pass@localhost:5432/verify_sandbox?schema=public"
+          DIRECT_URL: "postgresql://test_verifier:verifier_secret_pass@localhost:5432/verify_sandbox?schema=public"
+        run: |
+          pnpm prisma migrate deploy
+          pnpm prisma generate
+
+      # Step 2: Apply migrations to the remote Supabase Staging DB via DIRECT_URL (Port 5432)
+      - name: Apply Migrations to Remote Supabase Staging Database
+        env:
+          DATABASE_URL: ${{ secrets.STAGING_DATABASE_URL }}
+          DIRECT_URL: ${{ secrets.STAGING_DIRECT_URL }}
+        run: |
+          pnpm prisma migrate deploy
+
+      # Step 3: Run full typecheck and lint suite
+      - name: Run Strict TypeScript & Next.js Lint Auditing
+        run: |
+          pnpm tsc --noEmit
+          pnpm next lint
+
+  trigger-vercel-deployment:
+    name: Deploy to Vercel Staging
+    needs: validate-and-sync-db
+    runs-on: ubuntu-latest
+    steps:
+      - name: Call Vercel Staging Deployment Hook
+        run: |
+          HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" -X POST "${{ secrets.VERCEL_STAGING_DEPLOY_HOOK }}")
+          if [ "$HTTP_STATUS" -ne 200 ] && [ "$HTTP_STATUS" -ne 201 ]; then
+            echo "Vercel Deploy Hook Returned Non-200 Status: $HTTP_STATUS"
+            exit 1
+          fi
+          echo "Vercel staging build successfully triggered."

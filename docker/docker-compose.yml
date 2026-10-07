@@ -1,0 +1,26 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: engine-postgres
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_USER: engine_user
+      POSTGRES_PASSWORD: engine_local_dev_password
+      POSTGRES_DB: engine_dev_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U engine_user -d engine_dev_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: engine-redis
+    ports:
+      - "6380:6379"
+
+volumes:
+  postgres_data:
