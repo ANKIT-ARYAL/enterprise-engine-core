@@ -1,6 +1,7 @@
 export const instant = false;
 
 import AdminShell from '@/components/admin/AdminShell';
+import VisualInspector from '@/components/admin/VisualInspector';
 import { prisma } from '@/lib/db/client';
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -22,5 +23,10 @@ export default async function AdminLayout({ children }: { children: React.ReactN
 
   const navLinks = (settings?.tokens as any)?.navigation || defaultNav;
 
-  return <AdminShell initialNav={navLinks}>{children}</AdminShell>;
+  return (
+    <>
+      <AdminShell initialNav={navLinks}>{children}</AdminShell>
+      <VisualInspector />
+    </>
+  );
 }

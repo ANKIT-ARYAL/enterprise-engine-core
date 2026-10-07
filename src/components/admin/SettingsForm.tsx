@@ -121,10 +121,10 @@ export default function SettingsForm({ initialSettings }: { initialSettings: any
           <h1 className="text-2xl font-bold tracking-tight">System Design Studio</h1>
         </div>
         <div className="flex items-center gap-3">
-          <button type="button" className="flex items-center gap-2 px-4 py-2 text-sm font-medium border rounded-lg border-card-border hover:bg-black/5 transition-colors">
+          <button type="button" className="flex items-center gap-2 px-4 py-2 text-sm font-medium border border-card-border bg-card-bg text-surface-text rounded-btn hover:bg-card-hover transition-colors shadow-sm">
             Preset: Obsidian Pro <ChevronDown size={16} />
           </button>
-          <button type="button" className="flex items-center gap-2 px-4 py-2 text-sm font-medium border rounded-lg border-card-border hover:bg-black/5 transition-colors">
+          <button type="button" className="flex items-center gap-2 px-4 py-2 text-sm font-semibold border border-card-border bg-card-bg text-surface-text rounded-btn hover:bg-card-hover transition-colors shadow-sm">
             <Download size={16} /> Export JSON
           </button>
           <button 
@@ -168,9 +168,9 @@ export default function SettingsForm({ initialSettings }: { initialSettings: any
                       key={tab.id}
                       type="button"
                       onClick={() => setActiveTab(tab.id)}
-                      className={`flex items-center justify-start gap-3 px-3 py-2 rounded-lg transition-all text-sm font-medium text-left ${
+                      className={`flex items-center justify-start gap-3 px-3 py-2 rounded-btn transition-all text-sm font-medium text-left ${
                         activeTab === tab.id 
-                          ? 'bg-primary text-white shadow-md' 
+                          ? 'bg-btn-bg text-btn-text shadow-md' 
                           : 'opacity-70 hover:opacity-100 hover:bg-black/5'
                       }`}
                     >
