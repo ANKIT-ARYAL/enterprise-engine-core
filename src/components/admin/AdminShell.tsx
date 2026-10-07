@@ -3,6 +3,7 @@
 
 import React, { useState } from 'react';
 import { usePathname } from 'next/navigation';
+import Link from 'next/link';
 import * as Icons from 'lucide-react';
 import QuickAddPanel from '@/components/admin/QuickAddPanel';
 import { 
@@ -94,18 +95,18 @@ export default function AdminShell({ children, initialNav }: { children: React.R
                   const isActive = pathname.startsWith(link.href) || (link.href === '/admin/academy' && pathname === '/admin');
                   const IconComponent = (Icons as any)[link.icon] || Icons.Circle;
                   return (
-                    <a 
+                    <Link 
                       key={link.href + link.label} 
                       href={link.href} 
-                      className={`flex items-center gap-3 px-3 py-2 transition-colors text-[13px] font-medium rounded-btn ${
+                      className={`flex items-center gap-3 px-3 py-2 transition-colors text-[13px] font-medium rounded-md ${
                         isActive 
-                          ? 'bg-btn-bg text-btn-text shadow-sm hover:bg-btn-hover hover:text-[color:var(--btn-hover-text)]' 
-                          : 'text-surface-text/70 hover:bg-card-hover hover:text-surface-text'
+                          ? 'bg-black/5 text-black' 
+                          : 'text-surface-text/70 hover:bg-black/5 hover:text-surface-text'
                       }`}
                     >
-                      <IconComponent size={16} className={isActive ? 'text-btn-text' : 'opacity-70'} />
+                      <IconComponent size={16} className={isActive ? 'text-black' : 'opacity-70'} />
                       {link.label}
-                    </a>
+                    </Link>
                   );
                 })}
               </div>
@@ -151,14 +152,14 @@ export default function AdminShell({ children, initialNav }: { children: React.R
                     {(normalizedNav.userProfile.links || []).map((link: any, idx: number) => {
                       const IconComponent = (Icons as any)[link.icon] || Icons.Circle;
                       return (
-                        <a 
+                        <Link 
                           key={idx}
                           href={link.href}
                           className="flex items-center gap-2 px-3 py-2 text-[13px] font-medium text-slate-700 hover:bg-slate-50 hover:text-slate-900 transition-colors"
                         >
                           <IconComponent size={14} className="opacity-70" />
                           {link.label}
-                        </a>
+                        </Link>
                       );
                     })}
                   </div>
