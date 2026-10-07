@@ -4,19 +4,18 @@ import type { NextRequest } from 'next/server';
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Basic admin route barrier (mock implementation)
   if (pathname.startsWith('/admin')) {
-    const sessionToken = request.cookies.get('session_token');
+    const sessionToken = request.cookies.get('engine_admin_session');
     
     // Allow login page bypass
     if (pathname === '/admin/login') {
+      if (sessionToken) return NextResponse.redirect(new URL('/admin/pages', request.url));
       return NextResponse.next();
     }
     
-    // In a real application, you would verify this token via edge-compatible logic
+    // Require authentication for all other /admin routes
     if (!sessionToken) {
-      // return NextResponse.redirect(new URL('/admin/login', request.url));
-      // Commented out to avoid redirect loops in mock setup
+      return NextResponse.redirect(new URL('/admin/login', request.url));
     }
   }
 
