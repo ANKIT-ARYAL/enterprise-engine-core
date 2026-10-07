@@ -130,23 +130,59 @@ export default function VisualInspector() {
               &lt;{selectedElement.tagName.toLowerCase()} className="{typeof selectedElement.className === 'string' ? selectedElement.className : selectedElement.getAttribute('class') || ''}"&gt;
             </div>
             
-            {/* Quick Actions (Stubbed for now, visually fully represented) */}
             <div className="space-y-3">
               <div className="text-[10px] font-bold uppercase tracking-widest opacity-50 mb-2">Typography</div>
-              <button className="w-full flex justify-between items-center px-3 py-2 text-xs font-medium border border-card-border rounded-btn bg-card-bg hover:bg-card-hover text-surface-text transition-colors">
+              <button 
+                onClick={() => {
+                  selectedElement.contentEditable = 'true';
+                  selectedElement.focus();
+                  selectedElement.style.outline = '2px dashed var(--accent)';
+                  selectedElement.style.outlineOffset = '2px';
+                  
+                  const handleBlur = () => {
+                    selectedElement.contentEditable = 'false';
+                    selectedElement.style.outline = '';
+                    selectedElement.style.outlineOffset = '';
+                    selectedElement.removeEventListener('blur', handleBlur);
+                    selectedElement.removeEventListener('keydown', handleKey);
+                  };
+                  
+                  const handleKey = (e: KeyboardEvent) => {
+                    if (e.key === 'Enter' || e.key === 'Escape') {
+                      e.preventDefault();
+                      selectedElement.blur();
+                    }
+                  };
+                  
+                  selectedElement.addEventListener('blur', handleBlur);
+                  selectedElement.addEventListener('keydown', handleKey);
+                }}
+                className="w-full flex justify-between items-center px-3 py-2 text-xs font-medium border border-card-border rounded-btn bg-card-bg hover:bg-card-hover text-surface-text transition-colors"
+              >
                 <span className="flex items-center gap-2"><Type size={12} /> Edit Text Content</span>
               </button>
 
               <div className="text-[10px] font-bold uppercase tracking-widest opacity-50 mb-2 mt-4">Design Tokens</div>
-              <button className="w-full flex justify-between items-center px-3 py-2 text-xs font-medium border border-card-border rounded-btn bg-card-bg hover:bg-card-hover text-surface-text transition-colors">
+              <button className="w-full flex justify-between items-center px-3 py-2 text-xs font-medium border border-card-border rounded-btn bg-card-bg hover:bg-card-hover text-surface-text transition-colors opacity-50 cursor-not-allowed">
                 <span className="flex items-center gap-2"><Palette size={12} /> Bind to Token</span>
-                <span className="opacity-50">Select...</span>
+                <span className="opacity-50">Coming Soon</span>
               </button>
 
               <div className="text-[10px] font-bold uppercase tracking-widest opacity-50 mb-2 mt-4">Developer Tools</div>
-              <button className="w-full flex justify-between items-center px-3 py-2 text-xs font-medium border border-card-border rounded-btn bg-card-bg hover:bg-card-hover text-surface-text transition-colors">
-                <span className="flex items-center gap-2"><Code size={12} /> Edit Raw Tailwind</span>
-              </button>
+              <div className="space-y-2">
+                <label className="flex items-center gap-2 text-xs font-medium opacity-80"><Code size={12} /> Edit Raw Tailwind</label>
+                <textarea 
+                  defaultValue={typeof selectedElement.className === 'string' ? selectedElement.className : selectedElement.getAttribute('class') || ''}
+                  onChange={(e) => {
+                    if (typeof selectedElement.className === 'string') {
+                      selectedElement.className = e.target.value;
+                    } else {
+                      selectedElement.setAttribute('class', e.target.value);
+                    }
+                  }}
+                  className="w-full h-24 p-2 text-xs font-mono border rounded bg-transparent border-card-border focus:ring-1 focus:ring-accent outline-none resize-none"
+                />
+              </div>
             </div>
           </div>
         </div>
