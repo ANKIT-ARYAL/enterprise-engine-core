@@ -162,9 +162,9 @@ export default function AcademyDashboard() {
               { label: 'G11E', sub: 30, pend: 15, over: 5 },
             ].map((col, i) => (
               <div key={i} className="flex gap-1.5 items-end h-full relative group">
-                <div className="w-6 bg-slate-700 rounded-t-sm" style={{ height: \`\${col.sub}%\` }}></div>
-                <div className="w-6 bg-slate-400 rounded-t-sm" style={{ height: \`\${col.pend}%\` }}></div>
-                <div className="w-6 bg-rose-500 rounded-t-sm" style={{ height: \`\${col.over}%\` }}></div>
+                <div className="w-6 bg-slate-700 rounded-t-sm" style={{ height: `${col.sub}%` }}></div>
+                <div className="w-6 bg-slate-400 rounded-t-sm" style={{ height: `${col.pend}%` }}></div>
+                <div className="w-6 bg-rose-500 rounded-t-sm" style={{ height: `${col.over}%` }}></div>
                 
                 <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[10px] font-medium text-slate-500">
                   {col.label}
@@ -223,7 +223,7 @@ export default function AcademyDashboard() {
                   </div>
                   <div 
                     className="absolute top-1 text-[11px] font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded"
-                    style={{ left: \`calc(\${row.left} + \${row.width} + 8px)\` }}
+                    style={{ left: `calc(${row.left} + ${row.width} + 8px)` }}
                   >
                     {row.score}
                   </div>
