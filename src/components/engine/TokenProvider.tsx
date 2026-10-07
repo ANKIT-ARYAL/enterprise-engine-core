@@ -24,6 +24,23 @@ export async function TokenProvider() {
       --card-radius: ${settings.cardRadius === 'var(--radius)' ? settings.radius : settings.cardRadius};
       --container-max: ${settings.containerWidth};
       --global-shadow: ${getShadowCss(settings.shadowStyle)};
+      
+      /* Advanced Card Tokens */
+      --card-bg: ${settings.cardBgColor};
+      --card-hover-bg: ${settings.cardHoverBgColor};
+      --card-border: ${settings.cardBorderColor};
+      --card-hover-border: ${settings.cardHoverBorderColor};
+      --card-shadow: ${getShadowCss(settings.cardShadow)};
+      --card-hover-shadow: ${getShadowCss(settings.cardHoverShadow)};
+      
+      /* Advanced Button Tokens */
+      --btn-bg: ${settings.buttonBgColor};
+      --btn-hover-bg: ${settings.buttonHoverBgColor};
+      --btn-text: ${settings.buttonTextColor};
+      --btn-hover-text: ${settings.buttonHoverTextColor};
+      --btn-shadow: ${getShadowCss(settings.buttonShadow)};
+      --btn-hover-shadow: ${getShadowCss(settings.buttonHoverShadow)};
+      
       --font-heading: "${settings.fontHeading}", -apple-system, sans-serif;
       --font-body: "${settings.fontBody}", -apple-system, sans-serif;
       
@@ -37,8 +54,11 @@ export async function TokenProvider() {
     ` : ''}
     
     ${settings.hoverEffects ? `
-      .card-hover:hover { transform: translateY(-4px); box-shadow: var(--global-shadow); }
-      .btn-hover:hover { filter: brightness(1.1); }
+      .card-hover { background-color: var(--card-bg); border-color: var(--card-border); box-shadow: var(--card-shadow); border-radius: var(--card-radius); }
+      .card-hover:hover { transform: translateY(-4px); background-color: var(--card-hover-bg); border-color: var(--card-hover-border); box-shadow: var(--card-hover-shadow); }
+      
+      .btn-hover { background-color: var(--btn-bg); color: var(--btn-text); box-shadow: var(--btn-shadow); border-radius: var(--button-radius); }
+      .btn-hover:hover { background-color: var(--btn-hover-bg); color: var(--btn-hover-text); box-shadow: var(--btn-hover-shadow); }
     ` : ''}
 
     ${settings.customCss || ''}

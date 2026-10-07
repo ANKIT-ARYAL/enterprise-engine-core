@@ -26,6 +26,21 @@ export default function SettingsForm({ initialSettings }: { initialSettings: any
       shadowStyle: formData.get('shadowStyle') as string,
       hoverEffects: formData.get('hoverEffects') === 'on',
       animations: formData.get('animations') === 'on',
+      
+      cardBgColor: formData.get('cardBgColor') as string,
+      cardHoverBgColor: formData.get('cardHoverBgColor') as string,
+      cardBorderColor: formData.get('cardBorderColor') as string,
+      cardHoverBorderColor: formData.get('cardHoverBorderColor') as string,
+      cardShadow: formData.get('cardShadow') as string,
+      cardHoverShadow: formData.get('cardHoverShadow') as string,
+      
+      buttonBgColor: formData.get('buttonBgColor') as string,
+      buttonHoverBgColor: formData.get('buttonHoverBgColor') as string,
+      buttonTextColor: formData.get('buttonTextColor') as string,
+      buttonHoverTextColor: formData.get('buttonHoverTextColor') as string,
+      buttonShadow: formData.get('buttonShadow') as string,
+      buttonHoverShadow: formData.get('buttonHoverShadow') as string,
+      
       customCss: formData.get('customCss') as string,
     };
 
@@ -178,6 +193,100 @@ export default function SettingsForm({ initialSettings }: { initialSettings: any
                 </div>
               </div>
             ))}
+          </div>
+        </div>
+
+        {/* Specific UI Component Configuration */}
+        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 md:p-8 shadow-sm lg:col-span-2">
+          <div className="flex items-center gap-3 mb-8 pb-4 border-b border-slate-100 dark:border-slate-800">
+            <div className="p-2 bg-indigo-50 text-indigo-500 rounded-lg"><Box size={20} /></div>
+            <h2 className="font-semibold text-lg">Component-Specific Styling</h2>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+            {/* Card Tokens */}
+            <div>
+              <h3 className="font-medium text-lg mb-4 text-slate-700 dark:text-slate-300">Card Design</h3>
+              <div className="space-y-4">
+                {[
+                  { id: 'cardBgColor', label: 'Background Color', val: initialSettings.cardBgColor },
+                  { id: 'cardHoverBgColor', label: 'Hover Background Color', val: initialSettings.cardHoverBgColor },
+                  { id: 'cardBorderColor', label: 'Border Color', val: initialSettings.cardBorderColor },
+                  { id: 'cardHoverBorderColor', label: 'Hover Border Color', val: initialSettings.cardHoverBorderColor },
+                ].map(color => (
+                  <div key={color.id} className="flex items-center justify-between">
+                    <label className="text-sm font-medium text-slate-600 dark:text-slate-400">{color.label}</label>
+                    <div className="flex items-center gap-2">
+                      <input type="text" name={color.id} defaultValue={color.val} className="w-20 px-2 py-1 text-xs font-mono border rounded dark:bg-slate-800 dark:border-slate-700" />
+                      <input type="color" defaultValue={color.val} className="w-8 h-8 rounded cursor-pointer border-0 p-0" onChange={(e) => { const textInput = e.currentTarget.previousSibling as HTMLInputElement; if (textInput) textInput.value = e.currentTarget.value; }} />
+                    </div>
+                  </div>
+                ))}
+                
+                <div className="flex items-center justify-between pt-2">
+                  <label className="text-sm font-medium text-slate-600 dark:text-slate-400">Card Base Shadow</label>
+                  <select name="cardShadow" defaultValue={initialSettings.cardShadow} className="w-32 px-2 py-1.5 text-sm border rounded-lg dark:bg-slate-800 dark:border-slate-700">
+                    <option value="none">None</option>
+                    <option value="sm">Small</option>
+                    <option value="md">Medium</option>
+                    <option value="lg">Large</option>
+                    <option value="xl">X-Large</option>
+                  </select>
+                </div>
+                <div className="flex items-center justify-between">
+                  <label className="text-sm font-medium text-slate-600 dark:text-slate-400">Card Hover Shadow</label>
+                  <select name="cardHoverShadow" defaultValue={initialSettings.cardHoverShadow} className="w-32 px-2 py-1.5 text-sm border rounded-lg dark:bg-slate-800 dark:border-slate-700">
+                    <option value="none">None</option>
+                    <option value="sm">Small</option>
+                    <option value="md">Medium</option>
+                    <option value="lg">Large</option>
+                    <option value="xl">X-Large</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            {/* Button Tokens */}
+            <div>
+              <h3 className="font-medium text-lg mb-4 text-slate-700 dark:text-slate-300">Button Design</h3>
+              <div className="space-y-4">
+                {[
+                  { id: 'buttonBgColor', label: 'Background Color', val: initialSettings.buttonBgColor },
+                  { id: 'buttonHoverBgColor', label: 'Hover Background Color', val: initialSettings.buttonHoverBgColor },
+                  { id: 'buttonTextColor', label: 'Text Color', val: initialSettings.buttonTextColor },
+                  { id: 'buttonHoverTextColor', label: 'Hover Text Color', val: initialSettings.buttonHoverTextColor },
+                ].map(color => (
+                  <div key={color.id} className="flex items-center justify-between">
+                    <label className="text-sm font-medium text-slate-600 dark:text-slate-400">{color.label}</label>
+                    <div className="flex items-center gap-2">
+                      <input type="text" name={color.id} defaultValue={color.val} className="w-20 px-2 py-1 text-xs font-mono border rounded dark:bg-slate-800 dark:border-slate-700" />
+                      <input type="color" defaultValue={color.val} className="w-8 h-8 rounded cursor-pointer border-0 p-0" onChange={(e) => { const textInput = e.currentTarget.previousSibling as HTMLInputElement; if (textInput) textInput.value = e.currentTarget.value; }} />
+                    </div>
+                  </div>
+                ))}
+
+                <div className="flex items-center justify-between pt-2">
+                  <label className="text-sm font-medium text-slate-600 dark:text-slate-400">Button Base Shadow</label>
+                  <select name="buttonShadow" defaultValue={initialSettings.buttonShadow} className="w-32 px-2 py-1.5 text-sm border rounded-lg dark:bg-slate-800 dark:border-slate-700">
+                    <option value="none">None</option>
+                    <option value="sm">Small</option>
+                    <option value="md">Medium</option>
+                    <option value="lg">Large</option>
+                    <option value="xl">X-Large</option>
+                  </select>
+                </div>
+                <div className="flex items-center justify-between">
+                  <label className="text-sm font-medium text-slate-600 dark:text-slate-400">Button Hover Shadow</label>
+                  <select name="buttonHoverShadow" defaultValue={initialSettings.buttonHoverShadow} className="w-32 px-2 py-1.5 text-sm border rounded-lg dark:bg-slate-800 dark:border-slate-700">
+                    <option value="none">None</option>
+                    <option value="sm">Small</option>
+                    <option value="md">Medium</option>
+                    <option value="lg">Large</option>
+                    <option value="xl">X-Large</option>
+                  </select>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 

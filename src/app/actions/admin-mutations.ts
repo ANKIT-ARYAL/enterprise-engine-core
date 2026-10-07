@@ -19,6 +19,21 @@ const SettingsSchema = z.object({
   shadowStyle: z.string().min(1),
   hoverEffects: z.boolean().default(true).or(z.string().transform(val => val === 'on' || val === 'true')),
   animations: z.boolean().default(true).or(z.string().transform(val => val === 'on' || val === 'true')),
+  
+  cardBgColor: z.string().regex(/^#([0-9a-fA-F]{3}){1,2}$/),
+  cardHoverBgColor: z.string().regex(/^#([0-9a-fA-F]{3}){1,2}$/),
+  cardBorderColor: z.string().regex(/^#([0-9a-fA-F]{3}){1,2}$/),
+  cardHoverBorderColor: z.string().regex(/^#([0-9a-fA-F]{3}){1,2}$/),
+  cardShadow: z.string().min(1),
+  cardHoverShadow: z.string().min(1),
+  
+  buttonBgColor: z.string().regex(/^#([0-9a-fA-F]{3}){1,2}$/),
+  buttonHoverBgColor: z.string().regex(/^#([0-9a-fA-F]{3}){1,2}$/),
+  buttonTextColor: z.string().regex(/^#([0-9a-fA-F]{3}){1,2}$/),
+  buttonHoverTextColor: z.string().regex(/^#([0-9a-fA-F]{3}){1,2}$/),
+  buttonShadow: z.string().min(1),
+  buttonHoverShadow: z.string().min(1),
+  
   customCss: z.string().optional().nullable(),
 });
 
