@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useTransition, useMemo } from 'react';
+import { useState, useTransition, useMemo, useEffect } from 'react';
 import { updateSystemSettingsAction } from '@/app/actions/admin-mutations';
 import { Palette, Type, Layout, Code, Save, CheckCircle2, Box, MousePointer2, Layers, Settings2, Download, Monitor, Tablet, Smartphone, ChevronDown, Zap } from 'lucide-react';
 
@@ -25,24 +25,25 @@ export default function SettingsForm({ initialSettings }: { initialSettings: any
     }));
   };
 
+  // Dynamically inject CSS variables to the document root to update the Admin UI live
+  useEffect(() => {
+    const root = document.documentElement;
+    if (liveTokens.primaryColor) root.style.setProperty('--primary', liveTokens.primaryColor);
+    if (liveTokens.backgroundColor) root.style.setProperty('--bg-body', liveTokens.backgroundColor);
+    if (liveTokens.textColor) root.style.setProperty('--text-main', liveTokens.textColor);
+    if (liveTokens.radius) root.style.setProperty('--radius', liveTokens.radius);
+    if (liveTokens.fontHeading) root.style.setProperty('--font-heading', liveTokens.fontHeading);
+    if (liveTokens.fontBody) root.style.setProperty('--font-body', liveTokens.fontBody);
+  }, [liveTokens]);
+
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    const formData = new FormData(e.currentTarget);
     
-    const newTokens: any = {};
-    formData.forEach((value, key) => {
-      if (key !== 'siteName' && key !== 'customCss') {
-        newTokens[key] = value === 'on' ? true : value;
-      }
-    });
-
-    newTokens.hoverEffects = formData.get('hoverEffects') === 'on';
-    newTokens.animations = formData.get('animations') === 'on';
-
+    // We use liveTokens state instead of FormData because unrendered tabs wouldn't be included in FormData
     const data = {
-      siteName: formData.get('siteName') as string,
-      customCss: formData.get('customCss') as string,
-      tokens: newTokens,
+      siteName: liveTokens.siteName || initialSettings.siteName,
+      customCss: liveTokens.customCss || initialSettings.customCss || '',
+      tokens: liveTokens,
     };
 
     startTransition(async () => {
@@ -252,114 +253,6 @@ export default function SettingsForm({ initialSettings }: { initialSettings: any
             )}
           </div>
         </div>
-
-        {/* Right Column: Persistent Live Viewport */}
-        <div className="w-[500px] shrink-0 flex flex-col relative transition-colors duration-300">
-          
-          <div className="flex items-center justify-between mb-4">
-            <div className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Live Persistent Stage</div>
-            <div className="flex items-center gap-1 bg-slate-100 dark:bg-slate-800 p-1 rounded-lg">
-              <button type="button" onClick={() => setPreviewDevice('desktop')} className={`p-1.5 rounded-md ${previewDevice === 'desktop' ? 'bg-white dark:bg-slate-700 shadow-sm' : 'text-slate-500'}`}><Monitor size={14} /></button>
-              <button type="button" onClick={() => setPreviewDevice('tablet')} className={`p-1.5 rounded-md ${previewDevice === 'tablet' ? 'bg-white dark:bg-slate-700 shadow-sm' : 'text-slate-500'}`}><Tablet size={14} /></button>
-              <button type="button" onClick={() => setPreviewDevice('mobile')} className={`p-1.5 rounded-md ${previewDevice === 'mobile' ? 'bg-white dark:bg-slate-700 shadow-sm' : 'text-slate-500'}`}><Smartphone size={14} /></button>
-            </div>
-          </div>
-
-          {/* Sandbox Wrapper */}
-          <div className="flex-1 bg-slate-100 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden flex flex-col items-center p-4">
-            
-            <div 
-              className="bg-white rounded-xl shadow-xl overflow-hidden flex flex-col transition-all duration-300 relative border border-slate-200/50 dark:border-slate-700"
-              style={{ 
-                width: previewWidth,
-                height: '100%',
-                backgroundColor: liveTokens.backgroundColor || '#ffffff',
-                color: liveTokens.textColor || '#0f172a',
-                fontFamily: liveTokens.fontBody || 'Inter'
-              }}
-            >
-              
-              {/* Fake Browser Chrome */}
-              <div className="h-10 border-b border-black/5 bg-black/5 flex items-center px-4 shrink-0 gap-1.5">
-                <div className="w-2.5 h-2.5 rounded-full bg-slate-300 dark:bg-slate-600"></div>
-                <div className="w-2.5 h-2.5 rounded-full bg-slate-300 dark:bg-slate-600"></div>
-                <div className="w-2.5 h-2.5 rounded-full bg-slate-300 dark:bg-slate-600"></div>
-              </div>
-
-              {/* Viewport Content */}
-              <div className="p-8 overflow-y-auto custom-scrollbar flex-1 space-y-8">
-                
-                {/* Hero Section */}
-                <div>
-                  <div className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-full bg-[var(--primary)]/10 text-[var(--primary)] mb-4"
-                       style={{ color: liveTokens.primaryColor || '#2563eb', backgroundColor: `${liveTokens.primaryColor || '#2563eb'}1A` }}>
-                    <Zap size={12} /> Architecture v4.2
-                  </div>
-                  <h1 className="text-3xl font-bold tracking-tight mb-3" style={{ fontFamily: liveTokens.fontHeading || 'Inter' }}>
-                    Fluid Scalable Layout Engine
-                  </h1>
-                  <p className="opacity-70 leading-relaxed text-sm max-w-sm">
-                    Zero layout shifts, sub-second edge cache revalidation, and responsive clamp-based typography everywhere.
-                  </p>
-                  
-                  <div className="flex gap-3 mt-6">
-                    <button type="button" className="px-5 py-2.5 text-sm font-medium transition-all duration-300 shadow-sm"
-                            style={{
-                              backgroundColor: liveTokens.buttonBgColor || liveTokens.primaryColor || '#2563eb',
-                              color: liveTokens.buttonTextColor || '#ffffff',
-                              borderRadius: liveTokens.buttonRadius === 'var(--radius)' ? (liveTokens.radius || '0.5rem') : (liveTokens.buttonRadius || '0.5rem'),
-                            }}>
-                      Deploy Section
-                    </button>
-                    <button type="button" className="px-5 py-2.5 text-sm font-medium border opacity-80 hover:opacity-100"
-                            style={{
-                              borderColor: liveTokens.primaryColor || '#2563eb',
-                              color: liveTokens.primaryColor || '#2563eb',
-                              borderRadius: liveTokens.buttonRadius === 'var(--radius)' ? (liveTokens.radius || '0.5rem') : (liveTokens.buttonRadius || '0.5rem'),
-                            }}>
-                      Review Skeletons
-                    </button>
-                  </div>
-                </div>
-
-                {/* Cards Grid */}
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="p-4 border transition-all duration-300 relative group"
-                       style={{
-                         backgroundColor: liveTokens.cardBgColor || 'transparent',
-                         borderColor: liveTokens.cardBorderColor || '#e2e8f0',
-                         borderRadius: liveTokens.cardRadius === 'var(--radius)' ? (liveTokens.radius || '0.5rem') : (liveTokens.cardRadius || '0.75rem'),
-                         boxShadow: cardShadowVal,
-                       }}>
-                    <h3 className="font-semibold text-sm mb-1">Hero Dynamic Card</h3>
-                    <p className="text-xs opacity-60">Latency: 0.12ms</p>
-                  </div>
-                  <div className="p-4 border transition-all duration-300 relative group"
-                       style={{
-                         backgroundColor: liveTokens.cardBgColor || 'transparent',
-                         borderColor: liveTokens.cardBorderColor || '#e2e8f0',
-                         borderRadius: liveTokens.cardRadius === 'var(--radius)' ? (liveTokens.radius || '0.5rem') : (liveTokens.cardRadius || '0.75rem'),
-                         boxShadow: cardShadowVal,
-                       }}>
-                    <h3 className="font-semibold text-sm mb-1">Database Record</h3>
-                    <p className="text-xs opacity-60">Status: 40k Synced</p>
-                  </div>
-                </div>
-
-              </div>
-            </div>
-          </div>
-
-          {/* Compiled Active CSS Payload */}
-          <div className="mt-4 bg-[#0B0E14] border border-[#222938] rounded-xl p-4 shrink-0 shadow-lg">
-            <div className="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-2">Compiled Active CSS Payload</div>
-            <pre className="text-xs font-mono text-[#A8B2C1] whitespace-pre-wrap leading-relaxed">
-              {activeCssPreview}
-            </pre>
-          </div>
-
-        </div>
-
       </div>
     </form>
   );
