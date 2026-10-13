@@ -122,8 +122,13 @@
   --section-pad: clamp(3rem, 6vw, 6.5rem);
 }
 
+html,
 body {
   background-color: var(--bg-body);
+  min-height: 100%;
+}
+
+body {
   color: var(--text-main);
   font-family: var(--font-body);
   overflow-x: hidden;
@@ -368,16 +373,16 @@ button.bg-primary:hover {
 }
 
 /* Explicit page-owned animation wrappers. */
-.motion-explicit:not(.is-visible) { visibility: hidden; }
-.motion-explicit.is-visible { visibility: visible; }
-.motion-explicit.is-visible > * { animation-duration: .6s; animation-fill-mode: both; animation-timing-function: cubic-bezier(.22, 1, .36, 1); }
-.motion-fade-up.is-visible > * { animation-name: engine-up; }
-.motion-fade.is-visible > * { animation-name: engine-fade; }
-.motion-slide-down.is-visible > * { animation-name: engine-down; }
-.motion-slide-left.is-visible > * { animation-name: engine-left; }
-.motion-slide-right.is-visible > * { animation-name: engine-right; }
-.motion-scale-in.is-visible > * { animation-name: engine-scale; }
-.motion-auto-slide.is-visible > * { animation: engine-auto-slide 3s ease-in-out infinite; }
+.motion-explicit { visibility: visible; }
+.motion-explicit:not(.is-visible) { opacity: 0; transform: translate3d(0, 18px, 0); }
+.motion-explicit.is-visible { animation-duration: .6s; animation-fill-mode: both; animation-timing-function: cubic-bezier(.22, 1, .36, 1); }
+.motion-fade-up.is-visible { animation-name: engine-up; }
+.motion-fade.is-visible { animation-name: engine-fade; }
+.motion-slide-down.is-visible { animation-name: engine-down; }
+.motion-slide-left.is-visible { animation-name: engine-left; }
+.motion-slide-right.is-visible { animation-name: engine-right; }
+.motion-scale-in.is-visible { animation-name: engine-scale; }
+.motion-auto-slide.is-visible { animation: engine-auto-slide 3s ease-in-out infinite; }
 
 /* Pages own their motion wrappers. Unwrapped page content stays static. */
 .public-shell > main > *:not(.motion-viewport) * {

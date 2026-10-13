@@ -19,13 +19,15 @@ import {
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { GripVertical, Eye, EyeOff, Trash2 } from 'lucide-react';
-import { softDeleteSectionAction } from '@/app/actions/admin-mutations';
+import { reorderSectionsAction, softDeleteSectionAction, toggleSectionVisibilityAction } from '@/app/actions/admin-mutations';
+import { SectionEditorForm } from '@/components/admin/SectionEditorForm';
 
 interface SectionData {
   id: string;
   type: string;
   isEnabled: boolean;
   order: number;
+  content?: unknown;
 }
 
 interface SectionDndListProps {
@@ -33,7 +35,7 @@ interface SectionDndListProps {
   pageSlug: string;
 }
 
-function SortableItem({ section, onToggle, onDelete }: { section: SectionData, onToggle: (id: string, isEnabled: boolean) => void, onDelete: (id: string) => void }) {
+function SortableItem({ section, index, pageSlug, onToggle, onDelete }: { section: SectionData, index: number, pageSlug: string, onToggle: (id: string, isEnabled: boolean) => void, onDelete: (id: string) => void }) {
   const {
     attributes,
     listeners,
@@ -48,7 +50,8 @@ function SortableItem({ section, onToggle, onDelete }: { section: SectionData, o
   };
 
   return (
-    <div ref={setNodeRef} style={style} className="flex items-center justify-between p-4 mb-3 bg-white border border-[#ececec] rounded-xl shadow-sm hover:shadow-md transition-shadow">
+    <div ref={setNodeRef} style={style} className="relative">
+      {section.content ? <SectionEditorForm section={section as any} pageSlug={pageSlug} index={index} /> : <div className="flex items-center justify-between p-4 mb-3 bg-card border border-border rounded-xl shadow-sm">
       <div className="flex items-center gap-4">
         <button {...attributes} {...listeners} className="cursor-grab text-slate-400 hover:text-slate-600 hover:bg-slate-50 p-1.5 rounded-lg transition-colors active:cursor-grabbing">
           <GripVertical size={20} />
@@ -66,6 +69,8 @@ function SortableItem({ section, onToggle, onDelete }: { section: SectionData, o
           <Trash2 size={18} />
         </button>
       </div>
+      </div>}
+      <button {...attributes} {...listeners} type="button" aria-label={`Move ${section.type} section`} className="absolute left-3 top-1/2 -translate-y-1/2 z-10 cursor-grab rounded-md p-1 text-muted-foreground hover:bg-muted hover:text-foreground active:cursor-grabbing"><GripVertical size={18} /></button>
     </div>
   );
 }
@@ -84,22 +89,23 @@ export function SectionDndList({ initialSections, pageSlug }: SectionDndListProp
     const { active, over } = event;
     
     if (over && active.id !== over.id) {
-      setSections((items) => {
-        const oldIndex = items.findIndex((i) => i.id === active.id);
-        const newIndex = items.findIndex((i) => i.id === over.id);
-        const newArray = arrayMove(items, oldIndex, newIndex);
-        
-        // In a real app, you would send an API request here to update the order in DB
-        // e.g., updateSectionOrderAction(newArray.map((s, idx) => ({ id: s.id, order: idx })));
-        
-        return newArray;
-      });
+      const oldIndex = sections.findIndex((i) => i.id === active.id);
+      const newIndex = sections.findIndex((i) => i.id === over.id);
+      const newArray = arrayMove(sections, oldIndex, newIndex);
+      setSections(newArray);
+      try {
+        await reorderSectionsAction(pageSlug, newArray.map((s) => s.id));
+      } catch {
+        setSections(sections);
+      }
     }
   };
 
   const handleToggle = async (id: string, isEnabled: boolean) => {
     // In a real app, you would trigger a server action here to toggle
-    setSections(sections.map(s => s.id === id ? { ...s, isEnabled: !isEnabled } : s));
+    const next = sections.map(s => s.id === id ? { ...s, isEnabled: !isEnabled } : s);
+    setSections(next);
+    await toggleSectionVisibilityAction(id, pageSlug, !isEnabled);
   };
 
   const handleDelete = async (id: string) => {
@@ -115,8 +121,8 @@ export function SectionDndList({ initialSections, pageSlug }: SectionDndListProp
     <DndContext id={dndId} sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
       <SortableContext items={sections.map(s => s.id)} strategy={verticalListSortingStrategy}>
         <div className="w-full space-y-4">
-          {sections.map((section) => (
-            <SortableItem key={section.id} section={section} onToggle={handleToggle} onDelete={handleDelete} />
+          {sections.map((section, index) => (
+            <SortableItem key={section.id} section={section} index={index} pageSlug={pageSlug} onToggle={handleToggle} onDelete={handleDelete} />
           ))}
         </div>
       </SortableContext>

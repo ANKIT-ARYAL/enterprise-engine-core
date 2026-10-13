@@ -29,7 +29,7 @@ export function MotionViewport({ children, className = "" }: { children: ReactNo
     return () => observer.disconnect();
   }, [pageEnabled]);
 
-  return <div ref={ref} className={`motion-viewport ${pageEnabled ? "" : "motion-disabled"} ${visible ? "is-visible" : ""} ${className}`.trim()}>{children}</div>;
+  return <div ref={ref} className={`motion-viewport motion-global ${pageEnabled ? "" : "motion-disabled"} ${visible ? "is-visible" : ""} ${className}`.trim()}>{children}</div>;
 }
 
 export function FadeUp({ children, className = "" }: { children: ReactNode; className?: string }) {

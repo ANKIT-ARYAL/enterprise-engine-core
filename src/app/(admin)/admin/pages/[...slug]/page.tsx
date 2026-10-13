@@ -3,6 +3,7 @@ export const instant = false;
 import React from 'react';
 import { prisma } from '@/lib/db/client';
 import { SectionEditorForm } from '@/components/admin/SectionEditorForm';
+import { SectionDndList } from '@/components/admin/SectionDndList';
 import { AddSectionDropdown } from '@/components/admin/AddSectionDropdown';
 import Link from 'next/link';
 import { 
@@ -84,7 +85,7 @@ export default async function DynamicAdminPageDashboard({
   const publicHref = slugPath === 'home' ? '/' : `/${slugPath}`;
 
   return (
-    <div className="w-full space-y-6 pb-24">
+    <div className="w-full max-w-[1600px] mx-auto space-y-5 pb-24">
       {/* 1. Top Pages Switcher Strip */}
       <div className="flex items-center gap-2 overflow-x-auto pb-2 custom-scrollbar">
         {combinedNav.map(item => {
@@ -108,7 +109,8 @@ export default async function DynamicAdminPageDashboard({
       </div>
 
       {/* 2. Executive Page Builder Header */}
-      <div className="bg-card border border-border rounded-card p-5 md:p-6 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-5 w-full">
+      <div className="relative overflow-visible z-30 bg-card border border-border rounded-2xl p-6 md:p-8 shadow-sm flex flex-col md:flex-row md:items-end justify-between gap-6 w-full">
+        <div className="absolute inset-y-0 right-0 w-1/3 pointer-events-none bg-primary/[0.04] [mask-image:linear-gradient(to_left,black,transparent)]" />
         <div className="space-y-1.5">
           <div className="flex items-center gap-2 flex-wrap">
             <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">
@@ -123,7 +125,7 @@ export default async function DynamicAdminPageDashboard({
             </span>
           </div>
 
-          <h1 className="text-2xl font-bold tracking-tight text-foreground">
+          <h1 className="text-3xl md:text-4xl font-bold tracking-[-0.04em] text-foreground text-balance">
             {page.title} Page Builder
           </h1>
           <p className="text-xs text-muted-foreground">
@@ -132,7 +134,7 @@ export default async function DynamicAdminPageDashboard({
         </div>
 
         {/* Action Controls */}
-        <div className="flex items-center gap-3 shrink-0 flex-wrap">
+        <div className="relative flex items-center gap-2.5 shrink-0 flex-wrap">
           <a
             href={publicHref}
             target="_blank"
@@ -219,10 +221,13 @@ export default async function DynamicAdminPageDashboard({
 
       {/* 4. Active Components List */}
       <div className="space-y-4 w-full">
-        <div className="flex items-center justify-between px-1">
+        <div className="flex items-end justify-between px-1 pb-1">
           <div className="flex items-center gap-2">
-            <h2 className="text-sm font-semibold text-foreground">Page Sections & Components</h2>
-            <span className="text-xs px-2 py-0.5 rounded-full bg-muted border border-border text-muted-foreground font-mono">
+            <div>
+              <p className="text-[10px] uppercase tracking-[0.16em] font-semibold text-primary mb-1">Content architecture</p>
+              <h2 className="text-lg font-semibold tracking-tight text-foreground">Page sections & components</h2>
+            </div>
+            <span className="text-xs px-2 py-0.5 rounded-md bg-muted border border-border text-muted-foreground font-mono">
               {page.sections.length}
             </span>
           </div>
@@ -231,14 +236,16 @@ export default async function DynamicAdminPageDashboard({
           </span>
         </div>
 
-        {page.sections.map((section, idx) => (
-          <SectionEditorForm 
-            key={section.id} 
-            section={section} 
-            pageSlug={page.slug} 
-            index={idx} 
-          />
-        ))}
+        <SectionDndList
+          pageSlug={page.slug}
+          initialSections={page.sections.map((section) => ({
+            id: section.id,
+            type: section.type,
+            isEnabled: section.isEnabled,
+            order: section.order,
+            content: section.content,
+          }))}
+        />
 
         {/* 5. Empty State / Quick Starter Kits */}
         {page.sections.length === 0 && (

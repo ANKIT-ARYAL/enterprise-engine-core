@@ -98,6 +98,20 @@ export async function toggleSectionVisibilityAction(sectionId: string, pageSlug:
   return { success: true };
 }
 
+export async function reorderSectionsAction(pageSlug: string, sectionIds: string[]) {
+  await prisma.$transaction(
+    sectionIds.map((id, order) =>
+      prisma.pageSection.update({ where: { id }, data: { order } }),
+    ),
+  );
+  revalidateTag(`page:${pageSlug}`, 'default');
+  revalidateTag('sections', 'default');
+  revalidatePath(`/admin/pages/${pageSlug}`);
+  revalidatePath(`/${pageSlug}`);
+  revalidatePath('/', 'layout');
+  return { success: true };
+}
+
 export async function softDeleteSectionAction(sectionId: string, pageSlug: string) {
   await prisma.pageSection.update({
     where: { id: sectionId },

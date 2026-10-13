@@ -188,6 +188,18 @@ export default function AdminShell({ children, initialNav, sessionUser }: { chil
     }
   };
 
+  // Ensure the Design Studio submenu remains available even when navigation
+  // was customized and persisted before newer studio tabs were added.
+  const studioSection = normalizedNav.sections
+    .flatMap((section: any) => section.links || [])
+    .find((link: any) => link.href === '/admin/settings');
+  if (studioSection) {
+    studioSection.children = [
+      ...(studioSection.children || []).filter((child: any) => child.href !== '/admin/settings?tab=design-animations'),
+      { href: '/admin/settings?tab=design-animations', label: 'Animations' },
+    ];
+  }
+
   return (
     <div className="flex h-screen overflow-hidden bg-surface text-surface-text font-sans">
       

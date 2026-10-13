@@ -57,6 +57,23 @@ export async function TokenProvider() {
     }
   };
 
+  const motionKeyframes: Record<string, string> = {
+    fade: 'engine-fade',
+    'slide-up': 'engine-up',
+    'slide-down': 'engine-down',
+    'slide-left': 'engine-left',
+    'slide-right': 'engine-right',
+    blur: 'engine-blur',
+    scale: 'engine-scale',
+    'auto-slide': 'engine-auto-slide',
+  };
+  const motionRule = (target: string, value: unknown, delay: unknown) => {
+    const keyframe = motionKeyframes[String(value || 'none')];
+    if (!keyframe) return '';
+    const duration = keyframe === 'engine-auto-slide' ? '3s' : '.6s';
+    return `.public-shell .motion-global.is-visible.motion-target-${target}, .public-shell .motion-global.is-visible.motion-explicit { animation: ${keyframe} ${duration} ease both; animation-delay: ${String(delay || '0ms')}; }`;
+  };
+
   const cssPayload = `
     :root {
       ${tokens.primaryColor ? `--primary: ${tokens.primaryColor};` : ''}
@@ -102,6 +119,10 @@ export async function TokenProvider() {
       --enable-hover: ${tokens.hoverEffects !== false ? '1' : '0'};
       --enable-animations: ${tokens.animations !== false ? '1' : '0'};
     }
+
+    ${motionRule('text', tokens.textAnimation, tokens.textAnimationDelay)}
+    ${motionRule('card', tokens.cardAnimation, tokens.cardAnimationDelay)}
+    ${motionRule('button', tokens.buttonAnimation, tokens.buttonAnimationDelay)}
     
     ${tokens.animations !== false ? `
       * { transition-property: background-color, border-color, color, fill, stroke, opacity, box-shadow, transform; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 150ms; }
@@ -166,10 +187,6 @@ export async function TokenProvider() {
 
   return (
     <>
-      <script
-        id="theme-anti-fouc-script"
-        dangerouslySetInnerHTML={{ __html: antiFoucScript }}
-      />
       <style
         id="system-token-streamer"
         dangerouslySetInnerHTML={{ __html: cssPayload }}

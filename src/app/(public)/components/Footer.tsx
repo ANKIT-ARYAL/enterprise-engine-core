@@ -13,8 +13,16 @@ export default async function Footer() {
   
   // Footer configuration
   const footerConfig = tokens.footer || {};
-  const bgColor = footerConfig.bgColor || 'var(--card-bg, #ffffff)';
-  const textColor = footerConfig.textColor || 'inherit';
+  // Legacy footer settings stored white as the default. Treat that value as
+  // semantic so the footer follows light/dark mode instead of staying white.
+  const configuredBg = String(footerConfig.bgColor || '').toLowerCase();
+  const bgColor = !configuredBg || configuredBg === '#ffffff' || configuredBg === '#fff' || configuredBg === 'white'
+    ? 'var(--background)'
+    : footerConfig.bgColor;
+  const configuredText = String(footerConfig.textColor || '').toLowerCase();
+  const textColor = !configuredText || configuredText === 'inherit' || configuredText === '#000000' || configuredText === '#000' || configuredText === '#0f172a' || configuredText === '#111827'
+    ? 'var(--foreground)'
+    : footerConfig.textColor;
   const description = footerConfig.description || 'Modular, high-performance web architecture engineered for scale and speed.';
   const copyright = footerConfig.copyright || `© 2026 ${siteName}. All rights reserved.`;
 

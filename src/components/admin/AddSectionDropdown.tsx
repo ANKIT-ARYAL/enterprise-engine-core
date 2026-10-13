@@ -48,7 +48,7 @@ export function AddSectionDropdown({
   };
 
   return (
-    <div className="relative z-50 flex-1 md:flex-none" ref={dropdownRef}>
+    <div className="relative z-[100] flex-1 md:flex-none" ref={dropdownRef}>
       <button 
         onClick={() => setIsOpen(!isOpen)}
         disabled={isAdding}
@@ -58,7 +58,7 @@ export function AddSectionDropdown({
       </button>
       
       {isOpen && (
-        <div className="absolute right-0 top-full mt-2 w-64 bg-card border border-border rounded-xl shadow-2xl flex flex-col p-2 z-[9999] animate-in fade-in zoom-in-95 duration-150">
+        <div className="absolute right-0 top-full mt-2 w-64 bg-card border border-border rounded-xl shadow-2xl flex flex-col p-2 z-[1000] animate-in fade-in zoom-in-95 duration-150">
           <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider px-3 py-1.5">
             Pre-built Components
           </div>
