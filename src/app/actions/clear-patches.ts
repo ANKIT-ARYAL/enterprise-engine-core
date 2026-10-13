@@ -1,7 +1,8 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use server';
 
 import { prisma } from '@/lib/db/client';
-import { revalidatePath } from 'next/cache';
+import { revalidatePath, revalidateTag } from 'next/cache';
 
 export async function clearAllPatches() {
   if (process.env.NODE_ENV !== 'development') {
@@ -21,5 +22,7 @@ export async function clearAllPatches() {
     }
   });
 
+  revalidateTag('system-settings', 'default' as any);
+  revalidateTag('global-content', 'default' as any);
   revalidatePath('/', 'layout');
 }

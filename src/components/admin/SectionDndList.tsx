@@ -48,21 +48,21 @@ function SortableItem({ section, onToggle, onDelete }: { section: SectionData, o
   };
 
   return (
-    <div ref={setNodeRef} style={style} className="flex items-center justify-between p-4 mb-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-[var(--radius)] shadow-sm">
+    <div ref={setNodeRef} style={style} className="flex items-center justify-between p-4 mb-3 bg-white border border-[#ececec] rounded-xl shadow-sm hover:shadow-md transition-shadow">
       <div className="flex items-center gap-4">
-        <button {...attributes} {...listeners} className="cursor-grab text-slate-400 hover:text-slate-600">
+        <button {...attributes} {...listeners} className="cursor-grab text-slate-400 hover:text-slate-600 hover:bg-slate-50 p-1.5 rounded-lg transition-colors active:cursor-grabbing">
           <GripVertical size={20} />
         </button>
         <div>
-          <h3 className="font-semibold">{section.type}</h3>
-          <p className="text-xs text-slate-500">ID: {section.id}</p>
+          <h3 className="text-[14px] font-semibold text-slate-900 capitalize">{section.type || 'Generic Section'}</h3>
+          <p className="text-[12px] text-slate-500 font-mono mt-0.5">ID: {section.id}</p>
         </div>
       </div>
       <div className="flex items-center gap-2">
-        <button onClick={() => onToggle(section.id, section.isEnabled)} className={`p-2 rounded hover:bg-slate-100 ${section.isEnabled ? 'text-green-600' : 'text-slate-400'}`}>
+        <button onClick={() => onToggle(section.id, section.isEnabled)} className={`p-2 rounded-lg transition-colors hover:bg-slate-50 border border-transparent hover:border-slate-200 ${section.isEnabled ? 'text-emerald-600' : 'text-slate-400'}`}>
           {section.isEnabled ? <Eye size={18} /> : <EyeOff size={18} />}
         </button>
-        <button onClick={() => onDelete(section.id)} className="p-2 rounded hover:bg-red-50 text-red-500">
+        <button onClick={() => onDelete(section.id)} className="p-2 rounded-lg transition-colors hover:bg-red-50 text-red-500 border border-transparent hover:border-red-100">
           <Trash2 size={18} />
         </button>
       </div>
@@ -114,7 +114,7 @@ export function SectionDndList({ initialSections, pageSlug }: SectionDndListProp
   return (
     <DndContext id={dndId} sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
       <SortableContext items={sections.map(s => s.id)} strategy={verticalListSortingStrategy}>
-        <div className="w-full max-w-3xl">
+        <div className="w-full space-y-4">
           {sections.map((section) => (
             <SortableItem key={section.id} section={section} onToggle={handleToggle} onDelete={handleDelete} />
           ))}

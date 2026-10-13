@@ -5,17 +5,25 @@ export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   if (pathname.startsWith('/admin')) {
-    const sessionToken = request.cookies.get('engine_admin_session');
+    const sessionToken = request.cookies.get('engine_admin_session')?.value;
     
     // Allow login page bypass
     if (pathname === '/admin/login') {
-      if (sessionToken) return NextResponse.redirect(new URL('/admin/pages', request.url));
+      if (sessionToken) return NextResponse.redirect(new URL('/admin/dashboard', request.url));
       return NextResponse.next();
     }
     
     // Require authentication for all other /admin routes
     if (!sessionToken) {
       return NextResponse.redirect(new URL('/admin/login', request.url));
+    }
+
+    // RBAC: Restrict Admins from Superadmin features
+    if (sessionToken === 'ADMIN') {
+      const superAdminRoutes = ['/admin/dashboard/design-system', '/admin/dashboard/global'];
+      if (superAdminRoutes.some(route => pathname.startsWith(route))) {
+        return NextResponse.redirect(new URL('/admin/dashboard', request.url));
+      }
     }
   }
 

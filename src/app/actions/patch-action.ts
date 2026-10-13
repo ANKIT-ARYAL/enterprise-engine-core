@@ -1,7 +1,8 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use server';
 
 import { prisma } from '@/lib/db/client';
-import { revalidatePath } from 'next/cache';
+import { revalidatePath, revalidateTag } from 'next/cache';
 
 export async function saveVisualPatch(patch: { selector: string, type: 'text' | 'class', value: string }) {
   if (process.env.NODE_ENV !== 'development') {
@@ -30,5 +31,7 @@ export async function saveVisualPatch(patch: { selector: string, type: 'text' | 
     }
   });
 
+  revalidateTag('system-settings', 'default');
+  revalidateTag('global-content', 'default');
   revalidatePath('/', 'layout');
 }

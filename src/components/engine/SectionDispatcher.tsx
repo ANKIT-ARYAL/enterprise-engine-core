@@ -1,5 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react';
 import { SectionRegistry } from './SectionRegistry';
+import { MotionViewport } from './MotionViewport';
 
 interface SectionDispatcherProps {
   section: {
@@ -25,11 +27,14 @@ export function SectionDispatcher({ section }: SectionDispatcherProps) {
   }
 
   return (
-    <section id={`section-${section.id}`} className="w-full relative overflow-hidden">
+    <MotionViewport>
+      <section id={`section-${section.id}`} className="w-full relative overflow-hidden">
       {section.customCss && (
         <style dangerouslySetInnerHTML={{ __html: section.customCss }} />
       )}
       <Component {...section.content} sectionId={section.id} />
-    </section>
+      </section>
+    </MotionViewport>
+    
   );
 }

@@ -1,75 +1,57 @@
+export const instant = false;
+
 import { prisma } from '@/lib/db/client';
-import { revalidateTag } from 'next/cache';
-import { RefreshCcw, Trash2 } from 'lucide-react';
+import RecycleBinManager from '@/components/admin/RecycleBinManager';
 
 export default async function RecycleBinPage() {
-  const deletedSections = await prisma.pageSection.findMany({
-    where: { isDeleted: true },
-    include: { page: true },
-    orderBy: { updatedAt: 'desc' }
-  });
+  const [deletedSections, deletedProducts, deletedMedia] = await Promise.all([
+    prisma.pageSection.findMany({
+      where: { isDeleted: true },
+      include: { page: { select: { id: true, title: true, slug: true } } },
+      orderBy: { updatedAt: 'desc' },
+    }),
+    prisma.product.findMany({
+      where: { isDeleted: true },
+      select: { id: true, title: true, slug: true, price: true, updatedAt: true },
+      orderBy: { updatedAt: 'desc' },
+    }),
+    prisma.mediaVault.findMany({
+      where: { isDeleted: true },
+      select: { id: true, fileName: true, fileSize: true, mimeType: true, createdAt: true },
+      orderBy: { createdAt: 'desc' },
+    }),
+  ]);
 
-  async function restoreSection(formData: FormData) {
-    'use server';
-    const id = formData.get('id') as string;
-    const pageSlug = formData.get('pageSlug') as string;
-    
-    await prisma.pageSection.update({
-      where: { id },
-      data: { isDeleted: false }
-    });
-    
-    // @ts-expect-error - Next.js types conflict
-    revalidateTag(`page:${pageSlug}`);
-    // @ts-expect-error - Next.js types conflict
-    revalidateTag('sections');
-  }
+  const formattedSections = deletedSections.map((s) => ({
+    id: s.id,
+    type: s.type,
+    updatedAt: s.updatedAt.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+    page: s.page,
+  }));
 
-  async function purgeSection(formData: FormData) {
-    'use server';
-    const id = formData.get('id') as string;
-    
-    await prisma.pageSection.delete({
-      where: { id }
-    });
-  }
+  const formattedProducts = deletedProducts.map((p) => ({
+    id: p.id,
+    title: p.title,
+    slug: p.slug,
+    price: p.price.toString(),
+    updatedAt: p.updatedAt.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+  }));
+
+  const formattedMedia = deletedMedia.map((m) => ({
+    id: m.id,
+    fileName: m.fileName,
+    fileSize: m.fileSize,
+    mimeType: m.mimeType,
+    createdAt: m.createdAt.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+  }));
 
   return (
-    <div>
-      <h1 className="h2-title mb-6">Recycle Bin</h1>
-      <p className="desc-text mb-8">Restore accidentally deleted items or permanently purge them.</p>
-
-      {deletedSections.length === 0 ? (
-        <div className="p-8 border-2 border-dashed border-slate-300 rounded-[var(--radius)] text-center text-slate-500">
-          The recycle bin is empty.
-        </div>
-      ) : (
-        <div className="space-y-4 max-w-4xl">
-          {deletedSections.map((section: any) => (
-            <div key={section.id} className="flex items-center justify-between p-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-[var(--radius)]">
-              <div>
-                <h3 className="font-semibold">{section.type} <span className="text-sm font-normal text-slate-500">from {section.page.title}</span></h3>
-                <p className="text-xs text-slate-500">Deleted: {section.updatedAt.toLocaleString()}</p>
-              </div>
-              <div className="flex gap-2">
-                <form action={restoreSection}>
-                  <input type="hidden" name="id" value={section.id} />
-                  <input type="hidden" name="pageSlug" value={section.page.slug} />
-                  <button type="submit" className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-[var(--primary)] bg-[var(--primary)]/10 hover:bg-[var(--primary)]/20 rounded">
-                    <RefreshCcw size={16} /> Restore
-                  </button>
-                </form>
-                <form action={purgeSection}>
-                  <input type="hidden" name="id" value={section.id} />
-                  <button type="submit" className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-red-600 bg-red-50 hover:bg-red-100 rounded">
-                    <Trash2 size={16} /> Purge
-                  </button>
-                </form>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
+    <div className="w-full">
+      <RecycleBinManager
+        deletedSections={formattedSections}
+        deletedProducts={formattedProducts}
+        deletedMedia={formattedMedia}
+      />
     </div>
   );
 }

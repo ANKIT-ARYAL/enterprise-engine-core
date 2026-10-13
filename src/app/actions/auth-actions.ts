@@ -1,31 +1,144 @@
 'use server';
 
-import { cookies } from 'next/headers';
+import { prisma } from '@/lib/db/client';
+import { verifyPassword, hashPassword } from '@/lib/auth/passwords';
+import { createAdminSession, destroyAdminSession, getCurrentAdminSession } from '@/lib/auth/session';
 import { z } from 'zod';
+import { revalidatePath } from 'next/cache';
+
+const LoginSchema = z.object({
+  email: z.string().email('Valid email is required'),
+  password: z.string().min(1, 'Password is required'),
+});
 
 export async function loginAction(formData: FormData) {
-  const email = formData.get('email');
-  const password = formData.get('password');
+  const emailRaw = formData.get('email');
+  const passwordRaw = formData.get('password');
 
-  const validEmail = process.env.ADMIN_EMAIL || 'admin@engine.local';
-  const validPassword = process.env.ADMIN_PASSWORD || 'admin123456';
-
-  if (email === validEmail && password === validPassword) {
-    const cookieStore = await cookies();
-    cookieStore.set('engine_admin_session', 'authenticated', {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      path: '/'
-    });
-    return { success: true };
+  const parsed = LoginSchema.safeParse({ email: emailRaw, password: passwordRaw });
+  if (!parsed.success) {
+    return { success: false, error: parsed.error.issues[0]?.message || 'Invalid input format' };
   }
 
-  return { success: false, error: 'Invalid credentials. Check your .env file.' };
+  const { email, password } = parsed.data;
+
+  // 1. Look up user in database
+  let user = await prisma.user.findUnique({
+    where: { email: email.toLowerCase() },
+    include: { customRole: true },
+  });
+
+  // 2. Fallback / Seed check for system admin credentials if not existing
+  const superAdminEmail = (process.env.SUPERADMIN_EMAIL || 'super@engine.local').toLowerCase();
+  const superAdminPassword = process.env.SUPERADMIN_PASSWORD || 'super123456';
+  const adminEmail = (process.env.ADMIN_EMAIL || 'admin@engine.local').toLowerCase();
+  const adminPassword = process.env.ADMIN_PASSWORD || 'admin123456';
+
+  if (!user) {
+    if (email.toLowerCase() === superAdminEmail && password === superAdminPassword) {
+      user = await prisma.user.create({
+        data: {
+          email: superAdminEmail,
+          passwordHash: hashPassword(superAdminPassword),
+          name: 'Super Admin',
+          role: 'SUPER_ADMIN',
+        },
+        include: { customRole: true },
+      });
+    } else if (email.toLowerCase() === adminEmail && password === adminPassword) {
+      user = await prisma.user.create({
+        data: {
+          email: adminEmail,
+          passwordHash: hashPassword(adminPassword),
+          name: 'System Admin',
+          role: 'SUPER_ADMIN',
+        },
+        include: { customRole: true },
+      });
+    }
+  }
+
+  if (!user) {
+    return { success: false, error: 'Invalid email or password.' };
+  }
+
+  if (user.isBanned) {
+    return { success: false, error: 'This account has been disabled. Contact an administrator.' };
+  }
+
+  // 3. Verify password
+  let isValid = false;
+  if (user.passwordHash.includes(':')) {
+    isValid = verifyPassword(password, user.passwordHash);
+  } else {
+    // Check fallback plain text or dummy hash match
+    if (
+      (user.email === superAdminEmail && password === superAdminPassword) ||
+      (user.email === adminEmail && password === adminPassword)
+    ) {
+      isValid = true;
+      // Upgrade to secure hash immediately
+      await prisma.user.update({
+        where: { id: user.id },
+        data: { passwordHash: hashPassword(password) },
+      });
+    }
+  }
+
+  if (!isValid) {
+    return { success: false, error: 'Invalid email or password.' };
+  }
+
+  // 4. Create session and cookie
+  await createAdminSession(user.id);
+
+  // 5. Check if user is forced to change password
+  return {
+    success: true,
+    mustChangePassword: user.mustChangePassword,
+  };
 }
 
 export async function logoutAction() {
-  const cookieStore = await cookies();
-  cookieStore.delete('engine_admin_session');
+  await destroyAdminSession();
+  return { success: true };
+}
+
+/**
+ * Force password change for first-time login
+ */
+const ForcePasswordChangeSchema = z.object({
+  newPassword: z.string().min(8, 'Password must be at least 8 characters long'),
+  confirmPassword: z.string(),
+}).refine(data => data.newPassword === data.confirmPassword, {
+  message: 'Passwords do not match',
+  path: ['confirmPassword'],
+});
+
+export async function completeFirstTimePasswordChangeAction(formData: FormData) {
+  const sessionUser = await getCurrentAdminSession();
+  if (!sessionUser) {
+    throw new Error('Not authenticated.');
+  }
+
+  const newPassword = formData.get('newPassword') as string;
+  const confirmPassword = formData.get('confirmPassword') as string;
+
+  const parsed = ForcePasswordChangeSchema.safeParse({ newPassword, confirmPassword });
+  if (!parsed.success) {
+    throw new Error(parsed.error.issues[0]?.message || 'Validation failed');
+  }
+
+  const newHash = hashPassword(newPassword);
+
+  await prisma.user.update({
+    where: { id: sessionUser.id },
+    data: {
+      passwordHash: newHash,
+      mustChangePassword: false,
+    },
+  });
+
+  revalidatePath('/admin');
   return { success: true };
 }

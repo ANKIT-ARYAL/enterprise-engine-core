@@ -1,3 +1,5 @@
+/* eslint-disable react-hooks/immutability */
+/* eslint-disable react-hooks/rules-of-hooks */
 'use client';
 
 import React, { useState, useEffect, useTransition } from 'react';
@@ -105,6 +107,22 @@ export default function VisualInspector() {
       <style dangerouslySetInnerHTML={{__html: `
         body { cursor: crosshair !important; }
         * { transition: outline 0.1s ease !important; }
+        .dynamic-card { 
+          resize: both !important; 
+          overflow: auto !important; 
+          border-bottom-right-radius: 0 !important;
+          padding-bottom: 2rem !important;
+        }
+        .dynamic-card::after {
+          content: '⤡ Drag to resize';
+          position: absolute;
+          bottom: 4px;
+          right: 8px;
+          font-size: 10px;
+          color: var(--accent, #000);
+          pointer-events: none;
+          opacity: 0.5;
+        }
       `}} />
 
       {/* Hover Highlighter */}
@@ -158,7 +176,7 @@ export default function VisualInspector() {
 
           <div className="p-4 space-y-4 max-h-[400px] overflow-y-auto custom-scrollbar">
             <div className="text-[10px] font-mono bg-black/5 p-2 rounded text-surface-text break-all">
-              &lt;{selectedElement.tagName.toLowerCase()} className="{typeof selectedElement.className === 'string' ? selectedElement.className : selectedElement.getAttribute('class') || ''}"&gt;
+              &lt;{selectedElement.tagName.toLowerCase()} className=`{typeof selectedElement.className === 'string' ? selectedElement.className : selectedElement.getAttribute('class') || ''}`&gt;
             </div>
             
             <div className="space-y-3">
@@ -254,7 +272,7 @@ export default function VisualInspector() {
                   </optgroup>
                 </select>
                 <p className="text-[9px] opacity-60 leading-tight">
-                  Binding appends the token's Tailwind class to the element, linking it to the global design system.
+                  Binding appends the tokens Tailwind class to the element, linking it to the global design system.
                 </p>
               </div>
 

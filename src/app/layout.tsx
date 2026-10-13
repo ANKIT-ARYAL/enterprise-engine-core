@@ -1,5 +1,7 @@
 import '@/app/globals.css';
 import { TokenProvider } from '@/components/engine/TokenProvider';
+import { ThemeProvider } from '@/components/theme/theme-provider';
+import { Toaster } from 'react-hot-toast';
 
 export const metadata = {
   title: 'Enterprise Engine',
@@ -13,7 +15,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         {/* TokenProvider streams dynamic variables immediately to block FOUC */}
         <TokenProvider />
       </head>
-      <body>{children}</body>
+      <body>
+        <ThemeProvider>
+          <Toaster position="bottom-right" />
+          {children}
+        </ThemeProvider>
+      </body>
     </html>
   );
 }

@@ -1,8 +1,29 @@
+/* Google Fonts for 12 Theme Typography Options */
+@import url('https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Figtree:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&family=Lexend:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&family=Nunito:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Public+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=Work+Sans:wght@400;500;600;700;800&display=swap');
 @import "tailwindcss";
+@import "../styles/source-themes.css";
 
 @theme {
   --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
   --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
   --color-surface: var(--bg-body);
   --color-surface-text: var(--text-main);
   --color-card-bg: var(--card-bg);
@@ -12,26 +33,82 @@
   --color-btn-hover: var(--btn-hover-bg);
   --color-btn-text: var(--btn-text);
   --color-btn-hover-text: var(--btn-hover-text);
-  
+
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --radius-none: 0px;
+  --radius-xs: calc(var(--radius) * 0.4);
+  --radius-sm: calc(var(--radius) * 0.7);
+  --radius-md: var(--radius);
+  --radius-lg: calc(var(--radius) * 1.3);
+  --radius-xl: calc(var(--radius) * 1.7);
+  --radius-2xl: calc(var(--radius) * 2.2);
+  --radius-3xl: calc(var(--radius) * 3);
+  --radius-full: 9999px;
+
   --radius-global: var(--radius);
-  --radius-card: var(--card-radius);
-  --radius-btn: var(--button-radius);
-  
+  --radius-card: var(--card-radius, var(--radius));
+  --radius-btn: var(--button-radius, var(--radius));
+  --radius: var(--radius);
   --font-heading: var(--font-heading);
   --font-body: var(--font-body);
+  --font-sans: var(--font-sans);
 }
 
 :root {
-  /* Dynamic Injection Defaults (Replaced at runtime by TokenProvider) */
-  --primary: #2563eb;
-  --accent: #f97316;
-  --bg-body: #ffffff;
-  --text-main: #0f172a;
-  --font-heading: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --background: hsl(210 40% 98%);
+  --foreground: hsl(222.2 47.4% 11.2%);
+  --card: hsl(210 40% 99%);
+  --card-foreground: hsl(222.2 47.4% 11.2%);
+  --popover: hsl(210 40% 99%);
+  --popover-foreground: hsl(222.2 47.4% 11.2%);
+  --primary: hsl(215.3 25% 26.7%);
+  --primary-foreground: hsl(0 0% 100%);
+  --secondary: hsl(213.9 17.4% 86.8%);
+  --secondary-foreground: hsl(222.2 47.4% 11.2%);
+  --muted: hsl(213.2 16% 93.7%);
+  --muted-foreground: hsl(221.3 8.9% 41.6%);
+  --accent: hsl(214.7 15.7% 77.6%);
+  --accent-foreground: hsl(222.2 47.4% 11.2%);
+  --destructive: hsl(0 84.2% 60.2%);
+  --destructive-foreground: hsl(0 0% 100%);
+  --border: hsl(216.4 10% 85.9%);
+  --input: hsl(216.4 10% 85.9%);
+  --ring: hsl(215.3 25% 26.7%);
   --radius: 0.5rem;
 
-  /* Universal Fluid Mathematical Typography Scale (Pure clamp calculations) */
+  --bg-body: var(--background);
+  --text-main: var(--foreground);
+  --card-bg: var(--card);
+  --card-border: var(--border);
+  --card-hover-bg: var(--muted);
+  --btn-bg: var(--primary);
+  --btn-text: var(--primary-foreground);
+  --btn-hover-bg: var(--accent);
+  --btn-hover-text: var(--accent-foreground);
+  --card-radius: var(--radius);
+  --button-radius: var(--radius);
+
+  --sidebar: hsl(212.1 20.1% 95.4%);
+  --sidebar-foreground: hsl(222.2 47.4% 11.2%);
+  --sidebar-border: hsl(216.4 10% 85.9%);
+  --sidebar-primary: var(--primary);
+  --sidebar-primary-foreground: var(--primary-foreground);
+  --sidebar-accent: hsl(214.7 15.7% 77.6%);
+  --sidebar-accent-foreground: hsl(222.2 47.4% 11.2%);
+  --sidebar-ring: var(--ring);
+
+  --font-sans: 'Manrope', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-heading: var(--font-sans);
+  --font-body: var(--font-sans);
+
+  /* Universal Fluid Mathematical Typography Scale */
   --font-h1: clamp(2.25rem, 5vw + 1rem, 4.5rem);
   --font-h2: clamp(1.75rem, 3.5vw + 0.75rem, 3.25rem);
   --font-h3: clamp(1.35rem, 2vw + 0.5rem, 2.25rem);
@@ -53,6 +130,56 @@ body {
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
 }
+
+@keyframes engine-fade { from { opacity: 0 } to { opacity: 1 } }
+@keyframes engine-up { from { opacity: 0; transform: translateY(18px) } to { opacity: 1; transform: translateY(0) } }
+@keyframes engine-down { from { opacity: 0; transform: translateY(-18px) } to { opacity: 1; transform: translateY(0) } }
+@keyframes engine-left { from { opacity: 0; transform: translateX(-18px) } to { opacity: 1; transform: translateX(0) } }
+@keyframes engine-right { from { opacity: 0; transform: translateX(18px) } to { opacity: 1; transform: translateX(0) } }
+@keyframes engine-scale { from { opacity: 0; transform: scale(.94) } to { opacity: 1; transform: scale(1) } }
+@keyframes engine-blur { from { opacity: 0; filter: blur(8px) } to { opacity: 1; filter: blur(0) } }
+@keyframes engine-auto-slide { 0%, 100% { transform: translateY(0) } 50% { transform: translateY(-5px) } }
+
+:root[data-text-animation="fade"] .public-shell h1, :root[data-text-animation="fade"] .public-shell h2, :root[data-text-animation="fade"] .public-shell h3, :root[data-text-animation="fade"] .public-shell p { animation: engine-fade .6s ease both; animation-delay: var(--motion-text-delay); }
+:root[data-text-animation="slide-up"] .public-shell h1, :root[data-text-animation="slide-up"] .public-shell h2, :root[data-text-animation="slide-up"] .public-shell h3, :root[data-text-animation="slide-up"] .public-shell p { animation: engine-up .6s ease both; animation-delay: var(--motion-text-delay); }
+:root[data-text-animation="slide-down"] .public-shell h1, :root[data-text-animation="slide-down"] .public-shell h2, :root[data-text-animation="slide-down"] .public-shell h3, :root[data-text-animation="slide-down"] .public-shell p { animation: engine-down .6s ease both; animation-delay: var(--motion-text-delay); }
+:root[data-text-animation="slide-left"] .public-shell h1, :root[data-text-animation="slide-left"] .public-shell h2, :root[data-text-animation="slide-left"] .public-shell h3, :root[data-text-animation="slide-left"] .public-shell p { animation: engine-left .6s ease both; animation-delay: var(--motion-text-delay); }
+:root[data-text-animation="slide-right"] .public-shell h1, :root[data-text-animation="slide-right"] .public-shell h2, :root[data-text-animation="slide-right"] .public-shell h3, :root[data-text-animation="slide-right"] .public-shell p { animation: engine-right .6s ease both; animation-delay: var(--motion-text-delay); }
+:root[data-text-animation="blur"] .public-shell h1, :root[data-text-animation="blur"] .public-shell h2, :root[data-text-animation="blur"] .public-shell h3, :root[data-text-animation="blur"] .public-shell p { animation: engine-blur .6s ease both; animation-delay: var(--motion-text-delay); }
+:root[data-card-animation="fade"] .public-shell .rounded-card, :root[data-card-animation="fade"] .public-shell .card-hover { animation: engine-fade .6s ease both; animation-delay: var(--motion-card-delay); }
+:root[data-card-animation="slide-up"] .public-shell .rounded-card, :root[data-card-animation="slide-up"] .public-shell .card-hover { animation: engine-up .6s ease both; animation-delay: var(--motion-card-delay); }
+:root[data-card-animation="slide-left"] .public-shell .rounded-card, :root[data-card-animation="slide-left"] .public-shell .card-hover { animation: engine-left .6s ease both; animation-delay: var(--motion-card-delay); }
+:root[data-card-animation="slide-right"] .public-shell .rounded-card, :root[data-card-animation="slide-right"] .public-shell .card-hover { animation: engine-right .6s ease both; animation-delay: var(--motion-card-delay); }
+:root[data-card-animation="scale"] .public-shell .rounded-card, :root[data-card-animation="scale"] .public-shell .card-hover { animation: engine-scale .6s ease both; animation-delay: var(--motion-card-delay); }
+:root[data-card-animation="auto-slide"] .public-shell .rounded-card, :root[data-card-animation="auto-slide"] .public-shell .card-hover { animation: engine-auto-slide 3s ease-in-out infinite; animation-delay: var(--motion-card-delay); }
+:root[data-card-animation="fade"] .public-shell .motion-target-card { animation: engine-fade .6s ease both; animation-delay: var(--motion-card-delay); }
+:root[data-card-animation="slide-up"] .public-shell .motion-target-card { animation: engine-up .6s ease both; animation-delay: var(--motion-card-delay); }
+:root[data-card-animation="slide-left"] .public-shell .motion-target-card { animation: engine-left .6s ease both; animation-delay: var(--motion-card-delay); }
+:root[data-card-animation="slide-right"] .public-shell .motion-target-card { animation: engine-right .6s ease both; animation-delay: var(--motion-card-delay); }
+:root[data-card-animation="scale"] .public-shell .motion-target-card { animation: engine-scale .6s ease both; animation-delay: var(--motion-card-delay); }
+:root[data-card-animation="auto-slide"] .public-shell .motion-target-card { animation: engine-auto-slide 3s ease-in-out infinite; animation-delay: var(--motion-card-delay); }
+:root[data-button-animation="fade"] .public-shell button.bg-btn-bg, :root[data-button-animation="fade"] .public-shell button.btn-hover, :root[data-button-animation="fade"] .public-shell a.btn-typography, :root[data-button-animation="fade"] .public-shell a.bg-btn-bg { animation: engine-fade .6s ease both; animation-delay: var(--motion-button-delay); }
+:root[data-button-animation="slide-up"] .public-shell button.bg-btn-bg, :root[data-button-animation="slide-up"] .public-shell button.btn-hover, :root[data-button-animation="slide-up"] .public-shell a.btn-typography, :root[data-button-animation="slide-up"] .public-shell a.bg-btn-bg { animation: engine-up .6s ease both; animation-delay: var(--motion-button-delay); }
+:root[data-button-animation="slide-down"] .public-shell button.bg-btn-bg, :root[data-button-animation="slide-down"] .public-shell button.btn-hover, :root[data-button-animation="slide-down"] .public-shell a.btn-typography, :root[data-button-animation="slide-down"] .public-shell a.bg-btn-bg { animation: engine-down .6s ease both; animation-delay: var(--motion-button-delay); }
+:root[data-button-animation="slide-left"] .public-shell button.bg-btn-bg, :root[data-button-animation="slide-left"] .public-shell button.btn-hover, :root[data-button-animation="slide-left"] .public-shell a.btn-typography, :root[data-button-animation="slide-left"] .public-shell a.bg-btn-bg { animation: engine-left .6s ease both; animation-delay: var(--motion-button-delay); }
+:root[data-button-animation="slide-right"] .public-shell button.bg-btn-bg, :root[data-button-animation="slide-right"] .public-shell button.btn-hover, :root[data-button-animation="slide-right"] .public-shell a.btn-typography, :root[data-button-animation="slide-right"] .public-shell a.bg-btn-bg { animation: engine-right .6s ease both; animation-delay: var(--motion-button-delay); }
+:root[data-button-animation="scale"] .public-shell button.bg-btn-bg, :root[data-button-animation="scale"] .public-shell button.btn-hover, :root[data-button-animation="scale"] .public-shell a.btn-typography, :root[data-button-animation="scale"] .public-shell a.bg-btn-bg { animation: engine-scale .6s ease both; animation-delay: var(--motion-button-delay); }
+
+/* Imported Animated primitives follow the same saved global selection when
+   no local animation prop is supplied. */
+:root[data-text-animation="fade"] .public-shell .motion-auto-text { animation: engine-fade .6s ease both; animation-delay: var(--motion-text-delay); }
+:root[data-text-animation="slide-up"] .public-shell .motion-auto-text { animation: engine-up .6s ease both; animation-delay: var(--motion-text-delay); }
+:root[data-text-animation="slide-down"] .public-shell .motion-auto-text { animation: engine-down .6s ease both; animation-delay: var(--motion-text-delay); }
+:root[data-text-animation="slide-left"] .public-shell .motion-auto-text { animation: engine-left .6s ease both; animation-delay: var(--motion-text-delay); }
+:root[data-text-animation="slide-right"] .public-shell .motion-auto-text { animation: engine-right .6s ease both; animation-delay: var(--motion-text-delay); }
+:root[data-card-animation="fade"] .public-shell .motion-auto-card { animation: engine-fade .6s ease both; animation-delay: var(--motion-card-delay); }
+:root[data-card-animation="slide-up"] .public-shell .motion-auto-card { animation: engine-up .6s ease both; animation-delay: var(--motion-card-delay); }
+:root[data-card-animation="slide-left"] .public-shell .motion-auto-card { animation: engine-left .6s ease both; animation-delay: var(--motion-card-delay); }
+:root[data-card-animation="slide-right"] .public-shell .motion-auto-card { animation: engine-right .6s ease both; animation-delay: var(--motion-card-delay); }
+:root[data-card-animation="scale"] .public-shell .motion-auto-card { animation: engine-scale .6s ease both; animation-delay: var(--motion-card-delay); }
+
+.public-shell h1, .public-shell h2, .public-shell h3, .public-shell p, .public-shell .rounded-card, .public-shell button.bg-btn-bg, .public-shell button.btn-hover, .public-shell a.btn-typography, .public-shell a.bg-btn-bg, .public-shell .motion-target-text, .public-shell .motion-target-card, .public-shell .motion-target-button { will-change: transform, opacity; transform-style: preserve-3d; backface-visibility: hidden; }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; } }
 
 /* Atomic Typography Classes */
 .h1-title {
@@ -113,4 +240,147 @@ body {
 
 .section-spacing {
   padding-block: var(--section-pad);
+}
+
+.rounded-card {
+  border-radius: var(--card-radius, var(--radius)) !important;
+}
+
+.rounded-btn {
+  border-radius: var(--button-radius, var(--radius)) !important;
+}
+
+/* Universal Button Styling: Every button and action element inherits the engine button-radius by default */
+button:not([class*="rounded-full"]):not([class*="rounded-none"]):not(.rounded-full),
+a.btn-hover:not([class*="rounded-full"]):not([class*="rounded-none"]),
+a.btn-typography:not([class*="rounded-full"]):not([class*="rounded-none"]),
+[role="button"]:not([class*="rounded-full"]):not([class*="rounded-none"]) {
+  border-radius: var(--button-radius, var(--radius)) !important;
+}
+
+/* Universal Button Color Inheritance:
+   Ensures that buttons using .bg-btn-bg, .btn-hover, .bg-primary buttons, or general CTA action buttons
+   consistently inherit --btn-bg, --btn-text, --btn-hover-bg, and --btn-hover-text */
+/*
+ * Keep all engine buttons on the same cascade path.  Tailwind's generated
+ * token utilities and the legacy .btn-hover class used to compete here,
+ * which made foreground/hover values depend on class order and theme mode.
+ */
+button.bg-btn-bg,
+button.btn-hover,
+a.bg-btn-bg,
+a.btn-hover,
+[role="button"].bg-btn-bg,
+[role="button"].btn-hover {
+  background-color: var(--btn-bg) !important;
+  color: var(--btn-text) !important;
+}
+
+button.bg-btn-bg:hover,
+button.btn-hover:hover,
+a.bg-btn-bg:hover,
+a.btn-hover:hover,
+[role="button"].bg-btn-bg:hover,
+[role="button"].btn-hover:hover,
+.hover\:bg-btn-hover:hover {
+  background-color: var(--btn-hover-bg) !important;
+  color: var(--btn-hover-text) !important;
+}
+
+/* When primary CTA action buttons hover, smoothly transition using engine hover tokens */
+a.btn-typography.bg-\[var\(--primary\)\],
+button.bg-primary {
+  background-color: var(--btn-bg) !important;
+  color: var(--btn-text) !important;
+}
+
+a.btn-typography.bg-\[var\(--primary\)\]:hover,
+button.bg-primary:hover {
+  background-color: var(--btn-hover-bg) !important;
+  color: var(--btn-hover-text) !important;
+}
+
+/* Dynamic Tailwind v4 Radius Overrides tied to Live Engine Radius */
+.rounded-xs {
+  border-radius: var(--radius-xs, calc(var(--radius) * 0.4)) !important;
+}
+.rounded-sm {
+  border-radius: var(--radius-sm, calc(var(--radius) * 0.7)) !important;
+}
+.rounded, .rounded-md {
+  border-radius: var(--radius) !important;
+}
+.rounded-lg {
+  border-radius: var(--radius-lg, calc(var(--radius) * 1.3)) !important;
+}
+.rounded-xl {
+  border-radius: var(--radius-xl, calc(var(--radius) * 1.7)) !important;
+}
+.rounded-2xl {
+  border-radius: var(--radius-2xl, calc(var(--radius) * 2.2)) !important;
+}
+.rounded-3xl {
+  border-radius: var(--radius-3xl, calc(var(--radius) * 3)) !important;
+}
+
+/* Gate public motion by viewport visibility. IntersectionObserver adds
+   .is-visible once per section, avoiding scroll listeners and repeat work. */
+.public-shell .motion-viewport:not(.is-visible) h1,
+.public-shell .motion-viewport:not(.is-visible) h2,
+.public-shell .motion-viewport:not(.is-visible) h3,
+.public-shell .motion-viewport:not(.is-visible) p,
+.public-shell .motion-viewport:not(.is-visible) .rounded-card,
+.public-shell .motion-viewport:not(.is-visible) .card-hover,
+.public-shell .motion-viewport:not(.is-visible) .motion-target-card,
+.public-shell .motion-viewport:not(.is-visible) button.bg-btn-bg,
+.public-shell .motion-viewport:not(.is-visible) button.btn-hover,
+.public-shell .motion-viewport:not(.is-visible) a.bg-btn-bg,
+.public-shell .motion-viewport:not(.is-visible) a.btn-typography,
+.public-shell .motion-viewport:not(.is-visible) .motion-target-button {
+  animation-play-state: paused !important;
+}
+
+.public-shell .motion-viewport.is-visible h1,
+.public-shell .motion-viewport.is-visible h2,
+.public-shell .motion-viewport.is-visible h3,
+.public-shell .motion-viewport.is-visible p,
+.public-shell .motion-viewport.is-visible .rounded-card,
+.public-shell .motion-viewport.is-visible .card-hover,
+.public-shell .motion-viewport.is-visible .motion-target-card,
+.public-shell .motion-viewport.is-visible button.bg-btn-bg,
+.public-shell .motion-viewport.is-visible button.btn-hover,
+.public-shell .motion-viewport.is-visible a.bg-btn-bg,
+.public-shell .motion-viewport.is-visible a.btn-typography,
+.public-shell .motion-viewport.is-visible .motion-target-button {
+  animation-play-state: running;
+}
+
+/* Navigation and footer are chrome, not content sections. */
+.public-shell > header *,
+.public-shell > footer * {
+  animation: none !important;
+  animation-play-state: paused !important;
+}
+.public-shell .motion-viewport.motion-disabled * {
+  animation: none !important;
+  animation-play-state: paused !important;
+  transition: none;
+}
+
+/* Explicit page-owned animation wrappers. */
+.motion-explicit:not(.is-visible) { visibility: hidden; }
+.motion-explicit.is-visible { visibility: visible; }
+.motion-explicit.is-visible > * { animation-duration: .6s; animation-fill-mode: both; animation-timing-function: cubic-bezier(.22, 1, .36, 1); }
+.motion-fade-up.is-visible > * { animation-name: engine-up; }
+.motion-fade.is-visible > * { animation-name: engine-fade; }
+.motion-slide-down.is-visible > * { animation-name: engine-down; }
+.motion-slide-left.is-visible > * { animation-name: engine-left; }
+.motion-slide-right.is-visible > * { animation-name: engine-right; }
+.motion-scale-in.is-visible > * { animation-name: engine-scale; }
+.motion-auto-slide.is-visible > * { animation: engine-auto-slide 3s ease-in-out infinite; }
+
+/* Pages own their motion wrappers. Unwrapped page content stays static. */
+.public-shell > main > *:not(.motion-viewport) * {
+  animation: none !important;
+  animation-play-state: paused !important;
 }

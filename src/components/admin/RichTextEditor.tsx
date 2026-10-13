@@ -41,7 +41,7 @@ export function RichTextEditor({ content, onChange }: { content: string, onChang
 
   return (
     <div className="border border-slate-200 dark:border-slate-800 rounded-[var(--radius)] overflow-hidden">
-      <div className="bg-slate-50 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 p-2 flex gap-2">
+      <div className="bg-slate-50 border-b border-[#ececec] p-2 flex gap-2 rounded-t-xl">
         <button onClick={() => editor.chain().focus().toggleBold().run()} className="px-2 py-1 rounded hover:bg-slate-200 dark:hover:bg-slate-800 text-sm font-semibold">B</button>
         <button onClick={() => editor.chain().focus().toggleItalic().run()} className="px-2 py-1 rounded hover:bg-slate-200 dark:hover:bg-slate-800 text-sm italic">I</button>
         <label className="px-2 py-1 rounded hover:bg-slate-200 dark:hover:bg-slate-800 text-sm cursor-pointer text-blue-600 font-semibold">

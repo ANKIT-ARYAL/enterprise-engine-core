@@ -1,0 +1,357 @@
+/* Theme catalog palettes from the shared organization theme source. */
+
+
+/* ---------- slate ---------- */
+html:root.theme-slate, html:root.theme-slate.theme-slate, :root.theme-slate {
+  --background: hsl(210.0000 40.0000% 98.0392%);
+  --foreground: hsl(222.2222 47.3684% 11.1765%);
+  --card: hsl(210.0000 40.0000% 99.0196%);
+  --card-foreground: hsl(222.2222 47.3684% 11.1765%);
+  --popover: hsl(210.0000 40.0000% 99.0196%);
+  --popover-foreground: hsl(222.2222 47.3684% 11.1765%);
+  --primary: hsl(215.2941 25.0000% 26.6667%);
+  --primary-foreground: hsl(0.0000 0.0000% 100.0000%);
+  --secondary: hsl(213.9487 17.3539% 86.7804%);
+  --secondary-foreground: hsl(222.2222 47.3684% 11.1765%);
+  --muted: hsl(213.2039 16.0187% 93.6961%);
+  --muted-foreground: hsl(221.3193 8.9366% 41.5784%);
+  --accent: hsl(214.6667 15.7343% 77.5686%);
+  --accent-foreground: hsl(222.2222 47.3684% 11.1765%);
+  --destructive: hsl(0 84.2365% 60.1961%);
+  --destructive-foreground: hsl(0 0% 100%);
+  --border: hsl(216.3989 10.0250% 85.8784%);
+  --input: hsl(216.3989 10.0250% 85.8784%);
+  --ring: hsl(215.2941 25.0000% 26.6667%);
+  --chart-1: hsl(215.2941 25.0000% 26.6667%);
+  --chart-2: hsl(215.3846 16.3180% 46.8627%);
+  --chart-3: hsl(218.3607 31.6062% 18.9216%);
+  --chart-4: hsl(217.5439 20.5776% 32.5882%);
+  --chart-5: hsl(222.2222 47.3684% 11.1765%);
+  --sidebar: hsl(212.1109 20.1374% 95.4333%);
+  --sidebar-foreground: hsl(222.2222 47.3684% 11.1765%);
+  --sidebar-primary: hsl(215.2941 25.0000% 26.6667%);
+  --sidebar-primary-foreground: hsl(0.0000 0.0000% 100.0000%);
+  --sidebar-accent: hsl(214.6667 15.7343% 77.5686%);
+  --sidebar-accent-foreground: hsl(222.2222 47.3684% 11.1765%);
+  --sidebar-border: hsl(216.3989 10.0250% 85.8784%);
+  --sidebar-ring: hsl(215.2941 25.0000% 26.6667%);
+}
+
+html:root.dark.theme-slate, html:root.dark.theme-slate.theme-slate.dark, :root.dark.theme-slate {
+  --background: hsl(222.2222 47.3684% 6.1471%);
+  --foreground: hsl(210.0000 40.0000% 98.0392%);
+  --card: hsl(222.2222 47.3684% 8.9412%);
+  --card-foreground: hsl(210.0000 40.0000% 98.0392%);
+  --popover: hsl(222.2222 47.3684% 8.9412%);
+  --popover-foreground: hsl(210.0000 40.0000% 98.0392%);
+  --primary: hsl(215.0000 20.2247% 65.0980%);
+  --primary-foreground: hsl(222.2222 47.3684% 6.1471%);
+  --secondary: hsl(221.9802 22.0044% 21.6000%);
+  --secondary-foreground: hsl(210.0000 40.0000% 98.0392%);
+  --muted: hsl(222.2222 47.3684% 7.8235%);
+  --muted-foreground: hsl(220.0000 7.0513% 63.2941%);
+  --accent: hsl(219.2040 19.6737% 30.0490%);
+  --accent-foreground: hsl(210.0000 40.0000% 98.0392%);
+  --destructive: hsl(0 84.2365% 60.1961%);
+  --destructive-foreground: hsl(0 0% 100%);
+  --border: hsl(221.8373 16.7179% 26.8118%);
+  --input: hsl(221.8373 16.7179% 26.8118%);
+  --ring: hsl(215.0000 20.2247% 65.0980%);
+  --chart-1: hsl(215.0000 20.2247% 65.0980%);
+  --chart-2: hsl(215.3846 16.3180% 46.8627%);
+  --chart-3: hsl(214.6552 20.9386% 78.2745%);
+  --chart-4: hsl(215.0400 10.1958% 48.0784%);
+  --chart-5: hsl(220.6452 6.6955% 54.6078%);
+  --sidebar: hsl(222.2222 47.3684% 5.0294%);
+  --sidebar-foreground: hsl(210.0000 40.0000% 98.0392%);
+  --sidebar-primary: hsl(215.0000 20.2247% 65.0980%);
+  --sidebar-primary-foreground: hsl(222.2222 47.3684% 6.1471%);
+  --sidebar-accent: hsl(219.2040 19.6737% 30.0490%);
+  --sidebar-accent-foreground: hsl(210.0000 40.0000% 98.0392%);
+  --sidebar-border: hsl(221.8373 16.7179% 26.8118%);
+  --sidebar-ring: hsl(215.0000 20.2247% 65.0980%);
+}
+
+
+/* ---------- westminster ---------- */
+html:root.theme-westminster-college, html:root.theme-westminster-college.theme-westminster-college, :root.theme-westminster-college {
+  --background: hsl(270.0000 37.5000% 96.8627%);
+  --foreground: hsl(273.5294 41.4634% 16.0784%);
+  --card: hsl(270.0000 37.5000% 98.4314%);
+  --card-foreground: hsl(273.5294 41.4634% 16.0784%);
+  --popover: hsl(270.0000 37.5000% 98.4314%);
+  --popover-foreground: hsl(273.5294 41.4634% 16.0784%);
+  --primary: hsl(271.1321 52.4752% 39.6078%);
+  --primary-foreground: hsl(0.0000 0.0000% 100.0000%);
+  --secondary: hsl(271.8232 34.0354% 89.5725%);
+  --secondary-foreground: hsl(273.5294 41.4634% 16.0784%);
+  --muted: hsl(270.8108 20.2186% 92.8235%);
+  --muted-foreground: hsl(273.2231 10.6985% 44.3529%);
+  --accent: hsl(272.1429 33.4928% 83.6078%);
+  --accent-foreground: hsl(273.5294 41.4634% 16.0784%);
+  --destructive: hsl(0 84.2365% 60.1961%);
+  --destructive-foreground: hsl(0 0% 100%);
+  --border: hsl(271.6935 13.4636% 85.5529%);
+  --input: hsl(271.6935 13.4636% 85.5529%);
+  --ring: hsl(271.1321 52.4752% 39.6078%);
+  --chart-1: hsl(271.1321 52.4752% 39.6078%);
+  --chart-2: hsl(272.4590 32.9730% 63.7255%);
+  --chart-3: hsl(271.7143 49.2958% 27.8431%);
+  --chart-4: hsl(272.7490 22.0369% 44.6667%);
+  --chart-5: hsl(273.5294 41.4634% 16.0784%);
+  --sidebar: hsl(270.5263 24.1185% 94.4392%);
+  --sidebar-foreground: hsl(273.5294 41.4634% 16.0784%);
+  --sidebar-primary: hsl(271.1321 52.4752% 39.6078%);
+  --sidebar-primary-foreground: hsl(0.0000 0.0000% 100.0000%);
+  --sidebar-accent: hsl(272.1429 33.4928% 83.6078%);
+  --sidebar-accent-foreground: hsl(273.5294 41.4634% 16.0784%);
+  --sidebar-border: hsl(271.6935 13.4636% 85.5529%);
+  --sidebar-ring: hsl(271.1321 52.4752% 39.6078%);
+}
+
+html:root.dark.theme-westminster-college, html:root.dark.theme-westminster-college.theme-westminster-college.dark, :root.dark.theme-westminster-college {
+  --background: hsl(273.5294 41.4634% 8.8431%);
+  --foreground: hsl(270.0000 37.5000% 96.8627%);
+  --card: hsl(273.5294 41.4634% 12.8627%);
+  --card-foreground: hsl(270.0000 37.5000% 96.8627%);
+  --popover: hsl(273.5294 41.4634% 12.8627%);
+  --popover-foreground: hsl(270.0000 37.5000% 96.8627%);
+  --primary: hsl(272.4590 32.9730% 63.7255%);
+  --primary-foreground: hsl(273.5294 41.4634% 8.8431%);
+  --secondary: hsl(273.4465 23.3110% 25.7725%);
+  --secondary-foreground: hsl(270.0000 37.5000% 96.8627%);
+  --muted: hsl(273.5294 41.4634% 11.2549%);
+  --muted-foreground: hsl(272.7907 9.5133% 64.5490%);
+  --accent: hsl(273.0035 26.0102% 32.7549%);
+  --accent-foreground: hsl(270.0000 37.5000% 96.8627%);
+  --destructive: hsl(0 84.2365% 60.1961%);
+  --destructive-foreground: hsl(0 0% 100%);
+  --border: hsl(273.3978 18.5451% 30.6196%);
+  --input: hsl(273.3978 18.5451% 30.6196%);
+  --ring: hsl(272.4590 32.9730% 63.7255%);
+  --chart-1: hsl(272.4590 32.9730% 63.7255%);
+  --chart-2: hsl(272.4590 32.9730% 63.7255%);
+  --chart-3: hsl(272.3077 33.2198% 76.9804%);
+  --chart-4: hsl(271.1053 34.4828% 56.7843%);
+  --chart-5: hsl(273.0000 9.0090% 56.4706%);
+  --sidebar: hsl(273.5294 41.4634% 7.2353%);
+  --sidebar-foreground: hsl(270.0000 37.5000% 96.8627%);
+  --sidebar-primary: hsl(272.4590 32.9730% 63.7255%);
+  --sidebar-primary-foreground: hsl(273.5294 41.4634% 8.8431%);
+  --sidebar-accent: hsl(273.0035 26.0102% 32.7549%);
+  --sidebar-accent-foreground: hsl(270.0000 37.5000% 96.8627%);
+  --sidebar-border: hsl(273.3978 18.5451% 30.6196%);
+  --sidebar-ring: hsl(272.4590 32.9730% 63.7255%);
+}
+
+
+/* ---------- woolwich-dubai ---------- */
+html:root.theme-woolwich-dubai, html:root.theme-woolwich-dubai.theme-woolwich-dubai, :root.theme-woolwich-dubai {
+  --background: hsl(49.0909 35.4839% 93.9216%);
+  --foreground: hsl(216.2791 48.3146% 17.4510%);
+  --card: hsl(49.0909 35.4839% 96.9608%);
+  --card-foreground: hsl(216.2791 48.3146% 17.4510%);
+  --popover: hsl(49.0909 35.4839% 96.9608%);
+  --popover-foreground: hsl(216.2791 48.3146% 17.4510%);
+  --primary: hsl(217.5000 45.7143% 27.4510%);
+  --primary-foreground: hsl(0.0000 0.0000% 100.0000%);
+  --secondary: hsl(165.3435 3.2989% 84.4275%);
+  --secondary-foreground: hsl(216.2791 48.3146% 17.4510%);
+  --muted: hsl(52.4096 16.4356% 90.0980%);
+  --muted-foreground: hsl(214.2324 10.6874% 44.2157%);
+  --accent: hsl(209.5238 10.4825% 76.4314%);
+  --accent-foreground: hsl(216.2791 48.3146% 17.4510%);
+  --destructive: hsl(0 84.2365% 60.1961%);
+  --destructive-foreground: hsl(0 0% 100%);
+  --border: hsl(69.6585 4.8269% 83.3451%);
+  --input: hsl(69.6585 4.8269% 83.3451%);
+  --ring: hsl(217.5000 45.7143% 27.4510%);
+  --chart-1: hsl(217.5000 45.7143% 27.4510%);
+  --chart-2: hsl(216.2500 18.8976% 50.1961%);
+  --chart-3: hsl(217.0093 46.7249% 22.4510%);
+  --chart-4: hsl(216.2609 24.3129% 37.0980%);
+  --chart-5: hsl(216.2791 48.3146% 17.4510%);
+  --sidebar: hsl(50.8529 21.9672% 91.6275%);
+  --sidebar-foreground: hsl(216.2791 48.3146% 17.4510%);
+  --sidebar-primary: hsl(217.5000 45.7143% 27.4510%);
+  --sidebar-primary-foreground: hsl(0.0000 0.0000% 100.0000%);
+  --sidebar-accent: hsl(209.5238 10.4825% 76.4314%);
+  --sidebar-accent-foreground: hsl(216.2791 48.3146% 17.4510%);
+  --sidebar-border: hsl(69.6585 4.8269% 83.3451%);
+  --sidebar-ring: hsl(217.5000 45.7143% 27.4510%);
+}
+
+html:root.dark.theme-woolwich-dubai, html:root.dark.theme-woolwich-dubai.theme-woolwich-dubai.dark, :root.dark.theme-woolwich-dubai {
+  --background: hsl(216.2791 48.3146% 9.5980%);
+  --foreground: hsl(49.0909 35.4839% 93.9216%);
+  --card: hsl(216.2791 48.3146% 13.9608%);
+  --card-foreground: hsl(49.0909 35.4839% 93.9216%);
+  --popover: hsl(216.2791 48.3146% 13.9608%);
+  --popover-foreground: hsl(49.0909 35.4839% 93.9216%);
+  --primary: hsl(216.2500 18.8976% 50.1961%);
+  --primary-foreground: hsl(0.0000 0.0000% 100.0000%);
+  --secondary: hsl(215.8160 26.8925% 26.6275%);
+  --secondary-foreground: hsl(49.0909 35.4839% 93.9216%);
+  --muted: hsl(216.2791 48.3146% 12.2157%);
+  --muted-foreground: hsl(208.3019 5.6684% 63.3333%);
+  --accent: hsl(216.2682 30.3493% 28.9118%);
+  --accent-foreground: hsl(49.0909 35.4839% 93.9216%);
+  --destructive: hsl(0 84.2365% 60.1961%);
+  --destructive-foreground: hsl(0 0% 100%);
+  --border: hsl(215.5168 20.9045% 31.2157%);
+  --input: hsl(215.5168 20.9045% 31.2157%);
+  --ring: hsl(216.2500 18.8976% 50.1961%);
+  --chart-1: hsl(216.2500 18.8976% 50.1961%);
+  --chart-2: hsl(216.2500 18.8976% 50.1961%);
+  --chart-3: hsl(213.9344 14.8058% 67.6863%);
+  --chart-4: hsl(216.5783 17.1700% 47.3922%);
+  --chart-5: hsl(211.8750 7.0796% 55.6863%);
+  --sidebar: hsl(216.2791 48.3146% 7.8529%);
+  --sidebar-foreground: hsl(49.0909 35.4839% 93.9216%);
+  --sidebar-primary: hsl(216.2500 18.8976% 50.1961%);
+  --sidebar-primary-foreground: hsl(0.0000 0.0000% 100.0000%);
+  --sidebar-accent: hsl(216.2682 30.3493% 28.9118%);
+  --sidebar-accent-foreground: hsl(49.0909 35.4839% 93.9216%);
+  --sidebar-border: hsl(215.5168 20.9045% 31.2157%);
+  --sidebar-ring: hsl(216.2500 18.8976% 50.1961%);
+}
+
+
+/* ---------- kandel ---------- */
+html:root.theme-kandel-group, html:root.theme-kandel-group.theme-kandel-group, :root.theme-kandel-group {
+  --background: hsl(240.0000 23.0769% 97.4510%);
+  --foreground: hsl(226.5517 55.7692% 20.3922%);
+  --card: hsl(240.0000 23.0769% 98.7255%);
+  --card-foreground: hsl(226.5517 55.7692% 20.3922%);
+  --popover: hsl(240.0000 23.0769% 98.7255%);
+  --popover-foreground: hsl(226.5517 55.7692% 20.3922%);
+  --primary: hsl(227.0886 49.0683% 31.5686%);
+  --primary-foreground: hsl(0.0000 0.0000% 100.0000%);
+  --secondary: hsl(226.3337 26.2720% 87.7451%);
+  --secondary-foreground: hsl(226.5517 55.7692% 20.3922%);
+  --muted: hsl(233.2174 17.6110% 93.5980%);
+  --muted-foreground: hsl(226.9161 16.0422% 47.3627%);
+  --accent: hsl(225.1095 26.6019% 79.8039%);
+  --accent-foreground: hsl(226.5517 55.7692% 20.3922%);
+  --destructive: hsl(0 84.2365% 60.1961%);
+  --destructive-foreground: hsl(0 0% 100%);
+  --border: hsl(229.7944 15.7307% 86.6627%);
+  --input: hsl(229.7944 15.7307% 86.6627%);
+  --ring: hsl(227.0886 49.0683% 31.5686%);
+  --chart-1: hsl(227.0886 49.0683% 31.5686%);
+  --chart-2: hsl(224.0625 26.8908% 53.3333%);
+  --chart-3: hsl(226.8613 51.6981% 25.9804%);
+  --chart-4: hsl(225.0000 30.0781% 40.1569%);
+  --chart-5: hsl(226.5517 55.7692% 20.3922%);
+  --sidebar: hsl(234.9677 18.7576% 95.1392%);
+  --sidebar-foreground: hsl(226.5517 55.7692% 20.3922%);
+  --sidebar-primary: hsl(227.0886 49.0683% 31.5686%);
+  --sidebar-primary-foreground: hsl(0.0000 0.0000% 100.0000%);
+  --sidebar-accent: hsl(225.1095 26.6019% 79.8039%);
+  --sidebar-accent-foreground: hsl(226.5517 55.7692% 20.3922%);
+  --sidebar-border: hsl(229.7944 15.7307% 86.6627%);
+  --sidebar-ring: hsl(227.0886 49.0683% 31.5686%);
+}
+
+html:root.dark.theme-kandel-group, html:root.dark.theme-kandel-group.theme-kandel-group.dark, :root.dark.theme-kandel-group {
+  --background: hsl(226.5517 55.7692% 11.2157%);
+  --foreground: hsl(240.0000 23.0769% 97.4510%);
+  --card: hsl(226.5517 55.7692% 16.3137%);
+  --card-foreground: hsl(240.0000 23.0769% 97.4510%);
+  --popover: hsl(226.5517 55.7692% 16.3137%);
+  --popover-foreground: hsl(240.0000 23.0769% 97.4510%);
+  --primary: hsl(224.0625 26.8908% 53.3333%);
+  --primary-foreground: hsl(0.0000 0.0000% 100.0000%);
+  --secondary: hsl(226.6459 34.0037% 29.6392%);
+  --secondary-foreground: hsl(240.0000 23.0769% 97.4510%);
+  --muted: hsl(226.5517 55.7692% 14.2745%);
+  --muted-foreground: hsl(227.5200 14.6886% 66.6275%);
+  --accent: hsl(225.6240 36.9165% 31.9216%);
+  --accent-foreground: hsl(240.0000 23.0769% 97.4510%);
+  --destructive: hsl(0 84.2365% 60.1961%);
+  --destructive-foreground: hsl(0 0% 100%);
+  --border: hsl(226.7027 27.5266% 34.2627%);
+  --input: hsl(226.7027 27.5266% 34.2627%);
+  --ring: hsl(224.0625 26.8908% 53.3333%);
+  --chart-1: hsl(224.0625 26.8908% 53.3333%);
+  --chart-2: hsl(224.0625 26.8908% 53.3333%);
+  --chart-3: hsl(224.5455 26.7568% 70.9804%);
+  --chart-4: hsl(227.2954 22.6430% 51.3333%);
+  --chart-5: hsl(227.2131 14.5585% 58.9216%);
+  --sidebar: hsl(226.5517 55.7692% 9.1765%);
+  --sidebar-foreground: hsl(240.0000 23.0769% 97.4510%);
+  --sidebar-primary: hsl(224.0625 26.8908% 53.3333%);
+  --sidebar-primary-foreground: hsl(0.0000 0.0000% 100.0000%);
+  --sidebar-accent: hsl(225.6240 36.9165% 31.9216%);
+  --sidebar-accent-foreground: hsl(240.0000 23.0769% 97.4510%);
+  --sidebar-border: hsl(226.7027 27.5266% 34.2627%);
+  --sidebar-ring: hsl(224.0625 26.8908% 53.3333%);
+}
+
+/* Shared dark-mode surface treatment for the selected production themes. */
+html:root.dark.theme-slate,
+html:root.dark.theme-kandel-group,
+html:root.dark.theme-westminster-college,
+html:root.dark.theme-woolwich-dubai,
+:root.dark.theme-slate,
+:root.dark.theme-kandel-group,
+:root.dark.theme-westminster-college,
+:root.dark.theme-woolwich-dubai {
+  --background: hsl(228 8% 10%);
+  --foreground: hsl(215 7% 70%);
+  --card: hsl(228 8% 13%);
+  --card-foreground: hsl(215 7% 70%);
+  --popover: hsl(228 8% 13%);
+  --popover-foreground: hsl(215 7% 70%);
+  --secondary: hsl(228 7% 17%);
+  --secondary-foreground: hsl(215 6% 63%);
+  --muted: hsl(228 7% 17%);
+  --muted-foreground: hsl(215 5% 50%);
+  --accent: hsl(228 7% 17%);
+  --accent-foreground: hsl(215 6% 63%);
+  --destructive: hsl(0 50% 42%);
+  --destructive-foreground: hsl(210 7% 82%);
+  --border: hsl(228 7% 18%);
+  --input: hsl(228 7% 18%);
+  --sidebar: hsl(228 8% 8%);
+  --sidebar-foreground: hsl(215 7% 70%);
+  --sidebar-accent: hsl(228 7% 17%);
+  --sidebar-accent-foreground: hsl(215 6% 63%);
+  --sidebar-border: hsl(228 7% 18%);
+}
+
+html:root.dark.theme-slate, :root.dark.theme-slate {
+  --primary: hsl(210 10% 90%);
+  --primary-foreground: hsl(222 18% 13%);
+  --ring: hsl(210 10% 90%);
+  --sidebar-primary: hsl(210 10% 90%);
+  --sidebar-primary-foreground: hsl(222 18% 13%);
+  --sidebar-ring: hsl(210 10% 90%);
+}
+
+html:root.dark.theme-kandel-group, :root.dark.theme-kandel-group {
+  --primary: hsl(224 60% 68%);
+  --primary-foreground: hsl(226 56% 11%);
+  --ring: hsl(224 60% 68%);
+  --sidebar-primary: hsl(224 60% 68%);
+  --sidebar-primary-foreground: hsl(226 56% 11%);
+  --sidebar-ring: hsl(224 60% 68%);
+}
+
+html:root.dark.theme-westminster-college, :root.dark.theme-westminster-college {
+  --primary: hsl(272 65% 72%);
+  --primary-foreground: hsl(273 42% 9%);
+  --ring: hsl(272 65% 72%);
+  --sidebar-primary: hsl(272 65% 72%);
+  --sidebar-primary-foreground: hsl(273 42% 9%);
+  --sidebar-ring: hsl(272 65% 72%);
+}
+
+html:root.dark.theme-woolwich-dubai, :root.dark.theme-woolwich-dubai {
+  --primary: hsl(216 55% 65%);
+  --primary-foreground: hsl(216 48% 10%);
+  --ring: hsl(216 55% 65%);
+  --sidebar-primary: hsl(216 55% 65%);
+  --sidebar-primary-foreground: hsl(216 48% 10%);
+  --sidebar-ring: hsl(216 55% 65%);
+}

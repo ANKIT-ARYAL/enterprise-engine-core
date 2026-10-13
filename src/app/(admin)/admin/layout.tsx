@@ -5,11 +5,15 @@ import AdminShell from '@/components/admin/AdminShell';
 import VisualInspector from '@/components/admin/VisualInspector';
 import PatchApplier from '@/components/admin/PatchApplier';
 import { prisma } from '@/lib/db/client';
+import { getCurrentAdminSession } from '@/lib/auth/session';
 import { connection } from 'next/server';
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   await connection();
-  const settings = await prisma.systemSettings.findUnique({ where: { id: 'global_config' } });
+  const [settings, sessionUser] = await Promise.all([
+    prisma.systemSettings.findUnique({ where: { id: 'global_config' } }),
+    getCurrentAdminSession(),
+  ]);
   
   // Default fallback links if none are in the DB
   const defaultNav = {
@@ -31,7 +35,9 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   return (
     <>
       <PatchApplier patches={visualPatches} />
-      <AdminShell initialNav={navLinks}>{children}</AdminShell>
+      <AdminShell initialNav={navLinks} sessionUser={sessionUser}>
+        {children}
+      </AdminShell>
       <VisualInspector />
     </>
   );
