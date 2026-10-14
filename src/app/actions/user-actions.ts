@@ -6,6 +6,7 @@ import { hashPassword, verifyPassword, generateSecurePassword, generateRandomEma
 import { getCurrentAdminSession } from '@/lib/auth/session';
 import { revalidatePath, revalidateTag } from 'next/cache';
 import { z } from 'zod';
+import { writeAuditLog } from '@/lib/audit-log';
 
 const UserCreateSchema = z.object({
   name: z.string().optional(),
@@ -74,6 +75,10 @@ export async function createUserAction(data: {
     throw new Error('Unauthorized');
   }
 
+  if (data.role === 'SUPER_ADMIN' && sessionUser.role !== 'SUPER_ADMIN') {
+    throw new Error('Only a superadmin can create another superadmin.');
+  }
+
   // Auto-generate email if missing or requested
   const email = (data.email && data.email.trim()) 
     ? data.email.trim().toLowerCase() 
@@ -116,6 +121,7 @@ export async function createUserAction(data: {
   revalidateTag('roles', 'default');
   revalidatePath('/admin/users');
   revalidatePath('/admin/roles');
+  await writeAuditLog({ action: 'create', resource: 'user', resourceId: user.id, metadata: { role: user.role } });
 
   // Return generated credentials so admin can view/copy them
   return {
@@ -153,6 +159,10 @@ export async function updateUserAction(data: {
 
   const validated = UserUpdateSchema.parse(data);
 
+  if (validated.role === 'SUPER_ADMIN' && sessionUser.role !== 'SUPER_ADMIN') {
+    throw new Error('Only a superadmin can assign the superadmin role.');
+  }
+
   // Check email uniqueness if modified
   const existing = await prisma.user.findUnique({
     where: { email: validated.email.toLowerCase() },
@@ -185,6 +195,7 @@ export async function updateUserAction(data: {
 
   revalidatePath('/admin/users');
   revalidatePath('/admin/roles');
+  await writeAuditLog({ action: 'update', resource: 'user', resourceId: updatedUser.id, metadata: { role: updatedUser.role, isBanned: updatedUser.isBanned } });
   return { success: true, user: updatedUser };
 }
 
@@ -207,6 +218,7 @@ export async function deleteUserAction(id: string) {
 
   revalidatePath('/admin/users');
   revalidatePath('/admin/roles');
+  await writeAuditLog({ action: 'delete', resource: 'user', resourceId: id });
   return { success: true };
 }
 

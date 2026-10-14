@@ -3,6 +3,8 @@
 import { prisma } from '@/lib/db/client';
 import { revalidatePath, revalidateTag } from 'next/cache';
 import { z } from 'zod';
+import { requireSuperAdmin } from '@/lib/auth/authorization';
+import { writeAuditLog } from '@/lib/audit-log';
 
 
 
@@ -13,6 +15,7 @@ const RoleSchema = z.object({
 });
 
 export async function createRoleAction(data: z.infer<typeof RoleSchema>) {
+  await requireSuperAdmin();
   const validated = RoleSchema.parse(data);
 
   const existing = await prisma.customRole.findUnique({
@@ -34,10 +37,12 @@ export async function createRoleAction(data: z.infer<typeof RoleSchema>) {
   revalidateTag('roles', 'default');
   revalidatePath('/admin/roles');
   revalidatePath('/admin/permissions');
+  await writeAuditLog({ action: 'create', resource: 'custom_role', resourceId: role.id, metadata: { permissionCount: role.permissions.length } });
   return { success: true, role };
 }
 
 export async function updateRoleAction(id: string, data: z.infer<typeof RoleSchema>) {
+  await requireSuperAdmin();
   const validated = RoleSchema.parse(data);
 
   const role = await prisma.customRole.update({
@@ -52,10 +57,12 @@ export async function updateRoleAction(id: string, data: z.infer<typeof RoleSche
   revalidateTag('roles', 'default');
   revalidatePath('/admin/roles');
   revalidatePath('/admin/permissions');
+  await writeAuditLog({ action: 'update', resource: 'custom_role', resourceId: role.id, metadata: { permissionCount: role.permissions.length } });
   return { success: true, role };
 }
 
 export async function deleteRoleAction(id: string) {
+  await requireSuperAdmin();
   // Check if users are assigned
   const userCount = await prisma.user.count({
     where: { customRoleId: id },
@@ -72,10 +79,12 @@ export async function deleteRoleAction(id: string) {
   revalidateTag('roles', 'default');
   revalidatePath('/admin/roles');
   revalidatePath('/admin/permissions');
+  await writeAuditLog({ action: 'delete', resource: 'custom_role', resourceId: id });
   return { success: true };
 }
 
 export async function updatePermissionAssignmentAction(roleId: string, permissionId: string, enabled: boolean) {
+  await requireSuperAdmin();
   const role = await prisma.customRole.findUnique({
     where: { id: roleId },
   });
@@ -97,5 +106,6 @@ export async function updatePermissionAssignmentAction(roleId: string, permissio
   revalidateTag('roles', 'default');
   revalidatePath('/admin/roles');
   revalidatePath('/admin/permissions');
+  await writeAuditLog({ action: enabled ? 'grant_permission' : 'revoke_permission', resource: 'custom_role', resourceId: roleId, metadata: { permissionId } });
   return { success: true };
 }

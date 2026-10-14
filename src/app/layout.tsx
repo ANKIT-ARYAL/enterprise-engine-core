@@ -8,6 +8,10 @@ export const metadata = {
   description: 'Modular High-Performance Engine',
 };
 
+// The application reads database-backed settings during rendering. Do not
+// prerender the root tree before those runtime values are available.
+export const instant = false;
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>

@@ -8,6 +8,9 @@ function run(command, env = {}) {
 
 console.log('🚀 Initializing Enterprise Headless Engine...');
 
+console.log('🧾 Preparing isolated environment templates...');
+run('pnpm run prepare:env');
+
 // 1. Environment File Check
 if (!existsSync('.env')) {
   console.log('📄 Generating .env from .env.example...');
@@ -42,4 +45,9 @@ run('pnpm prisma db seed');
 
 console.log('\n✅ Local Infrastructure is Live.');
 console.log('👉 Public URL: http://localhost:3000');
-console.log('👉 Admin URL:  http://localhost:3000/admin (Default: admin@engine.local / admin123456)\n');
+console.log('👉 Admin URL:  http://localhost:3000/admin/login');
+const configuredEnv = readFileSync('.env', 'utf-8');
+const readEnvValue = (key) => configuredEnv.match(new RegExp(`^${key}="?([^"\\n]+)"?`, 'm'))?.[1] || '[not configured]';
+console.log(`👉 Superadmin email: ${readEnvValue('SUPERADMIN_EMAIL')}`);
+console.log('👉 Superadmin password: read SUPERADMIN_PASSWORD from .env');
+console.log('👉 Create regular admins from the Users screen after signing in.\n');

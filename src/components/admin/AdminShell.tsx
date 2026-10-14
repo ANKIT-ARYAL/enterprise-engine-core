@@ -47,7 +47,8 @@ function NavItem({ link, pathname, isCompact }: { link: any, pathname: string, i
                 e.preventDefault(); // Prevent navigating when just toggling accordion
                 setExpanded(!expanded);
               }}
-              className="p-1 rounded-md hover:bg-black/10 dark:hover:bg-white/10 transition-colors"
+              aria-label={`${expanded ? 'Collapse' : 'Expand'} ${link.label} submenu`}
+              className="min-h-6 min-w-6 p-1 rounded-md hover:bg-black/10 dark:hover:bg-white/10 transition-colors"
             >
               <Icons.ChevronDown size={14} className={`opacity-50 transition-transform ${expanded ? 'rotate-180' : ''}`} />
             </button>
@@ -171,7 +172,7 @@ export default function AdminShell({ children, initialNav, sessionUser }: { chil
     userProfile: {
       type: 'dropdown',
       name: sessionUser?.name || sessionUser?.email?.split('@')[0] || initialNav?.userProfile?.name || 'Admin',
-      email: sessionUser?.email || initialNav?.userProfile?.email || 'hello@admin.com',
+      email: sessionUser?.email || initialNav?.userProfile?.email || '',
       links: profileLinks
     }
   } : {
@@ -183,7 +184,7 @@ export default function AdminShell({ children, initialNav, sessionUser }: { chil
     userProfile: { 
       type: 'dropdown', 
       name: sessionUser?.name || 'Admin', 
-      email: sessionUser?.email || 'hello@admin.com',
+      email: sessionUser?.email || '',
       links: profileLinks
     }
   };
@@ -337,7 +338,7 @@ export default function AdminShell({ children, initialNav, sessionUser }: { chil
             <button 
               type="button"
               onClick={handleToggleSidebar}
-              className="p-1.5 text-muted-foreground hover:text-foreground hover:bg-muted rounded-md transition-colors"
+              className="min-h-6 min-w-6 p-1.5 text-muted-foreground hover:text-foreground hover:bg-muted rounded-md transition-colors"
               title={
                 mounted && typeof window !== 'undefined' && window.innerWidth < 1024
                   ? (sidebarOpen ? "Close menu" : "Open menu")

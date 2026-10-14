@@ -6,6 +6,7 @@ import { cookies } from 'next/headers';
 import { prisma } from '@/lib/db/client';
 import fs from 'fs/promises';
 import path from 'path';
+import { writeAuditLog } from '@/lib/audit-log';
 
 const MAX_FILE_SIZE = 1024 * 1024; // 1MB
 const MAX_FILES = 5;
@@ -109,6 +110,7 @@ export async function POST(request: Request) {
           altText: file.name,
         }
       });
+      await writeAuditLog({ action: 'upload', resource: 'media', metadata: { fileName: file.name, mimeType: 'image/webp', size: webpBuffer.length } });
 
       uploadedUrls.push(publicUrl);
     }

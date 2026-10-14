@@ -69,8 +69,8 @@ export default function HeroSection({
               src={imageUrl}
               alt={title}
               fill
+              sizes="(max-width: 768px) 100vw, 50vw"
               priority
-              sizes="(max-width: 1440px) 100vw, 1440px"
               className="object-cover"
             />
           </div>

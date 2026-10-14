@@ -3,8 +3,10 @@
 
 import { prisma } from '@/lib/db/client';
 import { revalidatePath, revalidateTag } from 'next/cache';
+import { requireSuperAdmin } from '@/lib/auth/authorization';
 
 export async function clearAllPatches() {
+  await requireSuperAdmin();
   if (process.env.NODE_ENV !== 'development') {
     throw new Error('Patches can only be managed in development mode');
   }

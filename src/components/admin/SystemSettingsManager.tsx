@@ -5,9 +5,10 @@ import { useState, useTransition } from 'react';
 import { updateSystemSettingsAction } from '@/app/actions/admin-mutations';
 import { 
   Settings, Image as ImageIcon, PanelTop, PanelBottom, 
-  Save, CheckCircle2, Plus, Trash2, Sparkles, ExternalLink, RefreshCw
+  Save, CheckCircle2, Plus, Trash2, Sparkles, ExternalLink, RefreshCw, Upload
 } from 'lucide-react';
 import Link from 'next/link';
+import toast from 'react-hot-toast';
 
 interface SystemSettingsManagerProps {
   initialSettings: any;
@@ -20,6 +21,7 @@ export default function SystemSettingsManager({
 }: SystemSettingsManagerProps) {
   const [isPending, startTransition] = useTransition();
   const [success, setSuccess] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
   const [activeTab, setActiveTab] = useState<'branding' | 'navbar' | 'footer'>('branding');
 
   const initialTokens = (initialSettings.tokens as any) || {};
@@ -77,11 +79,23 @@ export default function SystemSettingsManager({
     });
   };
 
-  const sampleLogos = [
-    { label: 'Next.js', url: 'https://assets.vercel.com/image/upload/v1662130559/nextjs/Icon.png' },
-    { label: 'Minimal Arc', url: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=120&auto=format&fit=crop&q=80' },
-    { label: 'Geometric Core', url: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=200&auto=format&fit=crop&q=60' }
-  ];
+  const handleLogoUpload = async (file: File) => {
+    setIsUploading(true);
+    try {
+      const formData = new FormData();
+      formData.append('images', file);
+      const response = await fetch('/api/upload', { method: 'POST', body: formData });
+      const result = await response.json();
+      if (!response.ok || !result.urls?.[0]) {
+        throw new Error(result.error || 'Logo upload failed');
+      }
+      setLogoUrl(result.urls[0]);
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Logo upload failed');
+    } finally {
+      setIsUploading(false);
+    }
+  };
 
   return (
     <form onSubmit={handleSave} className="space-y-6 w-full pb-24">
@@ -257,40 +271,32 @@ export default function SystemSettingsManager({
             </div>
 
             <div className="space-y-3">
-              <label className="block text-xs font-semibold text-foreground">
-                Logo Image URL (PNG, SVG, JPG, WebP)
-              </label>
-              <div className="flex gap-2">
+              <span className="block text-xs font-semibold text-foreground">Logo Image</span>
+              {logoUrl ? (
+                <div className="rounded-btn border border-border bg-muted/30 px-3.5 py-2 font-mono text-xs text-muted-foreground break-all">
+                  Uploaded asset: {logoUrl}
+                </div>
+              ) : (
+                <p className="text-xs text-muted-foreground">No logo uploaded. Upload an image to use it across the public site.</p>
+              )}
+              <label className="inline-flex cursor-pointer items-center gap-2 rounded-btn border border-border bg-muted/30 px-3 py-2 text-xs font-semibold text-foreground hover:bg-muted">
+                <Upload size={14} />
+                {isUploading ? 'Uploading…' : 'Upload logo'}
                 <input
-                  type="url"
-                  value={logoUrl}
-                  onChange={(e) => setLogoUrl(e.target.value)}
-                  className="flex-1 px-3.5 py-2 text-sm bg-muted/40 border border-border rounded-btn focus:bg-card focus:border-primary text-foreground outline-none font-mono text-xs transition-colors"
-                  placeholder="https://example.com/logo.png"
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp,image/gif"
+                  className="sr-only"
+                  disabled={isUploading}
+                  onChange={(event) => {
+                    const file = event.target.files?.[0];
+                    if (file) void handleLogoUpload(file);
+                    event.currentTarget.value = '';
+                  }}
                 />
-              </div>
+              </label>
               <p className="text-[11px] text-muted-foreground">
-                Provide an absolute URL to a hosted logo image or SVG icon. Transparent backgrounds are recommended.
+                Uploads are converted to WebP and stored through the configured storage driver. Maximum file size: 1 MB.
               </p>
-            </div>
-
-            {/* Quick Presets */}
-            <div className="space-y-2">
-              <span className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
-                Quick Preset Examples:
-              </span>
-              <div className="flex flex-wrap gap-2">
-                {sampleLogos.map((sample, idx) => (
-                  <button
-                    key={idx}
-                    type="button"
-                    onClick={() => setLogoUrl(sample.url)}
-                    className="px-2.5 py-1 text-xs border border-border rounded-btn bg-muted/30 hover:bg-muted text-foreground transition-colors"
-                  >
-                    {sample.label}
-                  </button>
-                ))}
-              </div>
             </div>
 
             {/* Live Logo Preview Box */}

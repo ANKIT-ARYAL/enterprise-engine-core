@@ -494,6 +494,7 @@ export function ThemePreferences({
 								</div>
 								<div className="flex items-center gap-1.5">
 									<input
+										aria-label={`${item.label} color`}
 										type="color"
 										value={item.value.startsWith("#") && item.value.length === 7 ? item.value : "#000000"}
 										onChange={(e) => {

@@ -6,6 +6,8 @@ import { prisma } from '@/lib/db/client';
 import { z } from 'zod';
 import fs from 'fs';
 import path from 'path';
+import { requireAdminPermission } from '@/lib/auth/authorization';
+import { writeAuditLog } from '@/lib/audit-log';
 
 const SettingsSchema = z.object({
   siteName: z.string().min(1),
@@ -14,6 +16,7 @@ const SettingsSchema = z.object({
 });
 
 export async function updateSystemSettingsAction(input: z.infer<typeof SettingsSchema>) {
+  await requireAdminPermission('settings:general');
   const validated = SettingsSchema.parse(input);
 
   await prisma.systemSettings.update({
@@ -24,6 +27,7 @@ export async function updateSystemSettingsAction(input: z.infer<typeof SettingsS
       tokens: validated.tokens as any,
     },
   });
+  await writeAuditLog({ action: 'update', resource: 'system_settings', resourceId: 'global_config' });
 
   // Zero-code Form Component Generation
   if (validated.tokens?.formSchema?.componentName) {
@@ -72,10 +76,12 @@ export async function ${compName}() {
 }
 
 export async function mutateSectionAction(sectionId: string, pageSlug: string, content: unknown) {
+  await requireAdminPermission('content:edit');
   await prisma.pageSection.update({
     where: { id: sectionId },
     data: { content: content as any },
   });
+  await writeAuditLog({ action: 'update', resource: 'page_section', resourceId: sectionId, metadata: { pageSlug } });
 
   // Invalidate page-specific cache tags
   revalidateTag(`page:${pageSlug}`, 'default');
@@ -86,10 +92,12 @@ export async function mutateSectionAction(sectionId: string, pageSlug: string, c
 }
 
 export async function toggleSectionVisibilityAction(sectionId: string, pageSlug: string, isEnabled: boolean) {
+  await requireAdminPermission('content:publish');
   await prisma.pageSection.update({
     where: { id: sectionId },
     data: { isEnabled },
   });
+  await writeAuditLog({ action: 'publish_toggle', resource: 'page_section', resourceId: sectionId, metadata: { pageSlug, isEnabled } });
 
   revalidateTag(`page:${pageSlug}`, 'default');
   revalidateTag('sections', 'default');
@@ -99,11 +107,13 @@ export async function toggleSectionVisibilityAction(sectionId: string, pageSlug:
 }
 
 export async function reorderSectionsAction(pageSlug: string, sectionIds: string[]) {
+  await requireAdminPermission('content:edit');
   await prisma.$transaction(
     sectionIds.map((id, order) =>
       prisma.pageSection.update({ where: { id }, data: { order } }),
     ),
   );
+  await writeAuditLog({ action: 'reorder', resource: 'page_sections', metadata: { pageSlug, sectionIds } });
   revalidateTag(`page:${pageSlug}`, 'default');
   revalidateTag('sections', 'default');
   revalidatePath(`/admin/pages/${pageSlug}`);
@@ -113,10 +123,12 @@ export async function reorderSectionsAction(pageSlug: string, sectionIds: string
 }
 
 export async function softDeleteSectionAction(sectionId: string, pageSlug: string) {
+  await requireAdminPermission('content:delete');
   await prisma.pageSection.update({
     where: { id: sectionId },
     data: { isDeleted: true },
   });
+  await writeAuditLog({ action: 'delete', resource: 'page_section', resourceId: sectionId, metadata: { pageSlug } });
 
   revalidateTag(`page:${pageSlug}`, 'default');
   revalidateTag('sections', 'default');
@@ -126,6 +138,7 @@ export async function softDeleteSectionAction(sectionId: string, pageSlug: strin
 }
 
 export async function createDynamicPageAction(title: string, slug: string) {
+  await requireAdminPermission('content:create');
   // Normalize slug
   const cleanSlug = slug.toLowerCase().replace(/[^a-z0-9-_]/g, '-');
 
@@ -187,6 +200,7 @@ export async function createDynamicPageAction(title: string, slug: string) {
     },
     include: { sections: true }
   });
+  await writeAuditLog({ action: 'upsert', resource: 'page', resourceId: page.id, metadata: { slug: cleanSlug } });
 
   // If page already existed without sections, seed them
   if (page.sections.length === 0) {
@@ -212,6 +226,7 @@ export async function createDynamicPageAction(title: string, slug: string) {
       groupId: 'PAGES',
     }
   });
+  await writeAuditLog({ action: 'upsert', resource: 'sidebar_navigation', metadata: { path: `/admin/pages/${cleanSlug}` } });
 
   // 4. Auto-generate the physical frontend TSX file with clean standard Next.js imports
   const appDir = path.join(process.cwd(), 'src', 'app', '(public)', cleanSlug);
@@ -301,6 +316,7 @@ export default async function ${compName}Page() {
 }
 
 export async function addSectionAction(pageId: string, pageSlug: string, sectionType: string, defaultContent: any) {
+  await requireAdminPermission('content:edit');
   await prisma.pageSection.create({
     data: {
       pageId,
@@ -308,6 +324,7 @@ export async function addSectionAction(pageId: string, pageSlug: string, section
       content: defaultContent,
     }
   });
+  await writeAuditLog({ action: 'create', resource: 'page_section', metadata: { pageId, pageSlug, sectionType } });
   
   revalidateTag(`page:${pageSlug}`, 'default');
   revalidateTag('sections', 'default');

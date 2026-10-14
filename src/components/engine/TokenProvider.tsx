@@ -46,6 +46,11 @@ interface SystemTokens {
 export async function TokenProvider() {
   const settings = await getCachedSystemSettings();
   const tokens = (settings.tokens as SystemTokens | null) || {};
+  const serverAppearance = {
+    themePreset: tokens.themePreset || 'slate',
+    fontFamily: tokens.fontFamily || 'manrope',
+    radius: tokens.radiusPreset || tokens.radius || 'md',
+  };
 
   const getShadowCss = (style: string) => {
     switch(style) {
@@ -143,7 +148,8 @@ export async function TokenProvider() {
     (function() {
       try {
         var stored = localStorage.getItem('enterprise-engine-appearance');
-        var app = stored ? JSON.parse(stored) : null;
+        var app = stored ? JSON.parse(stored) : ${JSON.stringify(serverAppearance)};
+        window.__ENGINE_SERVER_APPEARANCE__ = ${JSON.stringify(serverAppearance)};
         var theme = (app && app.themePreset) ? app.themePreset : '${tokens.themePreset || 'slate'}';
         var mode = localStorage.getItem('enterprise-engine-display-mode') || '${tokens.displayMode || 'system'}';
         var isDark = mode === 'dark' || (mode === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);

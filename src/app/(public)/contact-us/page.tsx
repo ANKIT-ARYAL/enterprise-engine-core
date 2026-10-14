@@ -1,16 +1,19 @@
 import { notFound } from 'next/navigation';
-import { getCachedPagePayload } from '@/lib/db/queries';
+import { getCachedPagePayload, getCachedSystemSettings } from '@/lib/db/queries';
 import Hero from '../components/Hero';
 import { Mail, MapPin, Phone, Clock } from 'lucide-react';
 
 export default async function ContactUsPage() {
   const page = await getCachedPagePayload('contact-us');
+  const settings = await getCachedSystemSettings();
 
   if (!page || !page.isPublished) {
     notFound();
   }
 
   const heroData = page.sections.find((s) => s.type === 'HERO')?.content as Record<string, string> | undefined;
+  const tokens = (settings.tokens as { contactEmail?: string; contactDetails?: { email?: string } }) || {};
+  const supportEmail = tokens.contactEmail || tokens.contactDetails?.email || 'support@enterprise.io';
 
   return (
     <main className="min-h-screen pb-20">
@@ -20,7 +23,7 @@ export default async function ContactUsPage() {
           title={heroData.title || 'Get in Touch with Our Team'}
           subtitle={heroData.subtitle || 'We are here to answer questions, explore custom architectures, and scale your systems.'}
           primaryCtaText={heroData.primaryCtaText || 'Send Email'}
-          primaryCtaLink={heroData.primaryCtaLink || 'mailto:contact@enterprise.io'}
+          primaryCtaLink={heroData.primaryCtaLink || `mailto:${supportEmail}`}
         />
       )}
 
@@ -33,8 +36,8 @@ export default async function ContactUsPage() {
             </div>
             <h3 className="font-bold text-lg text-[color:var(--text-main)]">Email Support</h3>
             <p className="text-sm text-[color:var(--text-muted)]">Direct communication with our platform engineering lead.</p>
-            <a href="mailto:support@enterprise.io" className="text-sm font-semibold text-[color:var(--primary)] hover:underline block pt-2">
-              support@enterprise.io
+            <a href={`mailto:${supportEmail}`} className="text-sm font-semibold text-[color:var(--primary)] hover:underline block pt-2">
+              {supportEmail}
             </a>
           </div>
 

@@ -640,11 +640,11 @@ export function FormBuilder({ onSave, initialSchema }: { onSave?: (schema: FormS
                       <div className="grid grid-cols-2 gap-3">
                         <div>
                            <label className="text-[11px] font-bold opacity-50 uppercase block mb-1">Background Color</label>
-                           <input type="color" className="w-full h-8 rounded cursor-pointer border-0 p-0" value={selectedField.buttonCustomBg || '#000000'} onChange={e => updateSelectedField({ buttonCustomBg: e.target.value })} />
+                           <input aria-label="Button background color" type="color" className="w-full h-8 rounded cursor-pointer border-0 p-0" value={selectedField.buttonCustomBg || '#000000'} onChange={e => updateSelectedField({ buttonCustomBg: e.target.value })} />
                         </div>
                         <div>
                            <label className="text-[11px] font-bold opacity-50 uppercase block mb-1">Text Color</label>
-                           <input type="color" className="w-full h-8 rounded cursor-pointer border-0 p-0" value={selectedField.buttonCustomText || '#ffffff'} onChange={e => updateSelectedField({ buttonCustomText: e.target.value })} />
+                           <input aria-label="Button text color" type="color" className="w-full h-8 rounded cursor-pointer border-0 p-0" value={selectedField.buttonCustomText || '#ffffff'} onChange={e => updateSelectedField({ buttonCustomText: e.target.value })} />
                         </div>
                       </div>
                     )}

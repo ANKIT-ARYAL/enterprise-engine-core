@@ -20,6 +20,12 @@ export const THEME_MODE_KEY = "enterprise-engine-display-mode";
 export const THEME_MODE_CHANGE_EVENT = "enterprise-engine-display-mode-change";
 const THEME_CLASSES = UI_THEME_OPTIONS.map(({ value }) => `theme-${value}`);
 
+declare global {
+	interface Window {
+		__ENGINE_SERVER_APPEARANCE__?: Partial<NormalizedAppearance>;
+	}
+}
+
 function resolvedMode(mode: ThemeMode) {
 	if (typeof window === "undefined") return "light";
 	return mode === "system"
@@ -117,7 +123,17 @@ export function useThemePreferences() {
 		React.useState<NormalizedAppearance>(DEFAULT_APPEARANCE);
 
 	React.useEffect(() => {
-		const current = getLocalAppearance(window.localStorage);
+		const stored = getLocalAppearance(window.localStorage, DEFAULT_APPEARANCE);
+		const hasStoredAppearance = window.localStorage.getItem("enterprise-engine-appearance");
+		const serverAppearance = window.__ENGINE_SERVER_APPEARANCE__;
+		const current = hasStoredAppearance || !serverAppearance
+			? stored
+			: {
+					...DEFAULT_APPEARANCE,
+					themePreset: serverAppearance.themePreset ?? DEFAULT_APPEARANCE.themePreset,
+					fontFamily: serverAppearance.fontFamily ?? DEFAULT_APPEARANCE.fontFamily,
+					radius: serverAppearance.radius ?? DEFAULT_APPEARANCE.radius,
+				};
 		setLocalAppearance(current);
 	}, []);
 

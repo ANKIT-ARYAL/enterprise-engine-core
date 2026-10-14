@@ -4,6 +4,7 @@ import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Image from '@tiptap/extension-image';
 import { useCallback } from 'react';
+import toast from 'react-hot-toast';
 
 export function RichTextEditor({ content, onChange }: { content: string, onChange: (val: string) => void }) {
   const editor = useEditor({
@@ -33,7 +34,7 @@ export function RichTextEditor({ content, onChange }: { content: string, onChang
       const data = await res.json();
       editor?.chain().focus().setImage({ src: data.url }).run();
     } else {
-      alert('Upload failed');
+      toast.error('Upload failed');
     }
   }, [editor]);
 

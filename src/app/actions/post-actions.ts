@@ -2,8 +2,10 @@
 
 import { prisma } from '@/lib/db/client';
 import { revalidatePath, revalidateTag } from 'next/cache';
+import { requireAdminPermission } from '@/lib/auth/authorization';
 
 export async function createPostAction(data: { title: string; slug: string; excerpt?: string; content: string; published?: boolean }) {
+  await requireAdminPermission('content:create');
   // Ensure default author exists
   let author = await prisma.user.findFirst();
   if (!author) {
@@ -42,6 +44,7 @@ export async function createPostAction(data: { title: string; slug: string; exce
 }
 
 export async function updatePostAction(id: string, data: { title: string; slug: string; excerpt?: string; content: string; published?: boolean }) {
+  await requireAdminPermission('content:edit');
   const post = await prisma.post.update({
     where: { id },
     data: {
@@ -69,6 +72,7 @@ export async function updatePostAction(id: string, data: { title: string; slug: 
 }
 
 export async function deletePostAction(id: string) {
+  await requireAdminPermission('content:delete');
   const post = await prisma.post.delete({
     where: { id }
   });

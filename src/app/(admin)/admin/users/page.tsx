@@ -2,10 +2,8 @@ export const instant = false;
 
 import { prisma } from '@/lib/db/client';
 import UsersManager from '@/components/admin/UsersManager';
-import { connection } from 'next/server';
 
 export default async function AdminUsersPage() {
-  await connection();
 
   const [users, customRoles, settings] = await Promise.all([
     prisma.user.findMany({

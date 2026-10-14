@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { Save, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import { createPostAction, updatePostAction } from '@/app/actions/post-actions';
+import toast from 'react-hot-toast';
 
 export function BlogForm({ initialData, isEditing = false }: { initialData?: any; isEditing?: boolean }) {
   const router = useRouter();
@@ -42,7 +43,7 @@ export function BlogForm({ initialData, isEditing = false }: { initialData?: any
       router.refresh();
     } catch (err) {
       console.error(err);
-      alert('Failed to save post.');
+      toast.error(err instanceof Error ? err.message : 'Failed to save post.');
     } finally {
       setLoading(false);
     }

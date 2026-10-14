@@ -87,7 +87,7 @@ export default function QuickAddPanel({
       { id: 's2', title: 'Pages', links: initialNav?.pages || [] }
     ],
     promoBox: { enabled: true, title: 'Have something in mind?', description: 'Suggest a feature or discuss custom work with me on 𝕏 or by email.' },
-    userProfile: { type: 'button', name: 'Admin', email: 'hello@admin.com' }
+    userProfile: { type: 'button', name: 'Admin', email: '' }
   };
 
   const [navState, setNavState] = useState(normalized);

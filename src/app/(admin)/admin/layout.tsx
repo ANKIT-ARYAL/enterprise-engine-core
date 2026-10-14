@@ -6,10 +6,8 @@ import VisualInspector from '@/components/admin/VisualInspector';
 import PatchApplier from '@/components/admin/PatchApplier';
 import { prisma } from '@/lib/db/client';
 import { getCurrentAdminSession } from '@/lib/auth/session';
-import { connection } from 'next/server';
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
-  await connection();
   const [settings, sessionUser] = await Promise.all([
     prisma.systemSettings.findUnique({ where: { id: 'global_config' } }),
     getCurrentAdminSession(),

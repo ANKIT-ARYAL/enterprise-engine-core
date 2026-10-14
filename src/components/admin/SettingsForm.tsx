@@ -693,7 +693,7 @@ export default function SettingsForm({
           >
             <span className="flex items-center gap-2">
               {success ? <CheckCircle2 size={16} /> : <Save size={16} />}
-              <span>
+              <span suppressHydrationWarning>
                 {isPending
                   ? "Syncing..."
                   : success
@@ -861,6 +861,7 @@ export default function SettingsForm({
                             className="w-24 px-2 py-1 text-xs font-mono border rounded-lg bg-transparent border-card-border text-center uppercase"
                           />
                           <input
+                            aria-label={`${color.id} color`}
                             type="color"
                             name={color.id}
                             value={color.val}

@@ -62,9 +62,27 @@ jobs:
 
       # Step 3: Run full typecheck and lint suite
       - name: Run Strict TypeScript & Next.js Lint Auditing
+        env:
+          DATABASE_URL: "postgresql://test_verifier:verifier_secret_pass@localhost:5432/verify_sandbox?schema=public"
+          DIRECT_URL: "postgresql://test_verifier:verifier_secret_pass@localhost:5432/verify_sandbox?schema=public"
         run: |
-          pnpm tsc --noEmit
-          pnpm next lint
+          pnpm run verify
+          pnpm test
+          pnpm exec tsc --noEmit
+          pnpm build
+
+      - name: Install Playwright Chromium
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Run Production Browser Smoke and Accessibility Audit
+        env:
+          DATABASE_URL: "postgresql://test_verifier:verifier_secret_pass@localhost:5432/verify_sandbox?schema=public"
+          DIRECT_URL: "postgresql://test_verifier:verifier_secret_pass@localhost:5432/verify_sandbox?schema=public"
+          SUPERADMIN_EMAIL: ${{ secrets.STAGING_SUPERADMIN_EMAIL }}
+          SUPERADMIN_PASSWORD: ${{ secrets.STAGING_SUPERADMIN_PASSWORD }}
+        run: |
+          pnpm start > /tmp/enterprise-engine-next.log 2>&1 &
+          pnpm exec playwright test tests/e2e/admin-smoke.spec.ts tests/e2e/quality-audit.spec.ts --project=chromium
 
   trigger-vercel-deployment:
     name: Deploy to Vercel Staging

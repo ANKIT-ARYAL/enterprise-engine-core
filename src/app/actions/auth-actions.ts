@@ -29,13 +29,13 @@ export async function loginAction(formData: FormData) {
   });
 
   // 2. Fallback / Seed check for system admin credentials if not existing
-  const superAdminEmail = (process.env.SUPERADMIN_EMAIL || 'super@engine.local').toLowerCase();
-  const superAdminPassword = process.env.SUPERADMIN_PASSWORD || 'super123456';
-  const adminEmail = (process.env.ADMIN_EMAIL || 'admin@engine.local').toLowerCase();
-  const adminPassword = process.env.ADMIN_PASSWORD || 'admin123456';
+  const superAdminEmail = process.env.SUPERADMIN_EMAIL?.toLowerCase();
+  const superAdminPassword = process.env.SUPERADMIN_PASSWORD;
+  const adminEmail = process.env.ADMIN_EMAIL?.toLowerCase();
+  const adminPassword = process.env.ADMIN_PASSWORD;
 
   if (!user) {
-    if (email.toLowerCase() === superAdminEmail && password === superAdminPassword) {
+    if (superAdminEmail && superAdminPassword && email.toLowerCase() === superAdminEmail && password === superAdminPassword) {
       user = await prisma.user.create({
         data: {
           email: superAdminEmail,
@@ -45,13 +45,15 @@ export async function loginAction(formData: FormData) {
         },
         include: { customRole: true },
       });
-    } else if (email.toLowerCase() === adminEmail && password === adminPassword) {
+    } else if (adminEmail && adminPassword && email.toLowerCase() === adminEmail && password === adminPassword) {
       user = await prisma.user.create({
         data: {
           email: adminEmail,
           passwordHash: hashPassword(adminPassword),
           name: 'System Admin',
-          role: 'SUPER_ADMIN',
+          // The configured admin bootstrap account is a regular admin.
+          // Only the superadmin bootstrap account receives root access.
+          role: 'ADMIN',
         },
         include: { customRole: true },
       });
@@ -73,8 +75,8 @@ export async function loginAction(formData: FormData) {
   } else {
     // Check fallback plain text or dummy hash match
     if (
-      (user.email === superAdminEmail && password === superAdminPassword) ||
-      (user.email === adminEmail && password === adminPassword)
+      (superAdminEmail && superAdminPassword && user.email === superAdminEmail && password === superAdminPassword) ||
+      (adminEmail && adminPassword && user.email === adminEmail && password === adminPassword)
     ) {
       isValid = true;
       // Upgrade to secure hash immediately
