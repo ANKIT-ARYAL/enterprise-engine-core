@@ -29,6 +29,7 @@ jobs:
           rm -rf .engine-source
       - name: Open update pull request
         uses: peter-evans/create-pull-request@v7
+        id: update-pr
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           branch: chore/enterprise-engine-sync
@@ -36,3 +37,8 @@ jobs:
           title: 'chore: sync Enterprise Engine'
           commit-message: 'chore: sync Enterprise Engine'
           body: 'Automated update from Enterprise Engine. Please review before merging.'
+      - name: Merge update pull request
+        if: steps.update-pr.outputs.pull-request-number != ''
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh pr merge "${{ steps.update-pr.outputs.pull-request-number }}" --squash --delete-branch --repo "${{ github.repository }}"
