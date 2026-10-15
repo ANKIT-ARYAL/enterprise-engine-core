@@ -2,6 +2,7 @@ import '@/app/globals.css';
 import { TokenProvider } from '@/components/engine/TokenProvider';
 import { ThemeProvider } from '@/components/theme/theme-provider';
 import { Toaster } from 'react-hot-toast';
+import GlobalLoadingIndicator from '@/components/system/GlobalLoadingIndicator';
 
 export const metadata = {
   title: 'Enterprise Engine',
@@ -22,6 +23,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         <ThemeProvider>
           <Toaster position="bottom-right" />
+          <GlobalLoadingIndicator />
           {children}
         </ThemeProvider>
       </body>

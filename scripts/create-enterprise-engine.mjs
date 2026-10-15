@@ -3,7 +3,7 @@
 import { cp, mkdir, readFile, readdir, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import process from 'node:process';
-import { execSync } from 'node:child_process';
+import { execFileSync, execSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 
 const sourceDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -58,6 +58,33 @@ try {
   execSync('git add . && git commit -m "Initialize Enterprise Engine project"', { cwd: targetDir, stdio: 'ignore' });
   execSync(`gh repo create ${owner}/${projectSlug} --private --source . --remote origin --push`, { cwd: targetDir, stdio: 'inherit' });
   console.log(`GitHub repository created: https://github.com/${owner}/${projectSlug}`);
+
+  const engineEnv = await readFile(path.join(sourceDir, '.env'), 'utf8').catch(() => '');
+  const registryToken = engineEnv.match(/^GITHUB_SYNC_TOKEN=(?:"([^"]+)"|([^\n]+))/m)?.[1]
+    ?? engineEnv.match(/^GITHUB_SYNC_TOKEN=([^\n]+)/m)?.[1]?.trim()
+    ?? engineEnv.match(/^GITHUB_TOKEN=(?:"([^"]+)"|([^\n]+))/m)?.[1]
+    ?? engineEnv.match(/^GITHUB_TOKEN=([^\n]+)/m)?.[1]?.trim();
+  const registryUrl = process.env.ENGINE_REGISTRY_URL ?? 'http://localhost:3000';
+  if (registryToken) {
+    try {
+      execFileSync('gh', ['secret', 'set', 'ENGINE_SYNC_TOKEN', '--repo', `${owner}/${projectSlug}`], {
+        input: registryToken,
+        stdio: ['pipe', 'ignore', 'inherit'],
+      });
+      console.log('✓ Configured GitHub Actions engine access secret');
+    } catch {
+      console.warn('GitHub Actions secret setup was skipped. The repository can be configured manually with ENGINE_SYNC_TOKEN.');
+    }
+    const response = await fetch(`${registryUrl}/api/projects`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json', 'x-engine-registration-token': registryToken },
+      body: JSON.stringify({ name: projectSlug, repository: `${owner}/${projectSlug}`, branch: 'main' }),
+    });
+    if (response.ok) console.log('✓ Registered project with Enterprise Engine');
+    else console.warn(`Project registration skipped (registry returned ${response.status}). Open ${registryUrl}/admin/projects to add it manually.`);
+  } else {
+    console.warn(`Project registration skipped: GITHUB_SYNC_TOKEN is not configured in ${sourceDir}/.env`);
+  }
 } catch (error) {
   console.warn('GitHub repository setup was skipped. Run gh auth login and retry if needed.');
 }

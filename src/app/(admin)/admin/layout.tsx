@@ -2,12 +2,14 @@
 export const instant = false;
 
 import AdminShell from '@/components/admin/AdminShell';
+import { connection } from 'next/server';
 import VisualInspector from '@/components/admin/VisualInspector';
 import PatchApplier from '@/components/admin/PatchApplier';
 import { prisma } from '@/lib/db/client';
 import { getCurrentAdminSession } from '@/lib/auth/session';
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
+  await connection();
   const [settings, sessionUser] = await Promise.all([
     prisma.systemSettings.findUnique({ where: { id: 'global_config' } }),
     getCurrentAdminSession(),
@@ -24,6 +26,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
       { href: '/admin/pages/contact-us', label: 'Contact Us', icon: 'Mail' },
     ],
     pages: [
+      { href: '/admin/projects', label: 'Projects', icon: 'FolderGit2' },
       { href: '/admin/users', label: 'Users', icon: 'Users' },
       { href: '/admin/roles', label: 'Roles', icon: 'ShieldCheck' },
       { href: '/admin/recycle-bin', label: 'Recycle Bin', icon: 'Trash2' },

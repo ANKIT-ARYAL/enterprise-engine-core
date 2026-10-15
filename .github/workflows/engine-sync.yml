@@ -1,0 +1,38 @@
+name: Enterprise Engine sync
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+          fetch-depth: 0
+      - name: Fetch engine source
+        uses: actions/checkout@v4
+        with:
+          repository: ANKIT-ARYAL/enterprise-engine-core
+          path: .engine-source
+          token: ${{ secrets.ENGINE_SYNC_TOKEN || github.token }}
+      - name: Copy managed engine files
+        run: |
+          rsync -a --delete .engine-source/src/ src/
+          rsync -a --delete .engine-source/prisma/ prisma/
+          rsync -a .engine-source/scripts/ scripts/
+          rm -rf .engine-source
+      - name: Open update pull request
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: chore/enterprise-engine-sync
+          delete-branch: true
+          title: 'chore: sync Enterprise Engine'
+          commit-message: 'chore: sync Enterprise Engine'
+          body: 'Automated update from Enterprise Engine. Please review before merging.'

@@ -27,18 +27,18 @@ enum SectionType {
 }
 
 model User {
-  id            String         @id @default(cuid())
-  email         String         @unique
-  passwordHash  String
-  name          String?
-  role          Role           @default(USER)
-  customRoleId  String?
-  customRole    CustomRole?    @relation(fields: [customRoleId], references: [id])
-  permissions   String[]       @default([])
-  sessions      Session[]
-  posts         Post[]
-  notifications Notification[]
-  auditLogs     AuditLog[]
+  id                 String         @id @default(cuid())
+  email              String         @unique
+  passwordHash       String
+  name               String?
+  role               Role           @default(USER)
+  customRoleId       String?
+  customRole         CustomRole?    @relation(fields: [customRoleId], references: [id])
+  permissions        String[]       @default([])
+  sessions           Session[]
+  posts              Post[]
+  notifications      Notification[]
+  auditLogs          AuditLog[]
   isBanned           Boolean        @default(false)
   mustChangePassword Boolean        @default(false)
   createdAt          DateTime       @default(now())
@@ -76,6 +76,21 @@ model SystemSettings {
   tokens    Json     @default("{}")
   customCss String?  @db.Text
   updatedAt DateTime @updatedAt
+}
+
+model ManagedProject {
+  id              String    @id @default(cuid())
+  name            String
+  repository      String    @unique
+  branch          String    @default("main")
+  engineVersion   String    @default("0.1.0")
+  lastSyncAt      DateTime?
+  lastSyncStatus  String    @default("never")
+  lastSyncMessage String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@index([lastSyncStatus])
 }
 
 model Page {
@@ -223,7 +238,7 @@ model SidebarNav {
   label     String
   path      String   @unique // e.g. "/admin/homepage"
   icon      String?
-  groupId   String?  // e.g. "PAGES", "SYSTEM"
+  groupId   String? // e.g. "PAGES", "SYSTEM"
   order     Int      @default(0)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

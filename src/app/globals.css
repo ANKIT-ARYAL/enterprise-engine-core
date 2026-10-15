@@ -3,6 +3,8 @@
 @import "tailwindcss";
 @import "../styles/source-themes.css";
 
+@keyframes loading-slide { from { transform: translateX(-120%); } to { transform: translateX(420%); } }
+
 @theme {
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);

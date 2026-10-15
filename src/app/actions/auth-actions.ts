@@ -60,6 +60,23 @@ export async function loginAction(formData: FormData) {
     }
   }
 
+  // The configured bootstrap credentials are authoritative. This also repairs
+  // databases created by older seeds that stored the wrong admin email/role.
+  if (
+    user &&
+    superAdminEmail &&
+    superAdminPassword &&
+    email.toLowerCase() === superAdminEmail &&
+    password === superAdminPassword &&
+    user.role !== 'SUPER_ADMIN'
+  ) {
+    user = await prisma.user.update({
+      where: { id: user.id },
+      data: { role: 'SUPER_ADMIN' },
+      include: { customRole: true },
+    });
+  }
+
   if (!user) {
     return { success: false, error: 'Invalid email or password.' };
   }

@@ -145,6 +145,7 @@ export default function AdminShell({ children, initialNav, sessionUser }: { chil
   ];
 
   const defaultPageLinks = [
+    { href: '/admin/projects', label: 'Projects', icon: 'FolderGit2' },
     { href: '/admin/users', label: 'Users', icon: 'Users' },
     { href: '/admin/roles', label: 'Roles', icon: 'ShieldCheck' },
     { href: '/admin/recycle-bin', label: 'Recycle Bin', icon: 'Trash2' },
@@ -195,16 +196,15 @@ export default function AdminShell({ children, initialNav, sessionUser }: { chil
     }
   };
 
-  // Ensure the Design Studio submenu remains available even when navigation
-  // was customized and persisted before newer studio tabs were added.
-  const studioSection = normalizedNav.sections
-    .flatMap((section: any) => section.links || [])
-    .find((link: any) => link.href === '/admin/settings');
-  if (studioSection) {
-    studioSection.children = [
-      ...(studioSection.children || []).filter((child: any) => child.href !== '/admin/settings?tab=design-animations'),
-      { href: '/admin/settings?tab=design-animations', label: 'Animations' },
-    ];
+  // Projects is a platform-management surface and must remain visible to
+  // superadmins even when the site navigation has been customized and saved.
+  if (!normalizedNav.sections.some((section: any) =>
+    (section.links || []).some((link: any) => link.href === '/admin/projects')
+  )) {
+    const systemSection = normalizedNav.sections.find((section: any) =>
+      /system|page|admin/i.test(section.title || '')
+    ) || normalizedNav.sections[normalizedNav.sections.length - 1];
+    systemSection?.links?.unshift({ href: '/admin/projects', label: 'Projects', icon: 'FolderGit2' });
   }
 
   return (
