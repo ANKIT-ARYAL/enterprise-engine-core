@@ -55,8 +55,8 @@ export function SectionEditorForm({ section, pageSlug, index = 0 }: SectionEdito
       });
       const data = await res.json();
       if (data.success && data.urls.length > 0) {
-        handleChange('imageUrl', data.urls[0]);
-        toast.success('Image uploaded successfully');
+        handleChange(content.mediaType === 'video' ? 'videoUrl' : 'imageUrl', data.urls[0]);
+        toast.success(`${content.mediaType === 'video' ? 'Video' : 'Image'} uploaded successfully`);
       } else {
         toast.error(data.error || 'Upload failed');
       }
@@ -227,6 +227,9 @@ export function SectionEditorForm({ section, pageSlug, index = 0 }: SectionEdito
               >
                 <Video size={15} /> YouTube Stream
               </button>
+              <button type="button" onClick={() => handleChange('mediaType', 'video')} className={`flex items-center justify-center gap-2 p-2.5 rounded-lg border text-xs font-medium transition-all ${content.mediaType === 'video' ? 'border-primary bg-primary/10 text-primary font-semibold' : 'border-border bg-card text-muted-foreground hover:bg-muted'}`}>
+                <Video size={15} /> Upload Video
+              </button>
             </div>
 
             {content.mediaType === 'youtube' ? (
@@ -240,6 +243,13 @@ export function SectionEditorForm({ section, pageSlug, index = 0 }: SectionEdito
                   className="w-full px-3.5 py-2 bg-background border border-border rounded-lg text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 font-mono"
                 />
               </div>
+            ) : content.mediaType === 'video' ? (
+              <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-border hover:border-primary rounded-lg bg-card cursor-pointer p-4">
+                <Video size={22} className="text-muted-foreground mb-1.5" />
+                <span className="text-xs font-medium text-foreground">{isUploading ? 'Uploading video...' : 'Click or drop video to upload'}</span>
+                <span className="text-[11px] text-muted-foreground mt-0.5">MP4, WEBM, or MOV · up to 100MB</span>
+                <input type="file" accept="video/mp4,video/webm,video/quicktime" onChange={handleFileUpload} disabled={isUploading} className="hidden" />
+              </label>
             ) : (
               <div>
                 {content.imageUrl ? (

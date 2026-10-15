@@ -10,6 +10,9 @@ interface HeroProps {
   secondaryCtaText?: string;
   secondaryCtaLink?: string;
   imageUrl?: string;
+  videoUrl?: string;
+  mediaType?: 'image' | 'video' | 'youtube';
+  youtubeId?: string;
   layout?: 'left' | 'center';
 }
 
@@ -22,6 +25,9 @@ export default function HeroSection({
   secondaryCtaText,
   secondaryCtaLink,
   imageUrl,
+  videoUrl,
+  mediaType = 'image',
+  youtubeId,
   layout = 'left',
 }: HeroProps) {
   const isCenter = layout === 'center';
@@ -63,7 +69,15 @@ export default function HeroSection({
           )}
         </div>
 
-        {imageUrl && (
+        {mediaType === 'video' && videoUrl ? (
+          <div className="w-full relative mt-8 aspect-[16/9] rounded-[var(--radius)] overflow-hidden border border-slate-200/60 shadow-2xl">
+            <video src={videoUrl} controls playsInline preload="metadata" className="w-full h-full object-cover" />
+          </div>
+        ) : mediaType === 'youtube' && youtubeId ? (
+          <div className="w-full relative mt-8 aspect-[16/9] rounded-[var(--radius)] overflow-hidden border border-slate-200/60 shadow-2xl">
+            <iframe src={`https://www.youtube.com/embed/${youtubeId}`} title={title} allowFullScreen className="w-full h-full" />
+          </div>
+        ) : imageUrl ? (
           <div className="w-full relative mt-8 aspect-[16/9] rounded-[var(--radius)] overflow-hidden border border-slate-200/60 shadow-2xl">
             <Image
               src={imageUrl}
@@ -74,7 +88,7 @@ export default function HeroSection({
               className="object-cover"
             />
           </div>
-        )}
+        ) : null}
       </div>
     </div>
   );

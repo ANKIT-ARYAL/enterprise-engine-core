@@ -16,13 +16,19 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   // Default fallback links if none are in the DB
   const defaultNav = {
     dashboards: [
-      { href: '/admin/default', label: 'Default', icon: 'LayoutDashboard' },
-      { href: '/admin/crm', label: 'CRM', icon: 'User' },
-      { href: '/admin/finance', label: 'Finance', icon: 'CreditCard' },
-      { href: '/admin/academy', label: 'Academy', icon: 'GraduationCap' },
+      { href: '/admin/dashboard', label: 'Dashboard', icon: 'LayoutDashboard' },
+      { href: '/admin/pages', label: 'Homepage', icon: 'House' },
+      { href: '/admin/blogs', label: 'Blogs', icon: 'BookOpen' },
+      { href: '/admin/faq', label: 'FAQ', icon: 'MessageCircleQuestion' },
+      { href: '/admin/pages/about-us', label: 'About Us', icon: 'Users' },
+      { href: '/admin/pages/contact-us', label: 'Contact Us', icon: 'Mail' },
     ],
     pages: [
-      { href: '/admin/email', label: 'Email', icon: 'Mail' },
+      { href: '/admin/users', label: 'Users', icon: 'Users' },
+      { href: '/admin/roles', label: 'Roles', icon: 'ShieldCheck' },
+      { href: '/admin/recycle-bin', label: 'Recycle Bin', icon: 'Trash2' },
+      { href: '/admin/pages', label: 'Pages & Sections', icon: 'Files' },
+      { href: '/admin/email', label: 'Contact Messages', icon: 'Mail' },
       { href: '/admin/settings', label: 'System Design', icon: 'Settings' },
     ]
   };

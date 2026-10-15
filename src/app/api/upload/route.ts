@@ -8,9 +8,9 @@ import fs from 'fs/promises';
 import path from 'path';
 import { writeAuditLog } from '@/lib/audit-log';
 
-const MAX_FILE_SIZE = 1024 * 1024; // 1MB
+const MAX_FILE_SIZE = 100 * 1024 * 1024;
 const MAX_FILES = 5;
-const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'video/mp4', 'video/webm', 'video/quicktime'];
 
 const storageDriver = process.env.STORAGE_DRIVER || 'local';
 const uploadDir = process.env.LOCAL_STORAGE_PATH || './public/uploads';
@@ -47,23 +47,23 @@ export async function POST(request: Request) {
         return NextResponse.json({ error: `Invalid file type: ${file.type}. Only images allowed.` }, { status: 400 });
       }
 
-      if (file.size > MAX_FILE_SIZE) {
-        return NextResponse.json({ error: `File ${file.name} exceeds 1MB limit.` }, { status: 400 });
+      const isVideo = file.type.startsWith('video/');
+      if (file.size > MAX_FILE_SIZE || (!isVideo && file.size > 1024 * 1024)) {
+        return NextResponse.json({ error: `File ${file.name} exceeds the permitted size.` }, { status: 400 });
       }
 
       const buffer = await file.arrayBuffer();
       const nodeBuffer = Buffer.from(buffer);
       
-      const webpBuffer = await sharp(nodeBuffer)
-        .webp({ quality: 80 })
-        .toBuffer();
+      const processedBuffer = isVideo ? nodeBuffer : await sharp(nodeBuffer).webp({ quality: 80 }).toBuffer();
 
-      const uniqueFileName = `${crypto.randomUUID()}.webp`;
+      const extension = isVideo ? (file.type === 'video/quicktime' ? 'mov' : file.type.split('/')[1]) : 'webp';
+      const uniqueFileName = `${crypto.randomUUID()}.${extension}`;
       let publicUrl = '';
 
       if (storageDriver === 'local') {
         const filePath = path.join(uploadDir, uniqueFileName);
-        await fs.writeFile(filePath, webpBuffer);
+        await fs.writeFile(filePath, processedBuffer);
         // Assuming uploadDir is inside ./public
         const publicPath = uploadDir.replace(/^\.\/public/, '');
         publicUrl = `${publicPath}/${uniqueFileName}`.replace(/\/\//g, '/');
@@ -80,8 +80,8 @@ export async function POST(request: Request) {
         
         const { error } = await supabase.storage
           .from(supabaseBucket)
-          .upload(uniqueFileName, webpBuffer, {
-            contentType: 'image/webp',
+          .upload(uniqueFileName, processedBuffer, {
+            contentType: file.type,
             upsert: false,
           });
 
@@ -105,12 +105,12 @@ export async function POST(request: Request) {
         data: {
           fileName: file.name,
           storageKey: publicUrl,
-          mimeType: 'image/webp',
-          fileSize: webpBuffer.length,
+          mimeType: file.type,
+          fileSize: processedBuffer.length,
           altText: file.name,
         }
       });
-      await writeAuditLog({ action: 'upload', resource: 'media', metadata: { fileName: file.name, mimeType: 'image/webp', size: webpBuffer.length } });
+      await writeAuditLog({ action: 'upload', resource: 'media', metadata: { fileName: file.name, mimeType: file.type, size: processedBuffer.length } });
 
       uploadedUrls.push(publicUrl);
     }

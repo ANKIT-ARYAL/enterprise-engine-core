@@ -136,14 +136,20 @@ export default function AdminShell({ children, initialNav, sessionUser }: { chil
 
   // Normalize legacy nav to new sections array
   const defaultDashboardLinks = [
-    { href: '/admin/default', label: 'Default', icon: 'LayoutDashboard' },
-    { href: '/admin/crm', label: 'CRM', icon: 'User' },
-    { href: '/admin/finance', label: 'Finance', icon: 'CreditCard' },
-    { href: '/admin/academy', label: 'Academy', icon: 'GraduationCap' },
+    { href: '/admin/dashboard', label: 'Dashboard', icon: 'LayoutDashboard' },
+    { href: '/admin/pages', label: 'Homepage', icon: 'House' },
+    { href: '/admin/blogs', label: 'Blogs', icon: 'BookOpen' },
+    { href: '/admin/faq', label: 'FAQ', icon: 'MessageCircleQuestion' },
+    { href: '/admin/pages/about-us', label: 'About Us', icon: 'Users' },
+    { href: '/admin/pages/contact-us', label: 'Contact Us', icon: 'Mail' },
   ];
 
   const defaultPageLinks = [
-    { href: '/admin/email', label: 'Email', icon: 'Mail' },
+    { href: '/admin/users', label: 'Users', icon: 'Users' },
+    { href: '/admin/roles', label: 'Roles', icon: 'ShieldCheck' },
+    { href: '/admin/recycle-bin', label: 'Recycle Bin', icon: 'Trash2' },
+    { href: '/admin/pages', label: 'Pages & Sections', icon: 'Files' },
+    { href: '/admin/email', label: 'Contact Messages', icon: 'Mail' },
     { 
       href: '/admin/settings', 
       label: 'System Design Studio', 
@@ -230,13 +236,15 @@ export default function AdminShell({ children, initialNav, sessionUser }: { chil
         
         <div className={`${isCompact ? 'px-2' : 'px-4'} py-2 shrink-0`}>
           <div className="flex gap-2">
-            <button 
-              onClick={() => setIsQuickAddOpen(true)}
-              title={isCompact ? "Quick Create" : undefined}
-              className={`flex-1 flex items-center justify-center gap-2 ${isCompact ? 'p-2' : 'px-3 py-2'} bg-btn-bg text-btn-text rounded-btn text-sm font-medium hover:bg-btn-hover hover:text-btn-hover-text transition-colors shadow-sm`}
-            >
-              <Plus size={16} /> {!isCompact && "Quick Create"}
-            </button>
+            {sessionUser?.role === 'SUPER_ADMIN' && (
+              <button 
+                onClick={() => setIsQuickAddOpen(true)}
+                title={isCompact ? "Quick Create" : undefined}
+                className={`flex-1 flex items-center justify-center gap-2 ${isCompact ? 'p-2' : 'px-3 py-2'} bg-btn-bg text-btn-text rounded-btn text-sm font-medium hover:bg-btn-hover hover:text-btn-hover-text transition-colors shadow-sm`}
+              >
+                <Plus size={16} /> {!isCompact && "Quick Create"}
+              </button>
+            )}
           </div>
         </div>
 
@@ -249,7 +257,7 @@ export default function AdminShell({ children, initialNav, sessionUser }: { chil
                 </div>
               )}
               <div className="space-y-0.5">
-                {section.links.map((link: any) => (
+                {section.links.filter((link: any) => sessionUser?.role === 'SUPER_ADMIN' || link.href !== '/admin/roles').map((link: any) => (
                   <NavItem key={link.href + link.label} link={link} pathname={pathname} isCompact={isCompact} />
                 ))}
               </div>

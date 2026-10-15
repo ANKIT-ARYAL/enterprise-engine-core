@@ -1,9 +1,36 @@
 import { execSync } from 'node:child_process';
 import { existsSync, copyFileSync, readFileSync, writeFileSync } from 'node:fs';
 import crypto from 'node:crypto';
+import path from 'node:path';
+import net from 'node:net';
+
+const composeProject = `engine-${path.basename(process.cwd())
+  .toLowerCase()
+  .replace(/[^a-z0-9]+/g, '-')
+  .replace(/^-|-$/g, '')}`;
 
 function run(command, env = {}) {
   execSync(command, { stdio: 'inherit', env: { ...process.env, ...env } });
+}
+
+function capture(command) {
+  return execSync(command, { encoding: 'utf8' }).trim();
+}
+
+function isPortAvailable(port) {
+  return new Promise((resolve) => {
+    const server = net.createServer();
+    server.once('error', () => resolve(false));
+    server.once('listening', () => server.close(() => resolve(true)));
+    server.listen(port, '127.0.0.1');
+  });
+}
+
+async function findPort(start) {
+  for (let port = start; port < 65536; port += 1) {
+    if (await isPortAvailable(port)) return port;
+  }
+  throw new Error(`No available port found starting at ${start}`);
 }
 
 console.log('🚀 Initializing Enterprise Headless Engine...');
@@ -22,6 +49,19 @@ if (!existsSync('.env')) {
   writeFileSync('.env', envContent);
 }
 
+const envPath = path.resolve('.env');
+let envContent = readFileSync(envPath, 'utf8');
+const postgresPort = 0;
+const redisPort = 0;
+const setEnv = (key, value) => {
+  const line = `${key}=${value}`;
+  const pattern = new RegExp(`^${key}=.*$`, 'm');
+  envContent = pattern.test(envContent) ? envContent.replace(pattern, line) : `${envContent.trimEnd()}\n${line}\n`;
+};
+setEnv('POSTGRES_PORT', postgresPort);
+setEnv('REDIS_PORT', redisPort);
+writeFileSync(envPath, envContent);
+
 // 2. Docker Health and Up
 try {
   console.log('🐳 Verifying Docker Daemon...');
@@ -31,13 +71,28 @@ try {
   process.exit(1);
 }
 
-console.log('📦 Starting Docker Services (Postgres 16, Redis, MinIO)...');
-run('docker compose -f docker/docker-compose.yml up -d --wait');
+console.log(`📦 Starting isolated Docker Services (${composeProject})...`);
+run(`docker compose -p ${composeProject} --env-file .env -f docker/docker-compose.yml up -d --wait`);
+
+const assignedPostgresPort = Number(capture(`docker compose -p ${composeProject} -f docker/docker-compose.yml port postgres 5432`).match(/:(\d+)\s*$/)?.[1]);
+const assignedRedisPort = Number(capture(`docker compose -p ${composeProject} -f docker/docker-compose.yml port redis 6379`).match(/:(\d+)\s*$/)?.[1]);
+if (!assignedPostgresPort || !assignedRedisPort) throw new Error('Docker did not report assigned host ports.');
+envContent = readFileSync(envPath, 'utf8');
+const replaceEnv = (key, value) => { envContent = envContent.replace(new RegExp(`^${key}=.*$`, 'm'), `${key}=${value}`); };
+replaceEnv('POSTGRES_PORT', assignedPostgresPort);
+replaceEnv('REDIS_PORT', assignedRedisPort);
+replaceEnv('DATABASE_URL', `postgresql://engine_user:engine_local_dev_password@localhost:${assignedPostgresPort}/engine_dev_db`);
+replaceEnv('DIRECT_URL', `postgresql://engine_user:engine_local_dev_password@localhost:${assignedPostgresPort}/engine_dev_db`);
+writeFileSync(envPath, envContent);
+console.log(`🔌 Docker assigned PostgreSQL port ${assignedPostgresPort} and Redis port ${assignedRedisPort}`);
 
 // 3. Database Sync & Migrations
-console.log('🔄 Running Database Migrations via Prisma...');
-run('pnpm prisma migrate dev --name init');
+console.log('🔄 Synchronizing fresh database schema via Prisma...');
 run('pnpm prisma generate');
+// Project bootstrap is intentionally non-interactive. Reviewed migrations remain
+// the production deployment mechanism; db push makes a brand-new local database
+// match the current template schema without asking the user to create a migration.
+run('pnpm prisma db push --accept-data-loss');
 
 // 4. Seed Core System Tokens & Administrator
 console.log('🌱 Seeding Core Design Tokens and Default Layout...');

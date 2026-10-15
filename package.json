@@ -1,7 +1,9 @@
 {
-  "name": "enterprise-engine",
+  "name": "create-enterprise-engine",
   "version": "0.1.0",
-  "private": true,
+  "bin": {
+    "create-enterprise-engine": "scripts/create-enterprise-engine.mjs"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -46,7 +48,7 @@
   "devDependencies": {
     "@axe-core/playwright": "^4.13.0",
     "@playwright/test": "^1.64.0",
-    "@prisma/client": "^5.13.0",
+    "@prisma/client": "5.13.0",
     "@tailwindcss/turbopack": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
@@ -59,4 +61,7 @@
     "typescript": "^5"
   },
   "packageManager": "pnpm@10.14.0"
+  ,"pnpm": {
+    "onlyBuiltDependencies": ["@prisma/client", "@prisma/engines", "esbuild", "prisma", "sharp"]
+  }
 }

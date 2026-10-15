@@ -41,6 +41,9 @@ export default async function HomePage() {
           secondaryCtaText={heroData.secondaryCtaText}
           secondaryCtaLink={heroData.secondaryCtaLink}
           imageUrl={heroData.imageUrl}
+          videoUrl={heroData.videoUrl}
+          mediaType={heroData.mediaType as "image" | "video" | "youtube" | undefined}
+          youtubeId={heroData.youtubeId}
           layout={heroData.layout as "left" | "center" | undefined}
         /></FadeUp>
       )}
